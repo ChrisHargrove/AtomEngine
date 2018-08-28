@@ -1,0 +1,276 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{b29f53dd-fd61-4aa7-853d-ed386880aba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{3127378d-c507-4242-95ab-4a5d2e523d58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core">
+      <UniqueIdentifier>{2123498a-53bb-4494-8fbc-80abc63fffca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core">
+      <UniqueIdentifier>{634c37d4-3981-4417-997a-e305e2802da9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core\Managers">
+      <UniqueIdentifier>{be6506d1-a25b-4875-b896-ea58ec6a6db3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core\Memory">
+      <UniqueIdentifier>{0958cbb0-c854-4bf1-9798-2c49989d2fa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core\Managers">
+      <UniqueIdentifier>{ece2bf84-032a-4065-8ba2-de171298536a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core\Components">
+      <UniqueIdentifier>{e05f2b34-3ebe-4abd-bd72-b8443cb79260}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core\Components">
+      <UniqueIdentifier>{bd2a779c-2578-4aa8-8c00-30bd594373b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics">
+      <UniqueIdentifier>{7a19fa18-8425-44d3-a1f1-4591636cb9fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics">
+      <UniqueIdentifier>{76483def-c679-48ea-86e3-b03504085381}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics\Managers">
+      <UniqueIdentifier>{e7e4df06-1ad3-40f3-9e80-9e0c0e309632}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics\Managers">
+      <UniqueIdentifier>{029c2d60-d956-4995-b1f2-ab8789e03339}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IMGUI">
+      <UniqueIdentifier>{5a886879-30cc-4b58-a07e-8632cbe7ab49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core\Memory">
+      <UniqueIdentifier>{d22adcb7-617d-43c8-b038-9a19cc66fe06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core\Entity Component System">
+      <UniqueIdentifier>{d3468184-0ee7-48e8-93ca-76cac1e11680}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core\Entity Component System">
+      <UniqueIdentifier>{090db566-eead-418d-9bdc-d3a770117474}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Core\Entity Component System\Components">
+      <UniqueIdentifier>{72fbfd92-2929-478c-9cb9-438a9fa83fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Core\Entity Component System\Components">
+      <UniqueIdentifier>{b545c0f0-6092-463a-8ec0-72f6e0376ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics">
+      <UniqueIdentifier>{0f56c6f9-0abc-48fd-bb9b-2b7bae4ad616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Physics">
+      <UniqueIdentifier>{5a7ef237-b8dc-4552-a19f-9d3f19f5103a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics\Geometry">
+      <UniqueIdentifier>{24c9690b-a789-4587-8cb1-1c44b17897d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics\Geometry\Primitives">
+      <UniqueIdentifier>{1e6edfb7-4f7f-420a-baf0-43a83c8c76af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics\Geometry">
+      <UniqueIdentifier>{8b1f84e4-8054-485d-bb94-c24d2bcc9d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics\Geometry\Primitives">
+      <UniqueIdentifier>{56cd5045-1133-44fa-b448-705d8852083e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LogManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="StateManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Timing.cpp">
+      <Filter>Source Files\Engine\Core\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Buffer.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>Source Files\Engine\Graphics\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeMap.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Lighting.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="NumberGenerator.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>Source Files\Engine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_demo.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_draw.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool.cpp">
+      <Filter>Source Files\Engine\Core\Memory</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Engine\Core\Entity Component System</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="IOManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Octree.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="AABB.cpp">
+      <Filter>Source Files\Engine\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Cuboid.cpp">
+      <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LogManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="StateManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="AlignedAllocation.h">
+      <Filter>Header Files\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Timing.h">
+      <Filter>Header Files\Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Buffer.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManager.h">
+      <Filter>Header Files\Engine\Graphics\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeMap.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="NumberGenerator.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imconfig.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_internal.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\stb_rect_pack.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\stb_textedit.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\stb_truetype.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool.h">
+      <Filter>Header Files\Engine\Core\Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Engine\Core\Entity Component System</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>Header Files\Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="IOManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Octree.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Cuboid.h">
+      <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimitiveShape.h">
+      <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
