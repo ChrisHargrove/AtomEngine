@@ -215,3 +215,7 @@ FakesAssemblies/
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
+
+AtomEngine/Application/nsight_profiler\.cfg
+
+AtomEngine/doc/
