@@ -49,6 +49,19 @@ enum ATOM_API VariableType {
     VT_FLOAT = GL_FLOAT             /*!< Specifies that it uses a float data type. */
 };
 
+/*!
+    * \enum BufferAttribute
+    * Is used to specify what type of attribute you will be adding to a buffer. This way every buffer has
+    * a standard layout for particular attribute types.
+*/
+enum class BufferAttribute {
+    POSITION = 0,   /*!< Specifies Position as Attribute 0. */
+    NORMAL,         /*!< Specifies Normals as Attribute 1. */
+    UV,             /*!< Specifies Texture Coords as Attribute 2. */
+    TANGENT,        /*!< Specifies Tangents as Attribute 3. */
+    BITANGENT       /*!< Specifies Bitangents as Attribute 4. */
+};
+
 class ATOM_API Buffer : public AlignedAllocation<BYTE16>
 {
 public:
@@ -117,6 +130,7 @@ public:
 
     /*!
         * \brief Gets the buffer ID.
+        * \return Returns the Buffer ID.
     */
     unsigned int GetID() const;
 

@@ -1,3 +1,9 @@
+/*!
+    * \class Camera "Camera.h" 
+    * \brief A camera component.
+    * 
+    * This component handles all the view capabilities of the game engine.
+*/
 #pragma once
 
 #ifdef BUILDING_DLL
@@ -15,22 +21,66 @@ public:
     Camera();
     virtual ~Camera();
 
+    /*!
+        * \brief Gets the zoom value of the camera.
+        * \returns Returns a float shoing the level of zoom.
+    */
     float GetZoom();
+
+    /*!
+        * \brief Gets the View Matrix from the Camera.
+        * \return Returns a 4x4 Matrix containing the view matrix.
+        *
+        * This function recalculates the current view matrix when it is called, stores it
+        * and then returns it.
+    */
     glm::mat4 GetViewMatrix();
+
+    /*!
+        * \brief Gets the Orthographic View Matrix from the Camera.
+        * \return Returns a 4x4 Matrix containing the orthographic view matrix.
+        *
+        * This function recalculates the current orthographic view matrix when it is called.
+    */
     glm::mat4 GetOrthoMatrix();
 
+    /*!
+        * \brief Sets whether or not the camera should have its pitch contrained.
+        * \param enable Should Pitch contraint be enabled. Defaults to true.
+        *
+        * This is primarily to stop the camera from spinning up and over. More used in FPS 
+        * style cameras.
+    */
     void EnablePitchConstraint(bool enable = true);
+
+    /*!
+        * \brief Sets a target for the camera to follow.
+        * \param target The target position for the camera to follow.
+        *
+        * If No target is set then the camera will just look at a defined direction.
+    */
     void SetTarget(glm::vec3 target);
 
 private:
-
-    virtual void Initialize() override;
+    /*!
+        * \brief Virtual Update function that is called each frame.
+        * \param deltaTime The time passed since last frame.
+        *
+        * This function is where the component behaviour is applied.
+    */
     virtual void Update(float deltaTime) override;
 
-    float m_zoom;
-    bool m_isPitchConstrained;
+    /*!
+        * \brief Virtual Initialize function that is only called once.
+        *
+        * This function is where the initial setup for this component is set.
+    */
+    virtual void Initialize() override;
 
-    glm::vec3 m_target;
-    glm::mat4 m_viewMatrix;
+    float m_zoom;               /*!< The zoom value of the camera. */
+    bool m_isPitchConstrained;  /*!< Should the camera pitch be contrained. */
+
+    glm::vec3 m_target;         /*!< The camera target. */
+    glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
 };
 

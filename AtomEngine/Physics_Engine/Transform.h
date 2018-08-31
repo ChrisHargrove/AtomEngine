@@ -73,23 +73,43 @@ public:
     */
     glm::mat4 GetTransform();
 
+    /*!
+        * \brief Gets the Formward Vector of the transform.
+        * \return Returns a 3 component vector representing the forward direction.
+        * 
+        * Calculates the Forward vector by dissasembling the transformation matrix.
+    */
     glm::vec3 GetForward();
+
+    /*!
+        * \brief Gets the Right Vector of the transform.
+        * \return Returns a 3 component vector representing the Right direction.
+        *
+        * Calculates the Right vector by dissasembling the transformation matrix.
+    */
     glm::vec3 GetRight();
+
+    /*!
+        * \brief Gets the Up Vector of the transform.
+        * \return Returns a 3 component vector representing the Up direction.
+        *
+        * Calculates the Up vector by dissasembling the transformation matrix.
+    */
     glm::vec3 GetUp();
 
 private:
     /*!
-    * \brief Virtual Update function that is called each frame.
-    * \param deltaTime The time passed since last frame.
-    *
-    * This function is where the component behaviour is applied.
+        * \brief Virtual Update function that is called each frame.
+        * \param deltaTime The time passed since last frame.
+        *
+        * This function is where the component behaviour is applied.
     */
     virtual void Update(float deltaTime) override;
 
     /*!
-    * \brief Virtual Initialize function that is only called once.
-    *
-    * This function is where the initial setup for this component is set.
+        * \brief Virtual Initialize function that is only called once.
+        *
+        * This function is where the initial setup for this component is set.
     */
     virtual void Initialize() override;
 

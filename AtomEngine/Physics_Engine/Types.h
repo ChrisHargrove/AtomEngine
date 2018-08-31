@@ -8,19 +8,15 @@
 
 #include <GLM/glm.hpp>
 
-enum class BufferAttribute {
-    POSITION = 0,
-    NORMAL,
-    UV,
-    TANGENT,
-    BITANGENT
-};
-
+/*!
+    * \struct ComplexVertex Types.h
+    * \brief This is a struct defining a complex vertex.
+*/
 struct ComplexVertex {
-    glm::vec3 m_position;
-    glm::vec3 m_normal;
-    glm::vec2 m_UV;
-    glm::vec3 m_tangent;
-    glm::vec3 m_bitangent;
+    glm::vec3 m_position;   /*!< A 3 component vector containing Position Data.*/
+    glm::vec3 m_normal;     /*!< A 3 component vector containing Normal Data.*/
+    glm::vec2 m_UV;         /*!< A 2 component vector containing Texture Cooridinate Data.*/
+    glm::vec3 m_tangent;    /*!< A 3 component vector containing Tangent Data.*/
+    glm::vec3 m_bitangent;  /*!< A 3 component vector containing Bitangent Data.*/
 };
 

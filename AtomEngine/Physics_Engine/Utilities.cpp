@@ -22,4 +22,12 @@ std::string SplitFront(const std::string & string, const std::string & delimeter
     return string.substr(0, position);
 }
 
+float MapRange(float number, float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd)
+{
+    return ((number - inRangeStart) * ((outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart))) + outRangeEnd;
+}
+
+
+
+
 

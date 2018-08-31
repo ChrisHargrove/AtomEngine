@@ -34,3 +34,16 @@ ATOM_API std::string SplitEnd(const std::string& string, const std::string& deli
 */
 ATOM_API std::string SplitFront(const std::string& string, const std::string& delimeter, bool include = false);
 
+/*!
+    * \brief Maps a number from one range to another.
+    * \param number The number you wish to map.
+    * \param inRangeStart The starting point of the input range of numbers.
+    * \param inRangeEnd The end point of the input range of numbers.
+    * \param outRangeStart The starting point of the output range of numbers.
+    * \param outRangeEnd The end point of the output range of numbers.
+    * \return Returns a floating point number within the newly mapped range.
+    *
+    * Will take a number and mapp it from an original range of numbers to a new range of numbers
+    * and will return the newly mapped number.
+*/
+ATOM_API float MapRange(float number, float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd);

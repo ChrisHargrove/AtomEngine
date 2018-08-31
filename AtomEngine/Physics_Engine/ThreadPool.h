@@ -115,17 +115,24 @@ private:
     */
     void StopPool();
 
+    /*!
+        * \brief Names a chosen thread.
+        * \param thread A pointer to the thread you wish to name.
+        * \param threadName The string you wish to name the thread as.
+        *
+        * Names a chosen thread with the given string. This is primarily to help identify them
+        * when profiling and debugging the application.
+        * NOTE: This is a windows specific function.
+    */
     void SetThreadName(std::thread* thread, const char* threadName)
     {
         DWORD threadId = ::GetThreadId(static_cast<HANDLE>(thread->native_handle()));
         SetThreadName(threadId, threadName);
     }
 
+
     void SetThreadName(uint32_t dwThreadID, const char* threadName)
     {
-
-        // DWORD dwThreadID = ::GetThreadId( static_cast<HANDLE>( t.native_handle() ) );
-
         THREADNAME_INFO info;
         info.dwType = 0x1000;
         info.szName = threadName;
