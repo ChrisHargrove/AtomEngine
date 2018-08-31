@@ -13,6 +13,7 @@
 #endif
 
 #include "AlignedAllocation.h"
+#include "Types.h"
 
 #include <string>
 #include <GLEW/glew.h>
@@ -102,7 +103,17 @@ public:
         * \param stride The stride from each vertex to the next in bytes.
         * \param offset How far from the beginning is this data inside the vertex in bytes.
     */
-    void AddAttributePointer(unsigned int locationID, int size, VariableType type, int stride, int offset);
+    void AddAttributePointer(unsigned int locationID, int size, VariableType type, int stride, int offset = 0);
+
+    /*!
+    * \brief Enables attribute pointers inside the GPU.
+    * \param attribute Which index is used for the data inside the GPU program.
+    * \param size The size of the data in bytes.
+    * \param type What type of data is inside the buffer.
+    * \param stride The stride from each vertex to the next in bytes.
+    * \param offset How far from the beginning is this data inside the vertex in bytes.
+    */
+    void AddAttributePointer(BufferAttribute attribute, int size, VariableType type, int stride, int offset = 0);
 
     /*!
         * \brief Gets the buffer ID.

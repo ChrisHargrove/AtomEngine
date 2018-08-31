@@ -7,6 +7,7 @@
 #include <GLM/glm.hpp>
 
 #include "Cuboid.h"
+#include "DebugCuboid.h"
 
 class LoadState : public State
 {
@@ -29,5 +30,6 @@ public:
     glm::vec3 rotation;
 
     Cuboid* cubeTest;
+    DebugCuboid* debugCubeTest;
 };
 

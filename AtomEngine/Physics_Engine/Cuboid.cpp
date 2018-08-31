@@ -77,8 +77,3 @@ void Cuboid::Render()
     glDrawArrays(GL_TRIANGLES, 0, m_drawCount);
     m_vertexArray.Unbind();
 }
-
-void Cuboid::SetColor(glm::vec3 color)
-{
-    m_color = color;
-}

@@ -88,6 +88,11 @@ void Buffer::AddAttributePointer(unsigned int locationID, int size, VariableType
     }
 }
 
+void Buffer::AddAttributePointer(BufferAttribute attribute, int size, VariableType type, int stride, int offset)
+{
+    AddAttributePointer((unsigned int)attribute, size, type, stride, offset);
+}
+
 unsigned int Buffer::GetID() const
 {
     return m_ID;

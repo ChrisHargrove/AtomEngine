@@ -88,6 +88,12 @@
     <Filter Include="Source Files\Engine\Graphics\Geometry\Primitives">
       <UniqueIdentifier>{56cd5045-1133-44fa-b448-705d8852083e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Graphics\Geometry\Debug">
+      <UniqueIdentifier>{f37fe620-6cec-463f-91d2-6b9504e73ec7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Graphics\Geometry\Debug">
+      <UniqueIdentifier>{1fdfcba1-38c0-4010-a1d3-28cf49912b4d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogManager.cpp">
@@ -167,6 +173,12 @@
     </ClCompile>
     <ClCompile Include="Cuboid.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugCuboid.cpp">
+      <Filter>Source Files\Engine\Graphics\Geometry\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -271,6 +283,12 @@
     </ClInclude>
     <ClInclude Include="PrimitiveShape.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugCuboid.h">
+      <Filter>Header Files\Engine\Graphics\Geometry\Debug</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -140,6 +140,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Cuboid.cpp" />
+    <ClCompile Include="DebugCuboid.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="LogManager.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="NumberGenerator.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -170,6 +172,7 @@
     <ClInclude Include="Component.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Cuboid.h" />
+    <ClInclude Include="DebugCuboid.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IMGUI\imconfig.h" />
@@ -182,6 +185,7 @@
     <ClInclude Include="IOManager.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LogManager.h" />
+    <ClInclude Include="Mesh.h" />
     <ClInclude Include="NumberGenerator.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="PrimitiveShape.h" />
