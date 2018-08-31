@@ -1,19 +1,18 @@
 #include "Mesh.h"
+#include "ModelLoader.h"
+#include "LogManager.h"
+
+#include "ShaderManager.h"
 
 
-
-Mesh::Mesh() :
-    m_color(glm::vec3(1, 1, 1)),
-    m_drawCount(0)
+Mesh::Mesh()
 {
 }
 
 
 Mesh::~Mesh()
 {
-    m_vertexArray.Destroy();
-    m_vertexBuffer.Destroy();
-    m_elementBuffer.Destroy();
+    
 }
 
 void Mesh::Update(float deltaTime)
@@ -22,26 +21,32 @@ void Mesh::Update(float deltaTime)
 
 void Mesh::Initialize()
 {
-    if (m_meshName != "") {
+    if (m_meshName == "") {
         LoadMesh();
     }
     else {
-        m_vertexArray.Create(VAO);
-        m_vertexBuffer.Create(VBO);
-        m_elementBuffer.Create(EBO);
 
-        m_vertexArray.Bind();
-        m_vertexBuffer.Bind();
+        if (LoadMesh(m_meshName)) {
 
-        m_vertexBuffer.AddAttributePointer(BufferAttribute::POSITION, 3, VT_FLOAT, sizeof(ComplexVertex));
-        m_vertexBuffer.AddAttributePointer(BufferAttribute::NORMAL, 3, VT_FLOAT, sizeof(ComplexVertex), 3 * sizeof(float));
-        m_vertexBuffer.AddAttributePointer(BufferAttribute::UV, 2, VT_FLOAT, sizeof(ComplexVertex), 5 * sizeof(float));
-        m_vertexBuffer.AddAttributePointer(BufferAttribute::TANGENT, 3, VT_FLOAT, sizeof(ComplexVertex), 8 * sizeof(float));
-        m_vertexBuffer.AddAttributePointer(BufferAttribute::BITANGENT, 3, VT_FLOAT, sizeof(ComplexVertex), 11 * sizeof(float));
+            for (auto subMesh : m_subMeshList) {
+                subMesh->m_vertexArray.Bind();
+                subMesh->m_vertexBuffer.Bind();
 
-        m_elementBuffer.Bind();
+                subMesh->m_vertexBuffer.FillBuffer(sizeof(ComplexVertex) * subMesh->m_vertices.size(), &subMesh->m_vertices[0], STATIC);
 
-        m_vertexArray.Unbind();
+                subMesh->m_vertexBuffer.AddAttributePointer(BufferAttribute::POSITION, 3, VT_FLOAT, sizeof(ComplexVertex));
+                subMesh->m_vertexBuffer.AddAttributePointer(BufferAttribute::NORMAL, 3, VT_FLOAT, sizeof(ComplexVertex), 3 * sizeof(float));
+                subMesh->m_vertexBuffer.AddAttributePointer(BufferAttribute::UV, 2, VT_FLOAT, sizeof(ComplexVertex), 5 * sizeof(float));
+                subMesh->m_vertexBuffer.AddAttributePointer(BufferAttribute::TANGENT, 3, VT_FLOAT, sizeof(ComplexVertex), 8 * sizeof(float));
+                subMesh->m_vertexBuffer.AddAttributePointer(BufferAttribute::BITANGENT, 3, VT_FLOAT, sizeof(ComplexVertex), 11 * sizeof(float));
+
+                subMesh->m_elementBuffer.Bind();
+                subMesh->m_elementBuffer.FillBuffer(sizeof(unsigned int) * subMesh->m_indices.size(), &subMesh->m_indices[0], STATIC);
+
+                subMesh->m_vertexArray.Unbind();
+            }
+            
+        }
     }
 }
 
@@ -50,22 +55,52 @@ void Mesh::SetMesh(const std::string& meshName)
     m_meshName = meshName;
 }
 
-void Mesh::LoadMesh()
+bool Mesh::LoadMesh()
 {
     //TODO: Load all mesh data using ASSIMP
 
     //This function is to be used a loader for when reading from serialized data.
+    return false;
 }
 
-void Mesh::LoadMesh(const std::string& meshName)
+bool Mesh::LoadMesh(const std::string& meshName)
 {
     //TODO: Load all mesh data using ASSIMP
-
-    //This function is to be used for all other mesh loading instances. But requires that the mesh be loaded and set before
-    //adding to the game object.
+    if (ModelLoader::LoadModel(meshName, this)) {
+        Logger::Instance()->LogInfo("Successfully Loaded: " + meshName);
+        return true;
+    }
+    return false;
 }
 
-void Mesh::SetColor(glm::vec3 color)
+void Mesh::Render()
 {
-    m_color = color;
+    Shaders::Instance()->GetShader("BASIC")->SetVec3("aColor", glm::vec3(1, 1, 1));
+    for (auto subMesh : m_subMeshList) {
+        if (subMesh->m_drawCount > 0) {
+            subMesh->Render();
+        }
+    }
+}
+
+SubMesh::SubMesh() :
+    m_drawCount(0)
+{
+    m_vertexArray.Create(VAO);
+    m_vertexBuffer.Create(VBO);
+    m_elementBuffer.Create(EBO);
+}
+
+SubMesh::~SubMesh()
+{
+    m_vertexArray.Destroy();
+    m_vertexBuffer.Destroy();
+    m_elementBuffer.Destroy();
+}
+
+void SubMesh::Render()
+{
+    m_vertexArray.Bind();
+    glDrawElements(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0);
+    m_vertexArray.Unbind();
 }

@@ -9,6 +9,7 @@
 #include "ScreenManager.h"
 
 #include "Cuboid.h"
+#include "Mesh.h"
 #include "GLM/gtc/matrix_transform.hpp"
 
 
@@ -37,10 +38,14 @@ bool LoadState::Initialize()
     GameObject* camera = new GameObject();
     camera->AddComponent<Camera>();
 
-    cubeTest = new Cuboid(1, 1, 1);
-    debugCubeTest = new DebugCuboid(1, 1, 1, glm::vec3(1,0,0));
+    //LOADING MODELS IS SUCCESSFUL
+    GameObject* meshTest = new GameObject();
+    Mesh* mesh = new Mesh();
+    mesh->SetMesh("Assets/Models/cactus_one.obj");
+    meshTest->AddComponent(mesh);
 
     GameObjectList.push_back(camera);
+    GameObjectList.push_back(meshTest);
 
     for (GameObject* obj : GameObjectList) {
         obj->Initialize();
@@ -61,10 +66,9 @@ void LoadState::Update(float delta)
 {
     for (GameObject* obj : GameObjectList) {
         obj->Update(delta);
-        //Logger::Instance()->LogDebug(std::to_string(obj->GetComponent<Transform>()->GetForward().x) + " " + std::to_string(obj->GetComponent<Transform>()->GetForward().y) + " " + std::to_string(obj->GetComponent<Transform>()->GetForward().z));
-        rotation.y += delta;
-        //obj->GetComponent<Transform>()->SetRotation(rotation);
+
     }
+    rotation.y += delta;
 }
 
 void LoadState::Render()
@@ -78,8 +82,13 @@ void LoadState::Render()
 
     Shaders::Instance()->UseShader("BASIC");
     Shaders::Instance()->GetShader("BASIC")->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
-    cubeTest->Render();
-    debugCubeTest->Render();
+
+    for (auto obj : GameObjectList) {
+        Mesh* mesh = obj->GetComponent<Mesh>();
+        if (mesh != nullptr) {
+            mesh->Render();
+        }
+    }
 
 }
 

@@ -85,7 +85,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)libs</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
@@ -151,6 +151,7 @@
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NumberGenerator.cpp" />
     <ClCompile Include="Octree.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="NumberGenerator.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="PrimitiveShape.h" />
@@ -200,6 +202,7 @@
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Timing.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Types.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

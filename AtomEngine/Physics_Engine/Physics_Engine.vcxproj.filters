@@ -178,7 +178,10 @@
       <Filter>Source Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelLoader.cpp">
+      <Filter>Source Files\Engine\Graphics\Geometry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -288,7 +291,13 @@
       <Filter>Header Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine\Core\Entity Component System\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Header Files\Engine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelLoader.h">
+      <Filter>Header Files\Engine\Graphics\Geometry</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

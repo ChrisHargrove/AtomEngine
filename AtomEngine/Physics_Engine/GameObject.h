@@ -51,6 +51,15 @@ public:
     void AddComponent();
 
     /*!
+    * \brief Adds a component to the GameObject.
+    * \param component The component to be added to the Game Object.
+    * This is a templated function that allows for any type of component to be added. This function
+    * will then create a new instance of the component type and add it to the game object.
+    */
+    template<class T>
+    void AddComponent(T* component);
+
+    /*!
         * \brief Removes a component from the GameObject.
         *
         * This is a templated function that will remove any type of component from the game object. This function
@@ -120,6 +129,13 @@ template<class T>
 inline void GameObject::AddComponent()
 {
     auto component = new T();
+    component->SetParent(this);
+    m_componentList.push_back(component);
+}
+
+template<class T>
+inline void GameObject::AddComponent(T * component)
+{
     component->SetParent(this);
     m_componentList.push_back(component);
 }
