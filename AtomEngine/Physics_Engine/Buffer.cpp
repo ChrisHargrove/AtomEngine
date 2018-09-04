@@ -93,7 +93,169 @@ void Buffer::AddAttributePointer(BufferAttribute attribute, int size, VariableTy
     AddAttributePointer((unsigned int)attribute, size, type, stride, offset);
 }
 
+
+FrameBuffer::FrameBuffer() : m_ID(0)
+{
+}
+
+FrameBuffer::~FrameBuffer()
+{
+}
+
+void FrameBuffer::Create(glm::vec2 size)
+{
+    glGenFramebuffers(1, &m_ID);
+
+    m_size = size;
+}
+
+void FrameBuffer::Bind()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+}
+
+void FrameBuffer::Unbind()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void FrameBuffer::Destroy()
+{
+    glDeleteFramebuffers(1, &m_ID);
+}
+
 unsigned int Buffer::GetID() const
+{
+    return m_ID;
+}
+
+bool FrameBuffer::IsFrameBufferComplete()
+{
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+        Logger::Instance()->LogDebug("FrameBuffer Completed Succesfully!");
+        Unbind();
+        return true;
+    }
+    Logger::Instance()->LogError("FrameBuffer Failed Completion!");
+    Unbind();
+    return false;
+}
+
+
+void FrameBuffer::AddAttachment(AttachmentType type)
+{
+    unsigned int textureID;
+    switch (type) {
+    case TEXTURE:
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_size.x, m_size.y, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachmentIDs.size(), GL_TEXTURE_2D, textureID, 0);
+        m_colorAttachmentIDs.push_back(textureID);
+        break;
+    case DEPTH:
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+        m_depthAttachmentID = textureID;
+        break;
+    case STENCIL:
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_STENCIL_INDEX, m_size.x, m_size.y, 0, GL_STENCIL_INDEX, GL_UNSIGNED_BYTE, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+        m_stencilAttachmentID = textureID;
+        break;
+    case DEPTH_STENCIL:
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_size.x, m_size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, textureID, 0);
+        m_depthAttachmentID = m_stencilAttachmentID = textureID;
+        break;
+    default:
+        Logger::Instance()->LogError("Attachment Type not valid!");
+    }
+}
+
+void FrameBuffer::AddRenderBuffer(AttachmentType type)
+{
+    RenderBuffer buffer;
+    buffer.Create(type, m_size);
+
+    switch (type) {
+    case DEPTH_STENCIL:
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.GetID());
+        m_renderBuffers.push_back(buffer);
+        break;
+    }
+}
+
+unsigned int FrameBuffer::GetID() const
+{
+    return m_ID;
+}
+
+RenderBuffer::RenderBuffer() : m_ID(0)
+{
+}
+
+RenderBuffer::~RenderBuffer()
+{
+}
+
+void RenderBuffer::Create(AttachmentType type, glm::vec2 size)
+{
+    glGenRenderbuffers(1, &m_ID);
+    m_size = size;
+    Bind();
+
+    switch (type) {
+    case DEPTH_STENCIL:
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, size.x, size.y);
+        break;
+    default:
+        Logger::Instance()->LogError("RenderBuffer AttachmentType not supported!");
+    }
+}
+
+void RenderBuffer::Bind()
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, m_ID);
+}
+
+void RenderBuffer::Unbind()
+{
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+}
+
+void RenderBuffer::Destroy()
+{
+    glDeleteRenderbuffers(1, &m_ID);
+}
+
+unsigned int RenderBuffer::GetID()
 {
     return m_ID;
 }

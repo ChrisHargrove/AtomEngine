@@ -16,6 +16,7 @@
 #include "Types.h"
 
 #include <string>
+#include <vector>
 #include <GLEW/glew.h>
 
 /*!
@@ -25,7 +26,8 @@
 enum ATOM_API BufferType {
     VAO = 0, /*!< Specifies a Vertex Array Object. */
     VBO,     /*!< Specifies a Vertex Buffer Object. */
-    EBO      /*!< Specifies a Element Buffer Object. */
+    EBO,      /*!< Specifies a Element Buffer Object. */
+    FBO,    /*!< Specifies a Frame Buffer Object. */
 };
 
 /*!
@@ -54,12 +56,23 @@ enum ATOM_API VariableType {
     * Is used to specify what type of attribute you will be adding to a buffer. This way every buffer has
     * a standard layout for particular attribute types.
 */
-enum class BufferAttribute {
+enum ATOM_API BufferAttribute {
     POSITION = 0,   /*!< Specifies Position as Attribute 0. */
     NORMAL,         /*!< Specifies Normals as Attribute 1. */
     UV,             /*!< Specifies Texture Coords as Attribute 2. */
     TANGENT,        /*!< Specifies Tangents as Attribute 3. */
     BITANGENT       /*!< Specifies Bitangents as Attribute 4. */
+};
+
+/*!
+    * \enum AttachmentType
+    * Is used to specify the type of attachment to add when using Frame Buffer Objects.
+*/
+enum ATOM_API AttachmentType {
+    TEXTURE = 0,    /*!< Specifies a texture attachment. */
+    DEPTH,          /*!< Specifies a depth texture attachment. */
+    STENCIL,        /*!< Specifies a stencil texture attachment. */
+    DEPTH_STENCIL,  /*!< Specifies a depth and stencil attachment. */
 };
 
 class ATOM_API Buffer : public AlignedAllocation<BYTE16>
@@ -141,3 +154,83 @@ private:
 
 };
 
+class ATOM_API RenderBuffer : public AlignedAllocation<BYTE16> {
+public:
+    RenderBuffer();
+    ~RenderBuffer();
+
+    void Create(AttachmentType type, glm::vec2 size);
+    void Bind();
+    void Unbind();
+    void Destroy();
+
+    unsigned int GetID();
+
+private:
+    unsigned int m_ID;
+    glm::vec2 m_size;
+};
+
+class ATOM_API FrameBuffer : public AlignedAllocation<BYTE16> {
+public:
+    FrameBuffer();
+    ~FrameBuffer();
+
+    /*!
+    * \brief Create a buffer of type specified.
+    * \param type The buffer type you wish to create.
+    *
+    * Creates a buffer of the type chosen by the user using the buffer type enum.
+    */
+    void Create(glm::vec2 size);
+
+    /*!
+    * \brief Binds the buffer to be the one currently being worked on.
+    *
+    * Binds the buffer to be the currently in use, for adding attribute pointers or filling
+    * with data.
+    */
+    void Bind();
+
+    /*!
+    * \brief Unbinds the buffer s no longer the currently in use.
+    */
+    void Unbind();
+
+    /*!
+        * \brief Detroys the buffer.
+        *
+        * Wll destroy the buffer releasing all data associated with the buffer and then deletes
+        * the buffer from the OpenGL context.
+    */
+    void Destroy();
+
+    /*!
+        * \brief Gets the buffer ID.
+        * \return Returns the Buffer ID.
+    */
+    unsigned int GetID() const;
+
+    /*!
+        * \brief Checks too see if the frame buffer is ready to use.
+        * \return Whether or not the frame buffer is ready for use.
+        *
+        * This function will only work with FrameBuffer objects.
+    */
+    bool IsFrameBufferComplete();
+
+    void AddAttachment(AttachmentType type);
+
+    void AddRenderBuffer(AttachmentType type);
+
+private:
+    unsigned int m_ID;  /*!< The buffer ID. */
+
+    glm::vec2 m_size; /*!< The size of the frame buffer. */
+
+    std::vector<unsigned int> m_colorAttachmentIDs;
+    unsigned int m_depthAttachmentID;
+    unsigned int m_stencilAttachmentID;
+
+    std::vector<RenderBuffer> m_renderBuffers;
+};

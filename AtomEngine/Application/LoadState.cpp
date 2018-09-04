@@ -1,6 +1,7 @@
 #include "LoadState.h"
 #include "ThreadPool.h"
 #include "LogManager.h"
+#include "InputManager.h"
 
 #include "GameObject.h"
 #include "Camera.h"
@@ -34,6 +35,7 @@ bool LoadState::Initialize()
     }*/
 
     Shaders::Instance()->AddShader("BASIC", "basic");
+    Shaders::Instance()->AddShader("FRAMETEST", "frameBufferTest");
 
     GameObject* camera = new GameObject();
     camera->AddComponent<Camera>();
@@ -55,11 +57,24 @@ bool LoadState::Initialize()
 
     camera->GetComponent<Transform>()->SetPosition(glm::vec3(0, 0, -4));
 
+    /*frameBuffer.Create(Screen::Instance()->GetSize());
+    frameBuffer.AddAttachment(TEXTURE);
+    frameBuffer.AddRenderBuffer(DEPTH_STENCIL);
+    if (!frameBuffer.IsFrameBufferComplete()) {
+        return false;
+    }*/
+
     return true;
 }
 
 void LoadState::Input()
 {
+    if (Input::Instance()->IsKeyPressed(SDLK_w)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    if (Input::Instance()->IsKeyPressed(SDLK_s)) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
 }
 
 void LoadState::Update(float delta)

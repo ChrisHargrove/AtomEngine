@@ -43,5 +43,11 @@
     <None Include="Shaders\basic.vert">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="Shaders\frameBufferTest.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\frameBufferTest.vert">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
