@@ -148,29 +148,71 @@ public:
     unsigned int GetID() const;
 
 private:
-
     unsigned int m_ID;  /*!< The buffer ID. */
     BufferType m_type;  /*!< The type of buffer that it is. Eg. VAO, VBO etc. */
 
 };
 
+/*!
+    * \class RenderBuffer "Buffer.h"
+    * \brief Used as an attachment to a framebuffer.
+    *
+    * Handles the creation and management of a render buffer object foor use as a
+    * framebuffer attachment.
+*/
 class ATOM_API RenderBuffer : public AlignedAllocation<BYTE16> {
 public:
     RenderBuffer();
     ~RenderBuffer();
 
+    /*!
+        * \brief Creates a RenderBuffer
+        * \param type The type oof render buffer you wish to create.
+        * \param size The size of the render buffer, usually the same size as the framebuffer.
+        *
+        * Will create a render buffer with a given size and type. The type being similar to a
+        * texture buffer attachment type.
+    */
     void Create(AttachmentType type, glm::vec2 size);
+
+    /*!
+        * \brief Binds the RenderBuffer.
+        *
+        * Binds the buffer so associated calls to Renderbuffer storage are dont to the active render buffer.
+    */
     void Bind();
+
+    /*!
+        * \brief Unbinds the RenderBuffer so it is no longer active.
+    */
     void Unbind();
+
+    /*!
+        * \brief Detroys the buffer.
+        *
+        * Wll destroy the buffer releasing all data associated with the buffer and then deletes
+        * the buffer from the OpenGL context.
+    */
     void Destroy();
 
+    /*!
+        * \brief Gets the buffer ID.
+        * \return Returns the Buffer ID.
+    */
     unsigned int GetID();
 
 private:
-    unsigned int m_ID;
-    glm::vec2 m_size;
+    unsigned int m_ID;  /*!< The RenderBuffer ID. */
+    glm::vec2 m_size;   /*!< The size of the RenderBuffer. */
 };
 
+/*!
+    * \class FrameBuffer "Buffer.h"
+    * \brief Creates a new FrameBuffer for rendering to that isnt the screen.
+    *
+    * Handles the creation and management oof the FrameBuffer, also handles the addition of
+    * frame buffer attachments.
+*/
 class ATOM_API FrameBuffer : public AlignedAllocation<BYTE16> {
 public:
     FrameBuffer();
@@ -219,8 +261,20 @@ public:
     */
     bool IsFrameBufferComplete();
 
+    /*!
+        * \brief Adds a frame buffer attachment to the FrameBuffer
+        * \param type The type of attachment you wish to add.
+        * 
+        * Adds a specified attachment to the FrameBuffer for later use.
+    */
     void AddAttachment(AttachmentType type);
 
+    /*!
+        * \brief Adds a render buffer to the FrameBuffer.
+        * \param type The type of RenderBuffer you wish to attach.
+        *
+        * Creates a new RenderBuffer of the given type and then attaches it to the FrameBuffer.
+    */
     void AddRenderBuffer(AttachmentType type);
 
 private:
@@ -228,9 +282,9 @@ private:
 
     glm::vec2 m_size; /*!< The size of the frame buffer. */
 
-    std::vector<unsigned int> m_colorAttachmentIDs;
-    unsigned int m_depthAttachmentID;
-    unsigned int m_stencilAttachmentID;
+    std::vector<unsigned int> m_colorAttachmentIDs; /*!< List of color attachment ID's. */
+    unsigned int m_depthAttachmentID;               /*!< The depth texture ID if one is attached. */
+    unsigned int m_stencilAttachmentID;             /*!< The stencil texture ID if one is attached. */
 
-    std::vector<RenderBuffer> m_renderBuffers;
+    std::vector<RenderBuffer> m_renderBuffers;      /*!< List of RenderBuffer attachments. */
 };
