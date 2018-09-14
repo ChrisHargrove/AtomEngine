@@ -46,6 +46,9 @@ bool LoadState::Initialize()
     mesh->SetMesh("Assets/Models/cactus_one.obj");
     meshTest->AddComponent(mesh);
 
+    //TESTING QUAD
+    quadTest = new Quad(true);
+
     GameObjectList.push_back(camera);
     GameObjectList.push_back(meshTest);
 
@@ -57,12 +60,14 @@ bool LoadState::Initialize()
 
     camera->GetComponent<Transform>()->SetPosition(glm::vec3(0, 0, -4));
 
-    /*frameBuffer.Create(Screen::Instance()->GetSize());
+    frameBuffer.Create(Screen::Instance()->GetSize());
     frameBuffer.AddAttachment(TEXTURE);
     frameBuffer.AddRenderBuffer(DEPTH_STENCIL);
     if (!frameBuffer.IsFrameBufferComplete()) {
         return false;
-    }*/
+    }
+
+    
 
     return true;
 }
@@ -74,6 +79,9 @@ void LoadState::Input()
     }
     if (Input::Instance()->IsKeyPressed(SDLK_s)) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    }
+    if (Input::Instance()->IsKeyPressed(SDLK_ESCAPE)) {
+        Input::Instance()->RequestQuit();
     }
 }
 
@@ -95,8 +103,14 @@ void LoadState::Render()
 
     glm::mat4 view = GameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
 
+    frameBuffer.Bind();
+    glViewport(0, 0, 800, 600);
+    glEnable(GL_DEPTH_TEST);
+    Screen::Instance()->Clear();
+
     Shaders::Instance()->UseShader("BASIC");
-    Shaders::Instance()->GetShader("BASIC")->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
+
+    Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
 
     for (auto obj : GameObjectList) {
         Mesh* mesh = obj->GetComponent<Mesh>();
@@ -104,6 +118,20 @@ void LoadState::Render()
             mesh->Render();
         }
     }
+
+
+    frameBuffer.Unbind();
+    glViewport(0, 0, 800, 600);
+    glDisable(GL_DEPTH_TEST);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    Shaders::Instance()->UseShader("FRAMETEST");
+    //model = glm::mat4(1.0f);
+    //Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
+    Shaders::Instance()->GetShader("FRAMETEST")->SetInt("myTexture", 0);
+    glActiveTexture(GL_TEXTURE0);
+    //frameBuffer.BindTexture();
+    quadTest->Render(frameBuffer.GetTexture());
 
 }
 

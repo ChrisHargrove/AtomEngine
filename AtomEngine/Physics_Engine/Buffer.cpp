@@ -105,13 +105,19 @@ FrameBuffer::~FrameBuffer()
 void FrameBuffer::Create(glm::vec2 size)
 {
     glGenFramebuffers(1, &m_ID);
-
+    Bind();
     m_size = size;
 }
 
 void FrameBuffer::Bind()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
+}
+
+GLuint FrameBuffer::GetTexture()
+{
+    //TODO - FIND A BETTER WAY TO DEAL WITH THIS!!!
+    return m_colorAttachmentIDs[0];
 }
 
 void FrameBuffer::Unbind()
@@ -155,7 +161,8 @@ void FrameBuffer::AddAttachment(AttachmentType type)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + m_colorAttachmentIDs.size(), GL_TEXTURE_2D, textureID, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+        
         m_colorAttachmentIDs.push_back(textureID);
         break;
     case DEPTH:
@@ -201,13 +208,13 @@ void FrameBuffer::AddAttachment(AttachmentType type)
 
 void FrameBuffer::AddRenderBuffer(AttachmentType type)
 {
-    RenderBuffer buffer;
-    buffer.Create(type, m_size);
+    RenderBuffer* buffer = new RenderBuffer();
+    buffer->Create(type, m_size);
 
     switch (type) {
     case DEPTH_STENCIL:
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, buffer.GetID());
         m_renderBuffers.push_back(buffer);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_renderBuffers[0]->GetID());
         break;
     }
 }

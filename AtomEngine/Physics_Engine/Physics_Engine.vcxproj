@@ -154,6 +154,7 @@
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NumberGenerator.cpp" />
     <ClCompile Include="Octree.cpp" />
+    <ClCompile Include="Quad.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="Shader.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="NumberGenerator.h" />
     <ClInclude Include="Octree.h" />
     <ClInclude Include="PrimitiveShape.h" />
+    <ClInclude Include="Quad.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ScreenManager.h" />
     <ClInclude Include="Shader.h" />

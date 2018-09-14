@@ -9,6 +9,7 @@
 #include "Cuboid.h"
 #include "DebugCuboid.h"
 #include "Buffer.h"
+#include "Quad.h"
 
 class LoadState : public State
 {
@@ -32,6 +33,7 @@ public:
 
     Cuboid* cubeTest;
     DebugCuboid* debugCubeTest;
+    Quad* quadTest;
 
     FrameBuffer frameBuffer;
 };

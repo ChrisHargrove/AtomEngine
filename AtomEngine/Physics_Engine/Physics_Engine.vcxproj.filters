@@ -183,6 +183,9 @@
     <ClCompile Include="ModelLoader.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry</Filter>
     </ClCompile>
+    <ClCompile Include="Quad.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogManager.h">
@@ -298,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="ModelLoader.h">
       <Filter>Header Files\Engine\Graphics\Geometry</Filter>
+    </ClInclude>
+    <ClInclude Include="Quad.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

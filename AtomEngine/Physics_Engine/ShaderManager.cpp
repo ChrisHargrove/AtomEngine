@@ -53,6 +53,14 @@ Shader * ShaderManager::GetShader(const std::string & name)
     return nullptr;
 }
 
+Shader * ShaderManager::GetCurrentShader()
+{
+    if (m_currentShader != "") {
+        return m_shaderList.at(m_currentShader);
+    }
+    return nullptr;
+}
+
 std::map<std::string, Shader*>* ShaderManager::GetShaderList()
 {
     return &m_shaderList;

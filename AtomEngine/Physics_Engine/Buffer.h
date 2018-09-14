@@ -27,7 +27,6 @@ enum ATOM_API BufferType {
     VAO = 0, /*!< Specifies a Vertex Array Object. */
     VBO,     /*!< Specifies a Vertex Buffer Object. */
     EBO,      /*!< Specifies a Element Buffer Object. */
-    FBO,    /*!< Specifies a Frame Buffer Object. */
 };
 
 /*!
@@ -234,6 +233,8 @@ public:
     */
     void Bind();
 
+    GLuint GetTexture();
+
     /*!
     * \brief Unbinds the buffer s no longer the currently in use.
     */
@@ -286,5 +287,5 @@ private:
     unsigned int m_depthAttachmentID;               /*!< The depth texture ID if one is attached. */
     unsigned int m_stencilAttachmentID;             /*!< The stencil texture ID if one is attached. */
 
-    std::vector<RenderBuffer> m_renderBuffers;      /*!< List of RenderBuffer attachments. */
+    std::vector<RenderBuffer*> m_renderBuffers;      /*!< List of RenderBuffer attachments. */
 };

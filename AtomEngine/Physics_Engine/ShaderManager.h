@@ -65,6 +65,12 @@ public:
     Shader* GetShader(const std::string& name);
 
     /*!
+        * \brief Gets a pointer to the currently active Shader.
+        * \return Returns a pointer to the currently bound shader program. Returns nullptr if no shader bound.
+    */
+    Shader* GetCurrentShader();
+
+    /*!
         * \brief Gets a pointer to the shader container.
         * \return Returns a pointer to the shader container.
     */
