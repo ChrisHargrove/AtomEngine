@@ -218,25 +218,43 @@ public:
     ~FrameBuffer();
 
     /*!
-    * \brief Create a buffer of type specified.
-    * \param type The buffer type you wish to create.
-    *
-    * Creates a buffer of the type chosen by the user using the buffer type enum.
+        * \brief Create a buffer of type specified.
+        * \param type The buffer type you wish to create.
+        *
+        * Creates a buffer of the type chosen by the user using the buffer type enum.
     */
     void Create(glm::vec2 size);
 
     /*!
-    * \brief Binds the buffer to be the one currently being worked on.
-    *
-    * Binds the buffer to be the currently in use, for adding attribute pointers or filling
-    * with data.
+        * \brief Binds the buffer to be the one currently being worked on.
+        *
+        * Binds the buffer to be the currently in use, for adding attribute pointers or filling
+        * with data.
     */
     void Bind();
 
-    GLuint GetTexture();
+    /*!
+        * \brief Gets the texture ID at the specified index.
+        * \param index The index from which you wish to recieve the texture ID.
+        * \return Returns the texture ID. Returns 0 on error.
+        *
+        * Gets a texture ID at the specified index, if the index is larger than total number of texture attachments
+        * outputs an error and returns a 0. Which will unbind a texture.
+    */
+    GLuint GetTexture(unsigned int index);
 
     /*!
-    * \brief Unbinds the buffer s no longer the currently in use.
+        * \brief Binds a texture from the specified index.
+        * \param index The index at which you wish to bind the texture ID.
+        *
+        * Attempts to bind a texture at the specified index, if the index is greater than the number of texture attachments
+        * it will output an error, and unbind the active texture unit.
+        * If no index is specified it will just unbind the texture unit.
+    */
+    void BindTexture(int index = -1);
+
+    /*!
+        * \brief Unbinds the buffer so no longer the currently in use.
     */
     void Unbind();
 

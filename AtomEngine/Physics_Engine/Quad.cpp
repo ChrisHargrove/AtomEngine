@@ -70,16 +70,9 @@ Quad::~Quad()
     m_vertexBuffer.Destroy();
 }
 
-void Quad::Render(GLuint textureID)
-{
-    //Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", m_color);
-    m_vertexArray.Bind();
-    glBindTexture(GL_TEXTURE_2D, textureID);
-    glDrawElements(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    m_vertexArray.Unbind();
-}
-
 void Quad::Render()
 {
+    m_vertexArray.Bind();
+    glDrawElements(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0);
+    m_vertexArray.Unbind();
 }

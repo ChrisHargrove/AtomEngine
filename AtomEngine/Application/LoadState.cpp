@@ -34,6 +34,7 @@ bool LoadState::Initialize()
         Logger::Instance()->LogDebug("Job Completed!");
     }*/
 
+    Shaders::Instance()->AddShader("PHONG", "phong");
     Shaders::Instance()->AddShader("BASIC", "basic");
     Shaders::Instance()->AddShader("FRAMETEST", "frameBufferTest");
 
@@ -66,8 +67,6 @@ bool LoadState::Initialize()
     if (!frameBuffer.IsFrameBufferComplete()) {
         return false;
     }
-
-    
 
     return true;
 }
@@ -108,9 +107,16 @@ void LoadState::Render()
     glEnable(GL_DEPTH_TEST);
     Screen::Instance()->Clear();
 
-    Shaders::Instance()->UseShader("BASIC");
+    Shaders::Instance()->UseShader("PHONG");
 
     Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
+
+    //Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", glm::vec3(0.1, 0.5f, 1));
+
+    Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
+    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", GameObjectList.front()->GetComponent<Transform>()->GetPosition());
+    Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
     for (auto obj : GameObjectList) {
         Mesh* mesh = obj->GetComponent<Mesh>();
@@ -119,19 +125,18 @@ void LoadState::Render()
         }
     }
 
-
     frameBuffer.Unbind();
     glViewport(0, 0, 800, 600);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
 
     Shaders::Instance()->UseShader("FRAMETEST");
-    //model = glm::mat4(1.0f);
-    //Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
     Shaders::Instance()->GetShader("FRAMETEST")->SetInt("myTexture", 0);
+
     glActiveTexture(GL_TEXTURE0);
-    //frameBuffer.BindTexture();
-    quadTest->Render(frameBuffer.GetTexture());
+    frameBuffer.BindTexture(0);
+    quadTest->Render();
+    frameBuffer.BindTexture();
 
 }
 

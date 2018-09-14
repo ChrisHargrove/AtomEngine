@@ -75,7 +75,6 @@ bool Mesh::LoadMesh(const std::string& meshName)
 
 void Mesh::Render()
 {
-    Shaders::Instance()->GetShader("BASIC")->SetVec3("aColor", glm::vec3(1, 1, 1));
     for (auto subMesh : m_subMeshList) {
         if (subMesh->m_drawCount > 0) {
             subMesh->Render();

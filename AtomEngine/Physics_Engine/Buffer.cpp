@@ -93,6 +93,10 @@ void Buffer::AddAttributePointer(BufferAttribute attribute, int size, VariableTy
     AddAttributePointer((unsigned int)attribute, size, type, stride, offset);
 }
 
+unsigned int Buffer::GetID() const
+{
+    return m_ID;
+}
 
 FrameBuffer::FrameBuffer() : m_ID(0)
 {
@@ -114,10 +118,27 @@ void FrameBuffer::Bind()
     glBindFramebuffer(GL_FRAMEBUFFER, m_ID);
 }
 
-GLuint FrameBuffer::GetTexture()
+GLuint FrameBuffer::GetTexture(unsigned int index)
 {
-    //TODO - FIND A BETTER WAY TO DEAL WITH THIS!!!
-    return m_colorAttachmentIDs[0];
+    if (index >= m_colorAttachmentIDs.size()) {
+        Logger::Instance()->LogError("[FRAMEBUFFER] Attempted to retrieve texture that doesn't exist, check index value!");
+        return 0;
+    }
+    return m_colorAttachmentIDs[index];
+}
+
+void FrameBuffer::BindTexture(int index)
+{
+    if (index <= -1) {
+        glBindTexture(GL_TEXTURE_2D, index);
+        return;
+    }
+    if (index >= m_colorAttachmentIDs.size()) {
+        Logger::Instance()->LogError("[FRAMEBUFFER] Attempted to bind texture that doesn't exist, check index value!");
+        glBindTexture(GL_TEXTURE_2D, 0);
+        return;
+    }
+    glBindTexture(GL_TEXTURE_2D, m_colorAttachmentIDs[index]);
 }
 
 void FrameBuffer::Unbind()
@@ -130,10 +151,6 @@ void FrameBuffer::Destroy()
     glDeleteFramebuffers(1, &m_ID);
 }
 
-unsigned int Buffer::GetID() const
-{
-    return m_ID;
-}
 
 bool FrameBuffer::IsFrameBufferComplete()
 {

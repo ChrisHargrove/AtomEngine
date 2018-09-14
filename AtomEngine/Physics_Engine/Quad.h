@@ -14,9 +14,7 @@ public:
     Quad(bool fullscreenQuad);
     Quad(float width, float height, glm::vec3 color = glm::vec3(1.0,1.0,1.0));
     ~Quad();
-
-    void Render(GLuint textureID);
-
+    
     virtual void Render() override;
 
 private:

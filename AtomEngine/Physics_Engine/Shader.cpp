@@ -31,6 +31,7 @@ Shader::Shader(const std::string & fileName)
     }
     catch (std::ifstream::failure e) {
         Logger::Instance()->LogError(fileName + ": Shader Files Not Successfully Read!");
+        return;
     }
     Logger::Instance()->LogDebug(fileName + ": Shader Files Read Successfully!");
 
