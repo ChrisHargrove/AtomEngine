@@ -14,6 +14,8 @@
 #include "GLM/gtc/matrix_transform.hpp"
 #include "GLM/gtc/type_ptr.hpp"
 #include "Buffer.h"
+#include <stddef.h>
+#include "Utilities.h"
 
 
 LoadState::LoadState()
@@ -73,22 +75,22 @@ bool LoadState::Initialize()
 
     Screen::Instance()->Enable3D();
 
-    struct testBuffer {
+    struct testBuff {
         glm::mat4 projection;
         glm::mat4 view;
     } testBuffer;
     testBuffer = { Screen::Instance()->GetProjection(), camera->GetComponent<Camera>()->GetViewMatrix() };
 
-    int ugh = sizeof(testBuffer);
+    int ugh = offsetof(struct testBuff, view);
+
+    ugh = DataUtils::OffsetOf(&testBuff::view);
     
     Shaders::Instance()->GetShader("PHONG")->BindUniformBuffer("Matrices", UniformBufferBinding::MATRICES);
     
     testUni.Create(sizeof(testBuffer));
     testUni.BindBuffer(UniformBufferBinding::MATRICES);
-    testUni.SetData(&testBuffer, sizeof(testBuffer));
-    //glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(testBuffer.projection));
-    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(testBuffer.view));
-
+    testUni.SetSubData(&testBuff::projection, &testBuffer.projection);
+    testUni.SetSubData(&testBuff::view, &testBuffer.view);
 
     return true;
 }
@@ -135,6 +137,7 @@ void LoadState::Render()
 
     Shaders::Instance()->UseShader("PHONG");
     Shaders::Instance()->GetCurrentShader()->SetMat4("model", model);
+
     //Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
 
     //Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", glm::vec3(0.1, 0.5f, 1));

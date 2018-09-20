@@ -309,6 +309,13 @@ void UniformBuffer::SetData(void* data, unsigned int size)
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+void UniformBuffer::SetSubData(void * data, unsigned int offset, unsigned int size)
+{
+    glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
+    glBufferSubData(GL_UNIFORM_BUFFER, offset, size, data);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
 unsigned int UniformBuffer::GetID()
 {
     return m_ID;

@@ -14,6 +14,7 @@
 
 #include "AlignedAllocation.h"
 #include "Types.h"
+#include "Utilities.h"
 
 #include <string>
 #include <vector>
@@ -324,9 +325,24 @@ public:
 
     void BindBuffer(UniformBufferBinding bindingPoint);
     void SetData(void* data, unsigned int size);
+    
+    template<class T, class R, class V>
+    void SetSubData(R T::*M, V* v);
+
+    void SetSubData(void* data, unsigned int offset, unsigned int size);
 
     unsigned int GetID();
 
 private:
     unsigned int m_ID; /*!< The buffer ID. */
 };
+
+template<class T, class R, class V>
+inline void UniformBuffer::SetSubData(R T::* M, V* v )
+{
+    glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
+
+    glBufferSubData(GL_UNIFORM_BUFFER, DataUtils::OffsetOf(M), sizeof(*v), v);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}

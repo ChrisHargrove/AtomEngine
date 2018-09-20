@@ -52,3 +52,17 @@ namespace MathUtils {
     ATOM_API float MapRange(float number, float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd);
 
 }
+
+namespace DataUtils {
+
+    template<typename T, typename R>
+    ATOM_API std::size_t OffsetOf(R T::*M);
+
+    template<typename T, typename R>
+    std::size_t OffsetOf(R T::* M)
+    {
+        return reinterpret_cast<std::size_t>(&(((T*)0)->*M));
+    }
+      
+
+}
