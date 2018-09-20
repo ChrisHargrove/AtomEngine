@@ -157,6 +157,11 @@ void Shader::SetMat4(const std::string & name, const glm::mat4 & value)
     glUniformMatrix4fv(glGetUniformLocation(m_ID, name.c_str()), 1, GL_FALSE, &value[0][0]);
 }
 
+void Shader::BindUniformBuffer(const std::string & name, UniformBufferBinding bindingPoint)
+{
+    glUniformBlockBinding(m_ID, glGetUniformBlockIndex(m_ID, name.c_str()), bindingPoint);
+}
+
 unsigned int Shader::GetID() const
 {
     return m_ID;

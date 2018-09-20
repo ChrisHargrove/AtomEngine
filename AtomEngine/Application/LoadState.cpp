@@ -12,6 +12,8 @@
 #include "Cuboid.h"
 #include "Mesh.h"
 #include "GLM/gtc/matrix_transform.hpp"
+#include "GLM/gtc/type_ptr.hpp"
+#include "Buffer.h"
 
 
 LoadState::LoadState()
@@ -26,12 +28,13 @@ LoadState::~LoadState()
 
 bool LoadState::Initialize()
 {
-    /*auto test = JobSystem::Instance()->AddJob([] {
+
+   /*auto test = JobSystem::Instance()->AddJob([] {
         Logger::Instance()->LogDebug("Single Test");
     });
 
-    if (IsJobReady(test)) {
-        Logger::Instance()->LogDebug("Job Completed!");
+    while (!IsJobReady(test)) {
+        Logger::Instance()->LogDebug("Job Not Done!!");
     }*/
 
     Shaders::Instance()->AddShader("PHONG", "phong");
@@ -68,16 +71,35 @@ bool LoadState::Initialize()
         return false;
     }
 
+    Screen::Instance()->Enable3D();
+
+    struct testBuffer {
+        glm::mat4 projection;
+        glm::mat4 view;
+    } testBuffer;
+    testBuffer = { Screen::Instance()->GetProjection(), camera->GetComponent<Camera>()->GetViewMatrix() };
+
+    int ugh = sizeof(testBuffer);
+    
+    Shaders::Instance()->GetShader("PHONG")->BindUniformBuffer("Matrices", UniformBufferBinding::MATRICES);
+    
+    testUni.Create(sizeof(testBuffer));
+    testUni.BindBuffer(UniformBufferBinding::MATRICES);
+    testUni.SetData(&testBuffer, sizeof(testBuffer));
+    //glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(testBuffer.projection));
+    //glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(testBuffer.view));
+
+
     return true;
 }
 
 void LoadState::Input()
 {
     if (Input::Instance()->IsKeyPressed(SDLK_w)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        _wireframe = true;
     }
     if (Input::Instance()->IsKeyPressed(SDLK_s)) {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        _wireframe = false;
     }
     if (Input::Instance()->IsKeyPressed(SDLK_ESCAPE)) {
         Input::Instance()->RequestQuit();
@@ -95,7 +117,7 @@ void LoadState::Update(float delta)
 
 void LoadState::Render()
 {
-    Screen::Instance()->Enable3D();
+    
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
@@ -107,9 +129,13 @@ void LoadState::Render()
     glEnable(GL_DEPTH_TEST);
     Screen::Instance()->Clear();
 
-    Shaders::Instance()->UseShader("PHONG");
+    if (_wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
 
-    Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
+    Shaders::Instance()->UseShader("PHONG");
+    Shaders::Instance()->GetCurrentShader()->SetMat4("model", model);
+    //Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
 
     //Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", glm::vec3(0.1, 0.5f, 1));
 
@@ -123,6 +149,10 @@ void LoadState::Render()
         if (mesh != nullptr) {
             mesh->Render();
         }
+    }
+
+    if (_wireframe) {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     frameBuffer.Unbind();

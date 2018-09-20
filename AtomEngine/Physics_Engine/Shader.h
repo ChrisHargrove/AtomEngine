@@ -17,6 +17,7 @@
 #include <GLM/glm.hpp>
 
 #include "AlignedAllocation.h"
+#include "Buffer.h"
 
 class ATOM_API Shader : public AlignedAllocation<BYTE16>
 {
@@ -143,6 +144,16 @@ public:
         * \param value The value to set the internal variable to.
     */
     void SetMat4(const std::string& name, const glm::mat4& value);
+
+    /*!
+        * \brief Binds a UniformBuffer
+        * \param name The name of the uniform block inside the shader.
+        * \param bindingPoint Which binding point the uniform block uses.
+        *
+        * Will bind a uniform block to the shader at the specified binding point.
+        * NOTE: The binding point for the uniform block and the shader must be the same.
+    */
+    void BindUniformBuffer(const std::string& name, UniformBufferBinding bindingPoint);
 
     /*!
         * \brief Gets the ID of the shader program.

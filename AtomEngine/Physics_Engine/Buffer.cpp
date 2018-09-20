@@ -283,3 +283,33 @@ unsigned int RenderBuffer::GetID()
 {
     return m_ID;
 }
+
+void UniformBuffer::Create(int size)
+{
+    glGenBuffers(1, &m_ID);
+    glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
+    glBufferData(GL_UNIFORM_BUFFER, size, NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void UniformBuffer::Destroy()
+{
+    glDeleteBuffers(1, &m_ID);
+}
+
+void UniformBuffer::BindBuffer(UniformBufferBinding bindingPoint)
+{
+    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPoint, m_ID);
+}
+
+void UniformBuffer::SetData(void* data, unsigned int size)
+{
+    glBindBuffer(GL_UNIFORM_BUFFER, m_ID);
+    glBufferData(GL_UNIFORM_BUFFER, size, data, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+unsigned int UniformBuffer::GetID()
+{
+    return m_ID;
+}

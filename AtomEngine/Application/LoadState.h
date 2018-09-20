@@ -36,5 +36,8 @@ public:
     Quad* quadTest;
 
     FrameBuffer frameBuffer;
+    bool _wireframe = false;
+
+    UniformBuffer testUni;
 };
 

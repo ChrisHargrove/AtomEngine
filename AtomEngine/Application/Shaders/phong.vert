@@ -6,9 +6,12 @@ layout (location = 1) in vec3 aNormal;
 out vec3 fPos;
 out vec3 fNormal;
 
+layout (std140) uniform Matrices{
+    mat4 projection;
+    mat4 view;
+};
+
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 void main()
 {

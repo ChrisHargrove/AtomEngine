@@ -46,8 +46,8 @@ bool CubeMap::Load(const std::string & fileName)
     //Bind Texture
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_ID);
 
-    std::string name = SplitFront(fileName, ".");
-    std::string extension = SplitEnd(fileName, ".", true);
+    std::string name = StringUtils::SplitFront(fileName, ".");
+    std::string extension = StringUtils::SplitEnd(fileName, ".", true);
     std::string filePath = "Assets/Textures/CubeMaps/" + name;
 
     SDL_Surface* image;
@@ -89,8 +89,8 @@ bool CubeMap::Load(const std::string & fileName)
 
 bool CubeMap::LoadSurfaces(const std::string & fileName)
 {
-    std::string name = SplitFront(fileName, ".");
-    std::string extension = SplitEnd(fileName, ".", true);
+    std::string name = StringUtils::SplitFront(fileName, ".");
+    std::string extension = StringUtils::SplitEnd(fileName, ".", true);
     std::string filePath = "Assets/Textures/CubeMaps/" + name;
 
     SDL_Surface* image;

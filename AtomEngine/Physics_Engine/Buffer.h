@@ -74,6 +74,14 @@ enum ATOM_API AttachmentType {
     DEPTH_STENCIL,  /*!< Specifies a depth and stencil attachment. */
 };
 
+/*!
+    * \enum UniformBufferBinding
+    * Is used to specify where the Uniform and shader bind together.
+*/
+enum ATOM_API UniformBufferBinding {
+    MATRICES = 0,   /*!< Specifies that the Matrice UniformBlock binds to point 0. */
+};
+
 class ATOM_API Buffer : public AlignedAllocation<BYTE16>
 {
 public:
@@ -306,4 +314,19 @@ private:
     unsigned int m_stencilAttachmentID;             /*!< The stencil texture ID if one is attached. */
 
     std::vector<RenderBuffer*> m_renderBuffers;      /*!< List of RenderBuffer attachments. */
+};
+
+class ATOM_API UniformBuffer {
+public:
+
+    void Create(int size);
+    void Destroy();
+
+    void BindBuffer(UniformBufferBinding bindingPoint);
+    void SetData(void* data, unsigned int size);
+
+    unsigned int GetID();
+
+private:
+    unsigned int m_ID; /*!< The buffer ID. */
 };
