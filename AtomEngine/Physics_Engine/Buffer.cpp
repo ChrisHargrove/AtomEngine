@@ -284,6 +284,14 @@ unsigned int RenderBuffer::GetID()
     return m_ID;
 }
 
+UniformBuffer::UniformBuffer()
+{
+}
+
+UniformBuffer::~UniformBuffer()
+{
+}
+
 void UniformBuffer::Create(int size)
 {
     glGenBuffers(1, &m_ID);

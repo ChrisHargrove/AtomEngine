@@ -317,20 +317,78 @@ private:
     std::vector<RenderBuffer*> m_renderBuffers;      /*!< List of RenderBuffer attachments. */
 };
 
+/*!
+    * \class UniformBuffer "Buffer.h"
+    * \brief Creates a Uniform Buffer for interfacing data with the GPU.
+    *
+    * This class handles the creation of Uniform Buffers to allow for sending groups of shared data
+    * to the GPU to be sued across multiple shaders. The blocks of data must be aligned the same as
+    * the data in the GPU Shader.
+*/
 class ATOM_API UniformBuffer {
 public:
+    UniformBuffer();
+    ~UniformBuffer();
 
+    /*!
+        * \brief Creates a uniform buffer.
+        * \param size The size in bytes the buffer needs to be.
+        *
+        * Creates a new Uniform buffer, generates an ID and assigns the required
+        * memory as specified by size parameter.
+    */
     void Create(int size);
+
+    /*!
+        * \brief Destroys the Uniform Buffer.
+    */
     void Destroy();
 
+    /*!
+        * \brief Binds the buffer.
+        * \param bindingPoint An enum value specifying which binding point the buffer is on.
+        *
+        * Will bind the buffer to a specified binding point and these need to match for both the buffer
+        * and the Shader program or data will not be shared.
+    */
     void BindBuffer(UniformBufferBinding bindingPoint);
+
+    /*!
+        * \brief Sets the whole buffers data
+        * \param data A pointer to the data being copied to the buffer.
+        * \param size The size of the data being copied.
+        *
+        * Copies the data from the pointer specified into the UniformBuffer.
+    */
     void SetData(void* data, unsigned int size);
     
+    /*!
+        * \brief Sets an individual piece of data inside the buffer.
+        * \param member A static reference to the member variable you wish t send to the GPU.
+        * \param variable A pointer to the data you wish to copy into the buffer.
+        *
+        * This is a templated function that takes a static reference to a member variable of a class
+        * or struct to identify its position inside the class or struct for use as an offset.
+        * It then uses this to know where to copy the data inside the variable to.
+    */
     template<class T, class R, class V>
-    void SetSubData(R T::*M, V* v);
+    void SetSubData(R T::*member, V* variable);
 
+    /*!
+        * \brief Sets an individual piece of data inside the buffer.
+        * \param data A pointer to the data you wish to copy into the buffer.
+        * \param offset Where inside the buffer you wish to copy the data to.
+        * \param size The size of the data you wish to copy.
+        *
+        * This function achieves the same as the templated variant, however the user is expected to calculate
+        * the offsets and size parameters required.
+    */
     void SetSubData(void* data, unsigned int offset, unsigned int size);
 
+    /*!
+        * \brief Get the Uniform Buffers ID.
+        * \return Returns the buffers ID.
+    */
     unsigned int GetID();
 
 private:

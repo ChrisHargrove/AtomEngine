@@ -55,13 +55,18 @@ namespace MathUtils {
 
 namespace DataUtils {
 
+    /*!
+        * \brief Figures out the offset of a variable inside a struct or class.
+        * \param member A static reference to the member variable you wish to calculate the offset of.
+        * \return Returns the offset of the member variable in bytes inside the owning class or struct.
+    */
     template<typename T, typename R>
-    ATOM_API std::size_t OffsetOf(R T::*M);
+    ATOM_API std::size_t OffsetOf(R T::*member);
 
     template<typename T, typename R>
     std::size_t OffsetOf(R T::* M)
     {
-        return reinterpret_cast<std::size_t>(&(((T*)0)->*M));
+        return reinterpret_cast<std::size_t>(&(((T*)0)->*member));
     }
       
 
