@@ -6,9 +6,8 @@
 #include <list>
 #include <GLM/glm.hpp>
 
-#include "Cuboid.h"
-#include "DebugCuboid.h"
 #include "Buffer.h"
+#include "Camera.h"
 #include "Quad.h"
 
 class LoadState : public State
@@ -29,11 +28,11 @@ public:
 
     std::list<GameObject*> GameObjectList;
 
+    Camera* m_mainCamera;
+
     glm::vec3 rotation;
 
-    Cuboid* cubeTest;
-    DebugCuboid* debugCubeTest;
-    Quad* quadTest;
+    Quad* screenFrame;
 
     FrameBuffer frameBuffer;
     bool _wireframe = false;

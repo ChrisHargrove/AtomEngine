@@ -14,6 +14,7 @@
 
 #include "Component.h"
 #include <GLM/glm.hpp>
+#include <GLM/gtc/quaternion.hpp>
 
 class ATOM_API Transform : public Component
 {
@@ -58,7 +59,7 @@ public:
         * \brief Gets the current rotation of the component.
         * \return A 3 component vector containing rotation data as Eular Angles.
     */
-    glm::vec3 GetRotation();
+    glm::quat GetRotation();
 
     /*!
         * \brief Gets the current scale of the component.
@@ -97,6 +98,10 @@ public:
     */
     glm::vec3 GetUp();
 
+    void Rotate(glm::vec3 rotation);
+    void Translate(glm::vec3 translation);
+    void Scale(glm::vec3 scale);
+
 private:
     /*!
         * \brief Virtual Update function that is called each frame.
@@ -114,7 +119,7 @@ private:
     virtual void Initialize() override;
 
     glm::vec3 m_position;    /*!< A 3 component vector containing translation data for the Transform. */
-    glm::vec3 m_rotation;       /*!< A 3 component vector containing rotation data for the transform. */
+    glm::quat m_rotation;       /*!< A 3 component vector containing rotation data for the transform. */
     glm::vec3 m_scale;          /*!< A 3 component vector containing scale data for the transform. */
     glm::mat4 m_tranformMatrix; /*!< A 4x4 Matrix containing all transform data. */
 

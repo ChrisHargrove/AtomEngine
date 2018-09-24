@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-#include <GLM/gtc/quaternion.hpp>
+
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/matrix_access.hpp>
 
@@ -20,7 +20,7 @@ Transform::~Transform()
 
 void Transform::Update(float deltaTime)
 {
-    m_tranformMatrix = glm::translate(glm::scale(glm::mat4(1.0f), m_scale) * glm::mat4_cast(glm::quat(m_rotation)), m_position);
+    m_tranformMatrix = glm::translate(glm::scale(glm::mat4(1.0f), m_scale) * glm::mat4_cast(m_rotation), m_position);
 }
 
 void Transform::Initialize()
@@ -47,7 +47,7 @@ glm::vec3 Transform::GetPosition()
     return m_position;
 }
 
-glm::vec3 Transform::GetRotation()
+glm::quat Transform::GetRotation()
 {
     return m_rotation;
 }
@@ -75,4 +75,21 @@ glm::vec3 Transform::GetRight()
 glm::vec3 Transform::GetUp()
 {
     return glm::row(m_tranformMatrix, 1);
+}
+
+void Transform::Rotate(glm::vec3 rotation)
+{
+    m_rotation = glm::rotate(m_rotation, rotation.x, glm::vec3(0.0, 1.0, 0.0));
+    m_rotation = glm::rotate(m_rotation, rotation.y, GetRight());
+    m_rotation = glm::rotate(m_rotation, rotation.z, GetForward());
+}
+
+void Transform::Translate(glm::vec3 translation)
+{
+    m_position += translation;
+}
+
+void Transform::Scale(glm::vec3 scale)
+{
+    m_scale += scale;
 }

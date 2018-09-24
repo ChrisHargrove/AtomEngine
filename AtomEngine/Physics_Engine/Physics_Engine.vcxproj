@@ -186,6 +186,7 @@
     <ClInclude Include="IMGUI\stb_truetype.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="IOManager.h" />
+    <ClInclude Include="Kernel.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LogManager.h" />
     <ClInclude Include="Material.h" />

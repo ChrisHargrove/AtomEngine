@@ -64,7 +64,7 @@ namespace DataUtils {
     ATOM_API std::size_t OffsetOf(R T::*member);
 
     template<typename T, typename R>
-    std::size_t OffsetOf(R T::* M)
+    std::size_t OffsetOf(R T::* member)
     {
         return reinterpret_cast<std::size_t>(&(((T*)0)->*member));
     }

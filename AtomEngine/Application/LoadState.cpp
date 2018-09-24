@@ -16,6 +16,7 @@
 #include "Buffer.h"
 #include <stddef.h>
 #include "Utilities.h"
+#include "Kernel.h"
 
 
 LoadState::LoadState()
@@ -27,6 +28,11 @@ LoadState::LoadState()
 LoadState::~LoadState()
 {
 }
+
+struct MatriceBuffer {
+    glm::mat4 projection;
+    glm::mat4 view;
+};
 
 bool LoadState::Initialize()
 {
@@ -41,10 +47,11 @@ bool LoadState::Initialize()
 
     Shaders::Instance()->AddShader("PHONG", "phong");
     Shaders::Instance()->AddShader("BASIC", "basic");
-    Shaders::Instance()->AddShader("FRAMETEST", "frameBufferTest");
+    Shaders::Instance()->AddShader("FRAMETEST", "postProcessing");
 
     GameObject* camera = new GameObject();
-    camera->AddComponent<Camera>();
+    m_mainCamera = new Camera();
+    camera->AddComponent(m_mainCamera);
 
     //LOADING MODELS IS SUCCESSFUL
     GameObject* meshTest = new GameObject();
@@ -53,7 +60,7 @@ bool LoadState::Initialize()
     meshTest->AddComponent(mesh);
 
     //TESTING QUAD
-    quadTest = new Quad(true);
+    screenFrame = new Quad(true);
 
     GameObjectList.push_back(camera);
     GameObjectList.push_back(meshTest);
@@ -75,34 +82,59 @@ bool LoadState::Initialize()
 
     Screen::Instance()->Enable3D();
 
-    struct testBuff {
-        glm::mat4 projection;
-        glm::mat4 view;
-    } testBuffer;
-    testBuffer = { Screen::Instance()->GetProjection(), camera->GetComponent<Camera>()->GetViewMatrix() };
+    MatriceBuffer testBuffer = { Screen::Instance()->GetProjection(), m_mainCamera->GetViewMatrix() };
 
-    int ugh = offsetof(struct testBuff, view);
-
-    ugh = DataUtils::OffsetOf(&testBuff::view);
-    
     Shaders::Instance()->GetShader("PHONG")->BindUniformBuffer("Matrices", UniformBufferBinding::MATRICES);
+    Shaders::Instance()->GetShader("FRAMETEST")->SetKernel(Kernel::Identity);
     
     testUni.Create(sizeof(testBuffer));
     testUni.BindBuffer(UniformBufferBinding::MATRICES);
-    testUni.SetSubData(&testBuff::projection, &testBuffer.projection);
-    testUni.SetSubData(&testBuff::view, &testBuffer.view);
+    testUni.SetSubData(&MatriceBuffer::projection, &testBuffer.projection);
+    testUni.SetSubData(&MatriceBuffer::view, &testBuffer.view);
+
+    Screen::Instance()->CaptureMouse();
 
     return true;
 }
 
 void LoadState::Input()
 {
-    if (Input::Instance()->IsKeyPressed(SDLK_w)) {
-        _wireframe = true;
+    //CAMERA CONTROLS
+    if (Input::Instance()->IsKeyHeld(SDLK_w)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(cam->GetForward());
     }
-    if (Input::Instance()->IsKeyPressed(SDLK_s)) {
-        _wireframe = false;
+    if (Input::Instance()->IsKeyHeld(SDLK_s)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(-cam->GetForward());
     }
+    if (Input::Instance()->IsKeyHeld(SDLK_a)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(cam->GetRight());
+    }
+    if (Input::Instance()->IsKeyHeld(SDLK_d)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(-cam->GetRight());
+    }
+    if (Input::Instance()->IsKeyHeld(SDLK_SPACE)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(cam->GetUp());
+    }
+    if (Input::Instance()->IsKeyHeld(SDLK_LSHIFT)) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        cam->Translate(-cam->GetUp());
+    }
+    if (Input::Instance()->HasMouseMoved()) {
+        Transform* cam = m_mainCamera->GetComponent<Transform>();
+        glm::vec2 rot = glm::vec2(Input::Instance()->GetMouseMove().m_relativeX * 0.01f, Input::Instance()->GetMouseMove().m_relativeY * 0.01f);
+        cam->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
+    }
+
+    //DRAWING INPUTS
+    if (Input::Instance()->IsKeyPressed(SDLK_F1)) {
+        _wireframe = !_wireframe;
+    }    
+    //QUIT INPUT
     if (Input::Instance()->IsKeyPressed(SDLK_ESCAPE)) {
         Input::Instance()->RequestQuit();
     }
@@ -119,12 +151,12 @@ void LoadState::Update(float delta)
 
 void LoadState::Render()
 {
-    
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
 
     glm::mat4 view = GameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
+    testUni.SetSubData(&MatriceBuffer::view, &view);
 
     frameBuffer.Bind();
     glViewport(0, 0, 800, 600);
@@ -137,10 +169,6 @@ void LoadState::Render()
 
     Shaders::Instance()->UseShader("PHONG");
     Shaders::Instance()->GetCurrentShader()->SetMat4("model", model);
-
-    //Shaders::Instance()->GetCurrentShader()->UpdateMatrices(model, view, Screen::Instance()->GetProjection());
-
-    //Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", glm::vec3(0.1, 0.5f, 1));
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", GameObjectList.front()->GetComponent<Transform>()->GetPosition());
@@ -168,7 +196,7 @@ void LoadState::Render()
 
     glActiveTexture(GL_TEXTURE0);
     frameBuffer.BindTexture(0);
-    quadTest->Render();
+    screenFrame->Render();
     frameBuffer.BindTexture();
 
 }
