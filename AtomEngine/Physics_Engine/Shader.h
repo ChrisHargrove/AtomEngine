@@ -145,6 +145,8 @@ public:
     */
     void SetMat4(const std::string& name, const glm::mat4& value);
 
+    void SetKernel(const std::vector<float>& value);
+
     /*!
         * \brief Binds a UniformBuffer
         * \param name The name of the uniform block inside the shader.
