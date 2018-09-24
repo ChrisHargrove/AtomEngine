@@ -21,6 +21,17 @@
 #include "Singleton.h"
 #include "AlignedAllocation.h"
 
+/*!
+    * \enum ClearBits
+    * Is used to specify which buffer bits to clear.
+*/
+enum class ATOM_API ClearBits {
+    COLOR = GL_COLOR_BUFFER_BIT,        /*!< Specifies the color buffer bit. */
+    DEPTH = GL_DEPTH_BUFFER_BIT,        /*!< Specifies the depth buffer bit. */
+    STENCIL = GL_STENCIL_BUFFER_BIT,    /*!< Specifies the stencil buffer bit. */
+    ACCUM = GL_ACCUM_BUFFER_BIT         /*!< Specifies the accumlation buffer bit. */
+};
+
 class ATOM_API ScreenManager : public AlignedAllocation<BYTE16>
 {
 public:
@@ -57,9 +68,17 @@ public:
     /*!
         * \brief Clears the window.
         *
-        * Clears the application window to the clear colour previously set.
+        * Clears the application window to the clear colour previously set. When no bits are set clears all buffers.
     */
     void Clear();
+
+    /*!
+        * \brief Clears the window.
+        * \param clearBit Which buffer bits you wish to clear.
+        *
+        * Clears the application window to the clear colour previously set.
+    */
+    void Clear(ClearBits clearBits);
 
     /*!
         * \brief Swaps the buffers for the window.
@@ -133,6 +152,12 @@ public:
     void Enable3D(bool enable3D = true);
 
     /*!
+        * \brief Toggles Depth Testing
+        * \param enable Whether or not Depth testing should be enabled.
+    */
+    void EnableDepthTesting(bool enable = true);
+
+    /*!
         * \brief Sets the initial values for Projection matrices.
         *
         * \param fieldOfView The angle of view in degrees. Default is 90 degrees.
@@ -148,6 +173,21 @@ public:
         * Will return the current projection matrix in use whether that be Perspective or Orthographic.
     */
     glm::mat4& GetProjection();
+
+    /*!
+        * \brief Creates a viewport to render to.
+        *
+        * When no parameters are specified Viewport will default to screen size.
+    */
+    void CreateViewport();
+
+    /*!
+        * \brief Creates a viewport to render to.
+        *
+        * \param w How wide the viewport is on the screen.
+        * \param h How tall the viewport is on the screen.
+    */
+    void CreateViewport(float w, float h);
 
     /*!
         * \brief Creates a viewport to render to.

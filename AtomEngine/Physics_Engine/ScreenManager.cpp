@@ -121,7 +121,12 @@ void ScreenManager::Close()
 void ScreenManager::Clear()
 {
     //Clear the colour buffer and depth buffer.
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+}
+
+void ScreenManager::Clear(ClearBits clearBits)
+{
+    glClear((GLbitfield)clearBits);
 }
 
 void ScreenManager::Swap()
@@ -189,6 +194,16 @@ void ScreenManager::Enable3D(bool enable3D)
     }
 }
 
+void ScreenManager::EnableDepthTesting(bool enable)
+{
+    if (enable) {
+        glEnable(GL_DEPTH_TEST);
+    }
+    else {
+        glDisable(GL_DEPTH_TEST);
+    }
+}
+
 void ScreenManager::InitializeProjection(float fieldOfView, float zNear, float zFar)
 {
     m_fieldOfView = fieldOfView;
@@ -199,6 +214,16 @@ void ScreenManager::InitializeProjection(float fieldOfView, float zNear, float z
 glm::mat4 & ScreenManager::GetProjection()
 {
     return m_projection;
+}
+
+void ScreenManager::CreateViewport()
+{
+    glViewport(0, 0, (GLsizei)m_size.x, (GLsizei)m_size.y);
+}
+
+void ScreenManager::CreateViewport(float w, float h)
+{
+    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
 }
 
 void ScreenManager::CreateViewport(float x, float y, float w, float h)
