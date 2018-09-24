@@ -50,7 +50,15 @@ public:
     //TODO: Need to add get component functions for component class that are virtual and can be overriden. This will allow components to talk to ecah other inside 1 game object...needs refining....
     //DATE: 12/07/2018....
 
+    template<class T>
+    T* GetComponent();
+
 protected:
     GameObject * m_parent; /*!< A pointer to the owning parent game object. */
 };
 
+template<class T>
+inline T * Component::GetComponent()
+{
+    return m_parent->GetComponent<T>();
+}
