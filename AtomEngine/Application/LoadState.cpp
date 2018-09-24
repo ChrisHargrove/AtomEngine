@@ -151,7 +151,6 @@ void LoadState::Update(float delta)
 
 void LoadState::Render()
 {
-
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
 

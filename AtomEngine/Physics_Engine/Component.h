@@ -47,9 +47,18 @@ public:
     */
     void SetParent(GameObject* parent) { m_parent = parent; }
 
-    //TODO: Need to add get component functions for component class that are virtual and can be overriden. This will allow components to talk to ecah other inside 1 game object...needs refining....
-    //DATE: 12/07/2018....
+    /*!
+        * \brief Gets the owning GameObject for this component.
+        * \return Returns a the owning GameObject pointer for this component.
+    */
+    GameObject* GetParent();
 
+    /*!
+        * \brief Gets a Component from the parent GameObject.
+        * \return Returns a pointer to the found Component or nullptr if there is no matching component.
+        *
+        * Will check the parent for a Component of specified type and return it.
+    */
     template<class T>
     T* GetComponent();
 
