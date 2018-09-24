@@ -138,7 +138,6 @@
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Component.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="DebugCuboid.cpp" />

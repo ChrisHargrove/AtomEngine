@@ -10,7 +10,7 @@
 bool ModelLoader::LoadModel(const std::string & fileName, Mesh* mesh)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         Logger::Instance()->LogError("[ASSIMP]" + std::string(importer.GetErrorString()));
         return false;
