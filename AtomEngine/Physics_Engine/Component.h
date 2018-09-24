@@ -15,7 +15,7 @@
 #define ATOM_API __declspec(dllimport)
 #endif
 
-class GameObject;
+#include "GameObject.h"
 
 class ATOM_API Component
 {
@@ -51,7 +51,7 @@ public:
         * \brief Gets the owning GameObject for this component.
         * \return Returns a the owning GameObject pointer for this component.
     */
-    GameObject* GetParent();
+    GameObject* GetParent() { return m_parent; }
 
     /*!
         * \brief Gets a Component from the parent GameObject.
