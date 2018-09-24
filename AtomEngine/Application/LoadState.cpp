@@ -11,10 +11,7 @@
 
 #include "Cuboid.h"
 #include "Mesh.h"
-#include "GLM/gtc/matrix_transform.hpp"
-#include "GLM/gtc/type_ptr.hpp"
 #include "Buffer.h"
-#include <stddef.h>
 #include "Utilities.h"
 #include "Kernel.h"
 
@@ -92,44 +89,13 @@ bool LoadState::Initialize()
     testUni.SetSubData(&MatriceBuffer::projection, &testBuffer.projection);
     testUni.SetSubData(&MatriceBuffer::view, &testBuffer.view);
 
-    Screen::Instance()->CaptureMouse();
+    //Screen::Instance()->CaptureMouse();
 
     return true;
 }
 
 void LoadState::Input()
 {
-    //CAMERA CONTROLS
-    if (Input::Instance()->IsKeyHeld(SDLK_w)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(cam->GetForward());
-    }
-    if (Input::Instance()->IsKeyHeld(SDLK_s)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(-cam->GetForward());
-    }
-    if (Input::Instance()->IsKeyHeld(SDLK_a)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(cam->GetRight());
-    }
-    if (Input::Instance()->IsKeyHeld(SDLK_d)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(-cam->GetRight());
-    }
-    if (Input::Instance()->IsKeyHeld(SDLK_SPACE)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(cam->GetUp());
-    }
-    if (Input::Instance()->IsKeyHeld(SDLK_LSHIFT)) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        cam->Translate(-cam->GetUp());
-    }
-    if (Input::Instance()->HasMouseMoved()) {
-        Transform* cam = m_mainCamera->GetComponent<Transform>();
-        glm::vec2 rot = glm::vec2(Input::Instance()->GetMouseMove().m_relativeX * 0.01f, Input::Instance()->GetMouseMove().m_relativeY * 0.01f);
-        cam->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
-    }
-
     //DRAWING INPUTS
     if (Input::Instance()->IsKeyPressed(SDLK_F1)) {
         _wireframe = !_wireframe;
@@ -151,15 +117,13 @@ void LoadState::Update(float delta)
 
 void LoadState::Render()
 {
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::rotate(model, rotation.y, glm::vec3(0, 1, 0));
 
     glm::mat4 view = GameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
     testUni.SetSubData(&MatriceBuffer::view, &view);
 
     frameBuffer.Bind();
-    glViewport(0, 0, 800, 600);
-    glEnable(GL_DEPTH_TEST);
+    Screen::Instance()->CreateViewport();
+    Screen::Instance()->EnableDepthTesting(true);
     Screen::Instance()->Clear();
 
     if (_wireframe) {
@@ -167,7 +131,6 @@ void LoadState::Render()
     }
 
     Shaders::Instance()->UseShader("PHONG");
-    Shaders::Instance()->GetCurrentShader()->SetMat4("model", model);
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", GameObjectList.front()->GetComponent<Transform>()->GetPosition());
@@ -177,6 +140,8 @@ void LoadState::Render()
     for (auto obj : GameObjectList) {
         Mesh* mesh = obj->GetComponent<Mesh>();
         if (mesh != nullptr) {
+            Shaders::Instance()->GetCurrentShader()->SetMat4("model", mesh->GetComponent<Transform>()->GetTransform());
+            mesh->GetComponent<Transform>()->Rotate(glm::vec3(1 * 0.01f, 0, 0));
             mesh->Render();
         }
     }
@@ -186,9 +151,9 @@ void LoadState::Render()
     }
 
     frameBuffer.Unbind();
-    glViewport(0, 0, 800, 600);
-    glDisable(GL_DEPTH_TEST);
-    glClear(GL_COLOR_BUFFER_BIT);
+    Screen::Instance()->CreateViewport();
+    Screen::Instance()->EnableDepthTesting(false);
+    Screen::Instance()->Clear(ClearBits::COLOR);
 
     Shaders::Instance()->UseShader("FRAMETEST");
     Shaders::Instance()->GetShader("FRAMETEST")->SetInt("myTexture", 0);
