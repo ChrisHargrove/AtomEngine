@@ -31,17 +31,17 @@ float Camera::GetZoom()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-    Transform* transform = m_parent->GetComponent<Transform>();
+    std::shared_ptr<Transform> transform = m_parent.get()->GetComponent<Transform>();
     if (transform == nullptr) return glm::mat4();
-    m_viewMatrix = glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->GetForward(), transform->GetUp());
+    m_viewMatrix = glm::lookAt(transform.get()->GetPosition(), transform.get()->GetPosition() + transform.get()->GetForward(), transform.get()->GetUp());
     return m_viewMatrix;
 }
 
 glm::mat4 Camera::GetOrthoMatrix()
 {
-    Transform* transform = m_parent->GetComponent<Transform>();
+    std::shared_ptr<Transform> transform = m_parent.get()->GetComponent<Transform>();
     if (transform == nullptr) return glm::mat4();
-    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform->GetUp());
+    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform.get()->GetUp());
 }
 
 void Camera::EnablePitchConstraint(bool enable)

@@ -45,13 +45,13 @@ public:
         * Will set the parent object for this component, this is so that each compenent
         * can retrieve data from the parent and allows for inter component communication.
     */
-    void SetParent(GameObject* parent) { m_parent = parent; }
+    void SetParent(std::shared_ptr<GameObject> parent) { m_parent = parent; }
 
     /*!
         * \brief Gets the owning GameObject for this component.
         * \return Returns a the owning GameObject pointer for this component.
     */
-    GameObject* GetParent() { return m_parent; }
+    std::shared_ptr<GameObject> GetParent() { return m_parent; }
 
     /*!
         * \brief Gets a Component from the parent GameObject.
@@ -60,14 +60,14 @@ public:
         * Will check the parent for a Component of specified type and return it.
     */
     template<class T>
-    T* GetComponent();
+    std::shared_ptr<T> GetComponent();
 
 protected:
-    GameObject * m_parent; /*!< A pointer to the owning parent game object. */
+    std::shared_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
 };
 
 template<class T>
-inline T * Component::GetComponent()
+inline std::shared_ptr<T> Component::GetComponent()
 {
-    return m_parent->GetComponent<T>();
+    return m_parent.get()->GetComponent<T>();
 }

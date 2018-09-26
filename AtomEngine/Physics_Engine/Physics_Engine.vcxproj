@@ -147,7 +147,6 @@
     <ClCompile Include="IMGUI\imgui_demo.cpp" />
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="Material.cpp" />
@@ -185,7 +184,6 @@
     <ClInclude Include="IMGUI\stb_textedit.h" />
     <ClInclude Include="IMGUI\stb_truetype.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="IOManager.h" />
     <ClInclude Include="Kernel.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LogManager.h" />

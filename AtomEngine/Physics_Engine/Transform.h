@@ -16,6 +16,10 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/quaternion.hpp>
 
+#include <CEREAL/macros.hpp>
+#include <CEREAL/types/polymorphic.hpp>
+#include <CEREAL/archives/xml.hpp>
+
 class ATOM_API Transform : public Component
 {
 public:
@@ -126,4 +130,3 @@ private:
     Transform* m_parentTransform; /*!< A parent Transform Component. */
 
 };
-

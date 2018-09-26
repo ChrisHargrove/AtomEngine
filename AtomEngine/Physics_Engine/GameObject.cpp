@@ -4,18 +4,15 @@
 
 GameObject::GameObject()
 {
-    AddComponent<Transform>();
-    Initialize();
 }
-
 
 GameObject::~GameObject()
 {
     for (auto child : m_childObjects) {
-        delete child;
+        child.reset();
     }
     for (auto component : m_componentList) {
-        delete component;
+        component.reset();
     }
     m_componentList.clear();
 }

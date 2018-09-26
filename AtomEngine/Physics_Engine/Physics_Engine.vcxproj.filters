@@ -159,9 +159,6 @@
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Engine\Core\Managers</Filter>
     </ClCompile>
-    <ClCompile Include="IOManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Octree.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
@@ -274,9 +271,6 @@
     </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Header Files\Engine\Core\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="IOManager.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Octree.h">
       <Filter>Header Files\Engine\Physics</Filter>

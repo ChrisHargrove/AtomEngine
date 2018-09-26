@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "Quad.h"
 
+#include <memory>
+
 class LoadState : public State
 {
 public:
@@ -26,9 +28,9 @@ public:
     virtual void Resume() override;
     virtual bool IsPaused() override;
 
-    std::list<GameObject*> GameObjectList;
+    std::list<std::shared_ptr<GameObject>> GameObjectList;
 
-    Camera* m_mainCamera;
+    std::shared_ptr<Camera> m_mainCamera;
 
     glm::vec3 rotation;
 

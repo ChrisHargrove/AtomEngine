@@ -5,6 +5,7 @@
 
 #include "GameObject.h"
 #include "Camera.h"
+#include "CameraControls.h"
 #include "Transform.h"
 #include "ShaderManager.h"
 #include "ScreenManager.h"
@@ -14,6 +15,10 @@
 #include "Buffer.h"
 #include "Utilities.h"
 #include "Kernel.h"
+
+#include <CEREAL/cereal.hpp>
+#include <CEREAL/archives/xml.hpp>
+#include <fstream>
 
 
 LoadState::LoadState()
@@ -46,13 +51,16 @@ bool LoadState::Initialize()
     Shaders::Instance()->AddShader("BASIC", "basic");
     Shaders::Instance()->AddShader("FRAMETEST", "postProcessing");
 
-    GameObject* camera = new GameObject();
-    m_mainCamera = new Camera();
+    std::shared_ptr<GameObject> camera = std::make_shared<GameObject>();
+    m_mainCamera = std::make_shared<Camera>();
+    camera->AddComponent<Transform>();
     camera->AddComponent(m_mainCamera);
+    camera->AddComponent<CameraControls>();
 
     //LOADING MODELS IS SUCCESSFUL
-    GameObject* meshTest = new GameObject();
-    Mesh* mesh = new Mesh();
+    std::shared_ptr<GameObject> meshTest = std::make_shared<GameObject>();
+    meshTest->AddComponent<Transform>();
+    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
     mesh->SetMesh("Assets/Models/cactus_one.obj");
     meshTest->AddComponent(mesh);
 
@@ -62,7 +70,7 @@ bool LoadState::Initialize()
     GameObjectList.push_back(camera);
     GameObjectList.push_back(meshTest);
 
-    for (GameObject* obj : GameObjectList) {
+    for (auto obj : GameObjectList) {
         obj->Initialize();
     }
 
@@ -89,7 +97,7 @@ bool LoadState::Initialize()
     testUni.SetSubData(&MatriceBuffer::projection, &testBuffer.projection);
     testUni.SetSubData(&MatriceBuffer::view, &testBuffer.view);
 
-    //Screen::Instance()->CaptureMouse();
+    Screen::Instance()->CaptureMouse();
 
     return true;
 }
@@ -108,7 +116,7 @@ void LoadState::Input()
 
 void LoadState::Update(float delta)
 {
-    for (GameObject* obj : GameObjectList) {
+    for (auto obj : GameObjectList) {
         obj->Update(delta);
 
     }
@@ -137,8 +145,8 @@ void LoadState::Render()
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
-    for (auto obj : GameObjectList) {
-        Mesh* mesh = obj->GetComponent<Mesh>();
+    for (std::shared_ptr<GameObject> obj : GameObjectList) {
+        std::shared_ptr<Mesh> mesh = obj.get()->GetComponent<Mesh>();
         if (mesh != nullptr) {
             Shaders::Instance()->GetCurrentShader()->SetMat4("model", mesh->GetComponent<Transform>()->GetTransform());
             mesh->GetComponent<Transform>()->Rotate(glm::vec3(1 * 0.01f, 0, 0));
@@ -168,7 +176,7 @@ void LoadState::Render()
 bool LoadState::Shutdown()
 {
     for (auto obj : GameObjectList) {
-        delete obj;
+        obj.reset();
     }
     GameObjectList.clear();
     return true;

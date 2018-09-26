@@ -15,6 +15,9 @@
 #include "Component.h"
 #include <GLM/glm.hpp>
 
+#include <CEREAL/types/polymorphic.hpp>
+#include <CEREAL/archives/xml.hpp>
+
 class ATOM_API Camera : public Component
 {
 public:
@@ -83,4 +86,3 @@ private:
     glm::vec3 m_target;         /*!< The camera target. */
     glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
 };
-

@@ -30,6 +30,7 @@ bool Engine::Initialize(float width, float height, const std::string & title, co
 
 bool Engine::Initialize(const std::string & configFile)
 {
+
     return false;
 }
 

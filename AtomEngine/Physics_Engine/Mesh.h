@@ -28,6 +28,9 @@
 
 #include "Types.h"
 
+#include <CEREAL/types/polymorphic.hpp>
+#include <CEREAL/archives/xml.hpp>
+
 
 class ATOM_API SubMesh
 {
@@ -97,6 +100,7 @@ public:
     */
     void Render();
 
+
 private:
     /*!
         * \brief A virtual Update function that is called every frame.
@@ -116,6 +120,3 @@ private:
     std::string m_meshName;                 /*!< The name of the overall Mesh. */
     std::vector<SubMesh*> m_subMeshList;    /*!< The list of sub-mesh's. */
 };
-
-
-
