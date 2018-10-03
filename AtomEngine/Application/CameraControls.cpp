@@ -6,40 +6,42 @@
 
 CameraControls::CameraControls()
 {
+    m_name = "CameraControls";
 }
-
 
 CameraControls::~CameraControls()
 {
 }
 
+void CameraControls::Initialize()
+{
+    _transform = GetComponent<Transform>();
+}
+
 void CameraControls::Update(float deltaTime)
 {
+    auto transform = (Transform*)_transform;
+
     if (Input::Instance()->IsKeyHeld(SDLK_w)) {
-        _transform->Translate(_transform->GetForward());
+        transform->Translate(transform->GetForward());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_s)) {
-        _transform->Translate(-_transform->GetForward());
+        transform->Translate(-transform->GetForward());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_a)) {
-        _transform->Translate(_transform->GetRight());
+        transform->Translate(transform->GetRight());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_d)) {
-        _transform->Translate(-_transform->GetRight());
+        transform->Translate(-transform->GetRight());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_SPACE)) {
-        _transform->Translate(glm::vec3(0, 1, 0));
+        transform->Translate(glm::vec3(0, 1, 0));
     }
     if (Input::Instance()->IsKeyHeld(SDLK_LSHIFT)) {
-        _transform->Translate(-glm::vec3(0, 1, 0));
+        transform->Translate(-glm::vec3(0, 1, 0));
     }
     if (Input::Instance()->HasMouseMoved()) {
         glm::vec2 rot = glm::vec2(Input::Instance()->GetMouseMove().m_relativeX * deltaTime, Input::Instance()->GetMouseMove().m_relativeY * deltaTime);
-        _transform->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
+        transform->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
     }
-}
-
-void CameraControls::Initialize()
-{
-    _transform = GetComponent<Transform>().get();
 }

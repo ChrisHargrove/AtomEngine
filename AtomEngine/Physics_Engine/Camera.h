@@ -15,9 +15,6 @@
 #include "Component.h"
 #include <GLM/glm.hpp>
 
-#include <CEREAL/types/polymorphic.hpp>
-#include <CEREAL/archives/xml.hpp>
-
 class ATOM_API Camera : public Component
 {
 public:
@@ -64,6 +61,11 @@ public:
     */
     void SetTarget(glm::vec3 target);
 
+    template<class Archive>
+    void serialize(Archive &archive) {
+        archive(m_zoom);
+    }
+
 private:
     /*!
         * \brief Virtual Update function that is called each frame.
@@ -85,4 +87,8 @@ private:
 
     glm::vec3 m_target;         /*!< The camera target. */
     glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
+
+    Component* _transform;
 };
+
+CEREAL_REGISTER_TYPE_WITH_NAME(Camera, "CameraObject");

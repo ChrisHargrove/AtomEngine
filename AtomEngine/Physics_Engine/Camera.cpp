@@ -9,6 +9,7 @@ Camera::Camera() :
     m_target(glm::vec3(0,0,0)),
     m_viewMatrix(glm::mat4(1.0f))
 {
+    m_name = "Camera";
 }
 
 Camera::~Camera()
@@ -17,6 +18,7 @@ Camera::~Camera()
 
 void Camera::Initialize()
 {
+    _transform = GetComponent<Transform>();
 }
 
 void Camera::Update(float deltaTime)
@@ -31,17 +33,20 @@ float Camera::GetZoom()
 
 glm::mat4 Camera::GetViewMatrix()
 {
-    std::shared_ptr<Transform> transform = m_parent.get()->GetComponent<Transform>();
-    if (transform == nullptr) return glm::mat4();
-    m_viewMatrix = glm::lookAt(transform.get()->GetPosition(), transform.get()->GetPosition() + transform.get()->GetForward(), transform.get()->GetUp());
+    if (_transform == nullptr) return glm::mat4();
+
+    Transform* transform = (Transform*)_transform;
+
+    m_viewMatrix = glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->GetForward(), transform->GetUp());
     return m_viewMatrix;
 }
 
 glm::mat4 Camera::GetOrthoMatrix()
 {
-    std::shared_ptr<Transform> transform = m_parent.get()->GetComponent<Transform>();
-    if (transform == nullptr) return glm::mat4();
-    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform.get()->GetUp());
+    if (_transform == nullptr) return glm::mat4();
+    Transform* transform = (Transform*)_transform;
+
+    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform->GetUp());
 }
 
 void Camera::EnablePitchConstraint(bool enable)
@@ -53,5 +58,4 @@ void Camera::SetTarget(glm::vec3 target)
 {
     m_target = target;
 }
-
 

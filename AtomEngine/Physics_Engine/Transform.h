@@ -16,9 +16,6 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/quaternion.hpp>
 
-#include <CEREAL/macros.hpp>
-#include <CEREAL/types/polymorphic.hpp>
-#include <CEREAL/archives/xml.hpp>
 
 class ATOM_API Transform : public Component
 {
@@ -106,6 +103,11 @@ public:
     void Translate(glm::vec3 translation);
     void Scale(glm::vec3 scale);
 
+    template<class Archive>
+    void serialize(Archive &archive) {
+        archive(m_position.x, m_position.y, m_position.z);
+    }
+
 private:
     /*!
         * \brief Virtual Update function that is called each frame.
@@ -130,3 +132,5 @@ private:
     Transform* m_parentTransform; /*!< A parent Transform Component. */
 
 };
+
+CEREAL_REGISTER_TYPE_WITH_NAME(Transform, "TransformObject");

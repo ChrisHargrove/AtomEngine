@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<polymorphic_id>1073741824</polymorphic_id>
+		<ptr_wrapper>
+			<id>2147483649</id>
+			<data>
+				<Transform>
+					<polymorphic_id>2147483649</polymorphic_id>
+					<polymorphic_name>TransformObject</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483650</id>
+						<data>
+							<value0>0</value0>
+							<value1>0</value1>
+							<value2>-4</value2>
+						</data>
+					</ptr_wrapper>
+				</Transform>
+				<Camera>
+					<polymorphic_id>2147483650</polymorphic_id>
+					<polymorphic_name>CameraObject</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483651</id>
+						<data>
+							<value0>0</value0>
+						</data>
+					</ptr_wrapper>
+				</Camera>
+				<CameraControls>
+					<polymorphic_id>2147483651</polymorphic_id>
+					<polymorphic_name>CameraCoontrols</polymorphic_name>
+					<ptr_wrapper>
+						<id>2147483652</id>
+						<data/>
+					</ptr_wrapper>
+				</CameraControls>
+			</data>
+		</ptr_wrapper>
+	</value0>
+</cereal>
+

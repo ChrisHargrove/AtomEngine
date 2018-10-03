@@ -1,6 +1,5 @@
 #include "Transform.h"
 
-
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/matrix_access.hpp>
 
@@ -11,6 +10,7 @@ Transform::Transform()
     m_rotation = glm::vec3(0, 0, 0);
     m_scale = glm::vec3(1, 1, 1);
     m_tranformMatrix = glm::mat4(1.0f);
+    m_name = "Transform";
 }
 
 

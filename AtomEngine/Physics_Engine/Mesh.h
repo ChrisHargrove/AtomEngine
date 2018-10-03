@@ -28,10 +28,6 @@
 
 #include "Types.h"
 
-#include <CEREAL/types/polymorphic.hpp>
-#include <CEREAL/archives/xml.hpp>
-
-
 class ATOM_API SubMesh
 {
 public:
@@ -100,6 +96,10 @@ public:
     */
     void Render();
 
+    template<class Archive>
+    void serialize(Archive &archive) {
+    }
+
 
 private:
     /*!
@@ -120,3 +120,5 @@ private:
     std::string m_meshName;                 /*!< The name of the overall Mesh. */
     std::vector<SubMesh*> m_subMeshList;    /*!< The list of sub-mesh's. */
 };
+
+CEREAL_REGISTER_TYPE_WITH_NAME(Mesh, "MeshObject");

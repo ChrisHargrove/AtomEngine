@@ -203,7 +203,7 @@ namespace cereal
       static const std::uint32_t version;                                        \
       static std::uint32_t registerVersion()                                     \
       {                                                                          \
-        ::cereal::detail::StaticObject<Versions>::getInstance().mapping.emplace( \
+        ::cereal::detail::StaticObject<Versions>::getInstance()->mapping.emplace( \
              std::type_index(typeid(TYPE)).hash_code(), VERSION_NUMBER );        \
         return VERSION_NUMBER;                                                   \
       }                                                                          \
@@ -492,7 +492,7 @@ namespace cereal
         const auto insertResult = itsVersionedTypes.insert( hash );
         const auto lock = detail::StaticObject<detail::Versions>::lock();
         const auto version =
-          detail::StaticObject<detail::Versions>::getInstance().find( hash, detail::Version<T>::version );
+          detail::StaticObject<detail::Versions>::getInstance()->find( hash, detail::Version<T>::version );
 
         if( insertResult.second ) // insertion took place, serialize the version number
           process( make_nvp<ArchiveType>("cereal_class_version", version) );

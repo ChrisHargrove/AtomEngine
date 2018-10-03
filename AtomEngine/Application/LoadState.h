@@ -28,7 +28,7 @@ public:
     virtual void Resume() override;
     virtual bool IsPaused() override;
 
-    std::list<std::shared_ptr<GameObject>> GameObjectList;
+    std::vector<std::shared_ptr<GameObject>> GameObjectList;
 
     std::shared_ptr<Camera> m_mainCamera;
 

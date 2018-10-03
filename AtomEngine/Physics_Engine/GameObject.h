@@ -14,10 +14,9 @@
 #endif
 
 #include <list>
+#include <vector>
 #include <typeinfo>
 #include <memory>
-
-#include <CEREAL/archives/xml.hpp>
 
 class Component;
 
@@ -90,7 +89,7 @@ public:
         * If no matching component type is found then function returns a nullptr.
     */
     template<class T>
-    std::shared_ptr<T> GetComponent();
+    T* GetComponent();
 
     /*!
         * \brief Gets a component from the parent object.
@@ -100,7 +99,7 @@ public:
         * If no matching component type is found then returns a nullptr.
     */
     template<class T>
-    std::shared_ptr<T> GetComponentInParent();
+    T* GetComponentInParent();
 
     /*!
         * \brief Gets the first component found of type specified in child objects.
@@ -110,7 +109,7 @@ public:
         * If no matching component type is found then returns a nullptr.
     */
     template<class T>
-    std::shared_ptr<T> GetComponentInChild();
+    T* GetComponentInChild();
 
     /*!
         * \brief Gets a list of all components of type specified from all child objects in GameObject.
@@ -120,19 +119,50 @@ public:
         * it will however return a pointer to all instance of components of that type.
     */
     template<class T>
-    std::list<std::shared_ptr<T>> GetComponentsInChildren();
+    std::vector<T*> GetComponentsInChildren();
+
+    /*!
+        * \brief Gets a pointer to parent GameObject
+        * \return Returns a pointer to the parent GameObject.
+    */
+    GameObject* GetParent();
+
+    /*!
+        * \brief Sets the parent of this GameObject
+        * \param parent The GameObject you wish to become this GameObjects new parent.
+    */
+    void SetParent(std::shared_ptr<GameObject> parent);
+
+    void AddChild(std::shared_ptr<GameObject> child);
+
+    //TODO: Add Remove Child function, this will require some sort of ID system...maybe GUID?
+
+    //TODO: Need a custom detroy method to release all shared pointers properly.
+    static void Destroy(std::shared_ptr<GameObject> &obj);
 
     template<class Archive>
-    void serialize(Archive &archive) {
-        for (auto comp : m_componentList) {
-            archive(comp);
+    void save(Archive &archive) const {
+        for (int i = 0; i < m_componentList.size(); i++) {
+            archive(cereal::make_nvp(m_componentList[i]->GetName(), m_componentList[i]));
+        }
+    }
+
+    template<class Archive>
+    void load(Archive &archive) {
+        int nodeSize;
+        archive.loadSize(nodeSize);
+        for (int i = 0; i < nodeSize; i++) {
+            std::shared_ptr<Component> newComponent;
+            archive(newComponent);
+            Logger::Instance()->LogInfo("Component Type = " + newComponent.get()->GetName());
+            AddComponent(newComponent);
         }
     }
 
 protected:
-    std::list<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
-    std::shared_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
-    std::list<std::shared_ptr<GameObject>> m_childObjects; /*!< The list of child objects attached to the GameObject. */
+    std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
+    std::weak_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
+    std::vector<std::shared_ptr<GameObject>> m_childObjects; /*!< The list of child objects attached to the GameObject. */
 
 };
 
@@ -173,34 +203,34 @@ inline void GameObject::RemoveAllComponents()
 }
 
 template<class T>
-inline std::shared_ptr<T> GameObject::GetComponent()
+inline T* GameObject::GetComponent()
 {
     for (auto component : m_componentList) {
         if (typeid(*component.get()) == typeid(T)) {
-            return std::dynamic_pointer_cast<T>(component);
+            return dynamic_cast<T*>(component.get());
         }
     }
     return nullptr;
 }
 
 template<class T>
-inline std::shared_ptr<T> GameObject::GetComponentInParent()
+inline T* GameObject::GetComponentInParent()
 {
     for (auto component : m_parentObject.get()->m_componentList) {
         if (typeid(*component.get()) == typeid(T)) {
-            return std::dynamic_pointer_cast<T>(component);
+            return component.get();
         }
     }
     return nullptr;
 }
 
 template<class T>
-inline std::shared_ptr<T> GameObject::GetComponentInChild() 
+inline T* GameObject::GetComponentInChild() 
 {
     for (auto child : m_childObjects) {
         for (auto component : child.get()->m_componentList) {
             if (typeid(*component.get()) == typeid(T)) {
-                return std::dynamic_pointer_cast<T>(component);
+                return component.get();
             }
         }
     }
@@ -208,12 +238,12 @@ inline std::shared_ptr<T> GameObject::GetComponentInChild()
 }
 
 template<class T>
-inline std::list<std::shared_ptr<T>> GameObject::GetComponentsInChildren()
+inline std::vector<T*> GameObject::GetComponentsInChildren()
 {
-    std::list<std::shared_ptr<T>> componentList;
+    std::vector<T*> componentList;
     for (auto child : m_childObjects) {
         for (auto component : child.get()->m_componentList) {
-            componentList.push_back(std::dynamic_pointer_cast<T>(component));
+            componentList.push_back(component.get());
         }
     }
     return componentList;

@@ -7,12 +7,15 @@
 
 Mesh::Mesh()
 {
+    m_name = "Mesh";
 }
 
 
 Mesh::~Mesh()
 {
-    
+    for (int i = 0; i < m_subMeshList.size(); i++) {
+        delete m_subMeshList[i];
+    }
 }
 
 void Mesh::Update(float deltaTime)
@@ -92,6 +95,7 @@ SubMesh::SubMesh() :
 
 SubMesh::~SubMesh()
 {
+
     m_vertexArray.Destroy();
     m_vertexBuffer.Destroy();
     m_elementBuffer.Destroy();

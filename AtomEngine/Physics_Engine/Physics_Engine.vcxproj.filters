@@ -94,6 +94,9 @@
     <Filter Include="Source Files\Engine\Graphics\Geometry\Debug">
       <UniqueIdentifier>{1fdfcba1-38c0-4010-a1d3-28cf49912b4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\IO">
+      <UniqueIdentifier>{7b8e32d9-50bf-434a-ae3c-3fc9600ffc9b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogManager.cpp">
@@ -183,8 +186,11 @@
     <ClCompile Include="Quad.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="Material.cpp">
+    <ClCompile Include="IOManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -302,11 +308,17 @@
     <ClInclude Include="Quad.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
     </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Kernel.h">
       <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Application\SerialTypes.h">
+      <Filter>Header Files\Engine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="IOManager.h">
+      <Filter>Header Files\Engine\IO</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

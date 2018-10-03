@@ -17,10 +17,17 @@
 
 #include "GameObject.h"
 
+#include <memory>
+#include <CEREAL/cereal.hpp>
+#include <CEREAL/types/memory.hpp>
+#include <CEREAL/archives/xml.hpp>
+
 class ATOM_API Component
 {
 public:
-    Component() {};
+    Component() {
+        m_name = "";
+    };
     virtual ~Component() {};
 
     /*!
@@ -51,7 +58,15 @@ public:
         * \brief Gets the owning GameObject for this component.
         * \return Returns a the owning GameObject pointer for this component.
     */
-    std::shared_ptr<GameObject> GetParent() { return m_parent; }
+    GameObject* GetParent() 
+    { 
+        if (m_parent.lock() != NULL) return m_parent.lock().get();
+        else { return nullptr; }
+    }
+
+    std::string GetName() {
+        return m_name;
+    }
 
     /*!
         * \brief Gets a Component from the parent GameObject.
@@ -60,14 +75,25 @@ public:
         * Will check the parent for a Component of specified type and return it.
     */
     template<class T>
-    std::shared_ptr<T> GetComponent();
+    T* GetComponent();
+
+    template <class Archive>
+    void serialize(Archive& archive) {};
 
 protected:
-    std::shared_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
+    std::string m_name;
+    std::weak_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
 };
 
 template<class T>
-inline std::shared_ptr<T> Component::GetComponent()
+inline T* Component::GetComponent()
 {
-    return m_parent.get()->GetComponent<T>();
+    if(m_parent.lock() != NULL) return m_parent.lock().get()->GetComponent<T>();
+    else { return nullptr; }
 }
+
+extern template ATOM_API void Component::serialize<cereal::XMLInputArchive>
+(cereal::XMLInputArchive & archive);
+
+extern template ATOM_API void Component::serialize<cereal::XMLOutputArchive>
+(cereal::XMLOutputArchive & archive);
