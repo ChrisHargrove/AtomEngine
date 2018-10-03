@@ -19,7 +19,8 @@
 
 #include <CEREAL/cereal.hpp>
 
-#include "SerialTypes.h"
+#include "SerialRegister.h"
+#include "SerialExtensions.h"
 
 
 LoadState::LoadState()
@@ -124,7 +125,7 @@ bool LoadState::Initialize()
     IO::Instance()->Open("cereal.test.xml", std::ios::in);
     IO::Instance()->Serialize<cereal::XMLInputArchive>(test);
     IO::Instance()->Close();
-
+       
     return true;
 }
 

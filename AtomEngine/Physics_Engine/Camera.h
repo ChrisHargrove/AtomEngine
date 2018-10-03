@@ -61,12 +61,11 @@ public:
     */
     void SetTarget(glm::vec3 target);
 
-    template<class Archive>
-    void serialize(Archive &archive) {
-        archive(m_zoom);
-    }
+    
 
 private:
+    friend class cereal::access;
+
     /*!
         * \brief Virtual Update function that is called each frame.
         * \param deltaTime The time passed since last frame.
@@ -89,6 +88,13 @@ private:
     glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
 
     Component* _transform;
+
+    template<class Archive>
+    void serialize(Archive &archive) {
+        archive(cereal::make_nvp("Zoom", m_zoom),
+            cereal::make_nvp("PitchConstrained", m_isPitchConstrained),
+            cereal::make_nvp("Target", m_target));
+    }
 };
 
 CEREAL_REGISTER_TYPE_WITH_NAME(Camera, "CameraObject");

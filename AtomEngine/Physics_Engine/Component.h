@@ -22,6 +22,8 @@
 #include <CEREAL/types/memory.hpp>
 #include <CEREAL/archives/xml.hpp>
 
+#include "SerialExtensions.h"
+
 class ATOM_API Component
 {
 public:
@@ -64,6 +66,12 @@ public:
         else { return nullptr; }
     }
 
+    /*!
+        * \brief Gets the name of the component.
+        * \return Returns a string of the component name.
+        *
+        * Primarily used during serialization.
+    */
     std::string GetName() {
         return m_name;
     }
@@ -77,12 +85,15 @@ public:
     template<class T>
     T* GetComponent();
 
-    template <class Archive>
-    void serialize(Archive& archive) {};
 
 protected:
     std::string m_name;
     std::weak_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
+
+private:
+
+    template <class Archive>
+    void serialize(Archive& archive) {};
 };
 
 template<class T>

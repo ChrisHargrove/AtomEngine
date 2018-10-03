@@ -298,6 +298,12 @@ public:
     */
     void CaptureMouse(bool capture);
 
+    /*!
+        * \brief Gets whether the mouse is captured or not;
+        * \return Returns a boolean as to whether the mouse is captured or not.
+    */
+    bool IsMouseCaptured();
+
 private:
     /*!
         * \brief Adds a keyboard event to be processed.

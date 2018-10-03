@@ -11,9 +11,22 @@
 					<ptr_wrapper>
 						<id>2147483650</id>
 						<data>
-							<value0>0</value0>
-							<value1>0</value1>
-							<value2>-4</value2>
+							<Position>
+								<X>0</X>
+								<Y>0</Y>
+								<Z>-4</Z>
+							</Position>
+							<Orientation>
+								<X>0</X>
+								<Y>0</Y>
+								<Z>0</Z>
+								<W>1</W>
+							</Orientation>
+							<Scale>
+								<X>1</X>
+								<Y>1</Y>
+								<Z>1</Z>
+							</Scale>
 						</data>
 					</ptr_wrapper>
 				</Transform>
@@ -23,7 +36,13 @@
 					<ptr_wrapper>
 						<id>2147483651</id>
 						<data>
-							<value0>0</value0>
+							<Zoom>0</Zoom>
+							<PitchConstrained>true</PitchConstrained>
+							<Target>
+								<X>0</X>
+								<Y>0</Y>
+								<Z>0</Z>
+							</Target>
 						</data>
 					</ptr_wrapper>
 				</Camera>

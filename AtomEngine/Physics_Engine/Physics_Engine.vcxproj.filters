@@ -97,6 +97,9 @@
     <Filter Include="Header Files\Engine\IO">
       <UniqueIdentifier>{7b8e32d9-50bf-434a-ae3c-3fc9600ffc9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine\IO">
+      <UniqueIdentifier>{26a93729-a477-429f-8ada-f392ce3bde89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogManager.cpp">
@@ -186,11 +189,11 @@
     <ClCompile Include="Quad.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
     </ClCompile>
-    <ClCompile Include="IOManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="IOManager.cpp">
+      <Filter>Source Files\Engine\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -314,10 +317,13 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="..\Application\SerialTypes.h">
-      <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="IOManager.h">
+      <Filter>Header Files\Engine\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialRegister.h">
+      <Filter>Header Files\Engine\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialExtensions.h">
       <Filter>Header Files\Engine\IO</Filter>
     </ClInclude>
   </ItemGroup>

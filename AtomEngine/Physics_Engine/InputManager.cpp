@@ -186,6 +186,11 @@ void InputManager::CaptureMouse(bool capture)
     Screen::Instance()->CaptureMouse(capture);
 }
 
+bool InputManager::IsMouseCaptured()
+{
+    return m_isMouseCaptured;
+}
+
 void InputManager::AddKeyboardEvent(int keyCode, int state, int modifier)
 {
     KeyEvent kEvent(keyCode, state, modifier);

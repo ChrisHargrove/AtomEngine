@@ -18,6 +18,8 @@
 #include <typeinfo>
 #include <memory>
 
+#include <CEREAL/cereal.hpp>
+
 class Component;
 
 class ATOM_API GameObject : public std::enable_shared_from_this<GameObject>
@@ -133,13 +135,45 @@ public:
     */
     void SetParent(std::shared_ptr<GameObject> parent);
 
+    /*!
+        * \brief Adds a child GameObject to this GameObject.
+        * \param child The GameObject to add.
+        *
+        * Will add the supplied GameObject to the current GameObject and set it as the 
+        * child objects parent.
+    */
     void AddChild(std::shared_ptr<GameObject> child);
 
     //TODO: Add Remove Child function, this will require some sort of ID system...maybe GUID?
 
-    //TODO: Need a custom detroy method to release all shared pointers properly.
+    /*!
+        * \brief Destroys a GameObject.
+        * \param obj A reference to the obj you wish to destroy.
+        *
+        * Will travel through the child list and their corresponding component lists until all
+        * smart pointers are released. After this will then release the GameObjects component list
+        * smart pointers and will finally release the GameObject itself. Calling the automatic destructor
+        * for the game object.
+    */
     static void Destroy(std::shared_ptr<GameObject> &obj);
 
+protected:
+    std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
+    std::weak_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
+    std::vector<std::shared_ptr<GameObject>> m_childObjects; /*!< The list of child objects attached to the GameObject. */
+
+private:
+
+    friend class cereal::access; // Allows for private serialization methods //
+
+    /*!
+        * \brief Serializes the GameObject to a file for later use.
+        * \param archive A reference to the Cereal Archive being used.
+        *
+        * This function never gets called by the user hence why it is a private method. This will take each
+        * part of the GameObject and serialize it to a file previously specified with the IOManager.
+        * Saves each Component with its type as a name.
+    */
     template<class Archive>
     void save(Archive &archive) const {
         for (int i = 0; i < m_componentList.size(); i++) {
@@ -147,6 +181,13 @@ public:
         }
     }
 
+    /*!   
+        * \brief Serializes the GameObject from a file.
+        * \param archive A reference to the Cereal Archive being used.
+        *
+        * This function never gets called by the user hence why it is a private method. This will take an archive
+        * object and load all the data from it into the GameObject.
+    */
     template<class Archive>
     void load(Archive &archive) {
         int nodeSize;
@@ -154,16 +195,9 @@ public:
         for (int i = 0; i < nodeSize; i++) {
             std::shared_ptr<Component> newComponent;
             archive(newComponent);
-            Logger::Instance()->LogInfo("Component Type = " + newComponent.get()->GetName());
             AddComponent(newComponent);
         }
     }
-
-protected:
-    std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
-    std::weak_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
-    std::vector<std::shared_ptr<GameObject>> m_childObjects; /*!< The list of child objects attached to the GameObject. */
-
 };
 
 template<class T>

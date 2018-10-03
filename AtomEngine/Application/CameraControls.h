@@ -17,6 +17,7 @@ public:
 
 private:
     Component* _transform;
+    bool _mouseCaptured;
 };
 
 CEREAL_REGISTER_TYPE_WITH_NAME(CameraControls, "CameraCoontrols");

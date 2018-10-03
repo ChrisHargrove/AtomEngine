@@ -16,7 +16,6 @@
 #include <GLM/glm.hpp>
 #include <GLM/gtc/quaternion.hpp>
 
-
 class ATOM_API Transform : public Component
 {
 public:
@@ -99,16 +98,30 @@ public:
     */
     glm::vec3 GetUp();
 
+    /*!
+        * \brief Rotates the Transform
+        * \param rotation The amount to rotate, represented as Yaw, Pitch, Roll repsectively.
+    */
     void Rotate(glm::vec3 rotation);
+
+    /*!
+        * \brief Translates the Transform
+        * \param translation The amount to translate by on X,Y,Z axis' respectively.
+    */
     void Translate(glm::vec3 translation);
+
+    /*!
+        * \brief Scales the Transform
+        * \param scale The amount to scale by on X,Y,Z axis' respectively.
+    */
     void Scale(glm::vec3 scale);
 
-    template<class Archive>
-    void serialize(Archive &archive) {
-        archive(m_position.x, m_position.y, m_position.z);
-    }
+    
 
 private:
+
+    friend class cereal::access;
+
     /*!
         * \brief Virtual Update function that is called each frame.
         * \param deltaTime The time passed since last frame.
@@ -124,12 +137,23 @@ private:
     */
     virtual void Initialize() override;
 
+    /*!
+        * \brief Calculates the transformation matrix.
+    */
+    void CalculateTransform();
+
     glm::vec3 m_position;    /*!< A 3 component vector containing translation data for the Transform. */
     glm::quat m_rotation;       /*!< A 3 component vector containing rotation data for the transform. */
     glm::vec3 m_scale;          /*!< A 3 component vector containing scale data for the transform. */
     glm::mat4 m_tranformMatrix; /*!< A 4x4 Matrix containing all transform data. */
 
     Transform* m_parentTransform; /*!< A parent Transform Component. */
+
+
+    template<class Archive>
+    void serialize(Archive &archive) {
+        archive(cereal::make_nvp("Position", m_position), cereal::make_nvp("Orientation", m_rotation), cereal::make_nvp("Scale", m_scale));
+    }
 
 };
 

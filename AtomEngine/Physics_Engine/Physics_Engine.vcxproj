@@ -168,7 +168,6 @@
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Application\SerialTypes.h" />
     <ClInclude Include="AABB.h" />
     <ClInclude Include="AlignedAllocation.h" />
     <ClInclude Include="Buffer.h" />
@@ -199,6 +198,8 @@
     <ClInclude Include="Quad.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="ScreenManager.h" />
+    <ClInclude Include="SerialExtensions.h" />
+    <ClInclude Include="SerialRegister.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Singleton.h" />
