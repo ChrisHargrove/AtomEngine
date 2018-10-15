@@ -43,6 +43,14 @@ bool ShaderManager::UseShader(const std::string & name)
     return false;
 }
 
+void ShaderManager::SetUniformBufferBinding(const std::string& name, UniformBufferBinding bufferBinding)
+{
+    for(auto& shader : m_shaderList)
+    {
+        shader.second->BindUniformBuffer(name, bufferBinding);
+    }
+}
+
 Shader * ShaderManager::GetShader(const std::string & name)
 {
     auto found = m_shaderList.find(name);

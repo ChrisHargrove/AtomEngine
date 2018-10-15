@@ -53,6 +53,8 @@ public:
     */
     bool UseShader(const std::string& name);
 
+    void SetUniformBufferBinding(const std::string& name, UniformBufferBinding bufferBinding);
+
     /*!
         * \brief Gets a pointer to the shader specified.
         * \param name The name of the shader, which was chosen upon storage.
