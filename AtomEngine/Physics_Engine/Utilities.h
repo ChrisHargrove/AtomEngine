@@ -21,7 +21,7 @@ namespace StringUtils{
         * Will split a string given at the delimeter and return everything after the delimeter
         * as a new string.
     */
-    ATOM_API std::string SplitEnd(const std::string& string, const std::string& delimeter, bool include = false);
+    ATOM_API std::string SplitEnd(std::string string, const std::string& delimeter, bool include = false);
 
     /*!
         * \brief Splits a string at the delimeter.
@@ -33,7 +33,7 @@ namespace StringUtils{
         * Will split a string given at the delimeter and return everything before the delimeter
         * as a new string.
     */
-    ATOM_API std::string SplitFront(const std::string& string, const std::string& delimeter, bool include = false);
+    ATOM_API std::string SplitFront(std::string string, const std::string& delimeter, bool include = false);
 }
 
 namespace MathUtils {

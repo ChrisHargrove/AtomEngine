@@ -3,7 +3,7 @@
 #include "State.h"
 
 #include "GameObject.h"
-#include <list>
+#include <vector>
 #include <GLM/glm.hpp>
 
 #include "Buffer.h"
@@ -12,11 +12,14 @@
 
 #include <memory>
 
+#include "Skybox.h"
+
+
 class LoadState : public State
 {
 public:
     LoadState();
-    ~LoadState();
+    virtual ~LoadState();
 
     // Inherited via State
     virtual bool Initialize() override;
@@ -28,7 +31,7 @@ public:
     virtual void Resume() override;
     virtual bool IsPaused() override;
 
-    std::vector<std::shared_ptr<GameObject>> GameObjectList;
+    std::vector<std::shared_ptr<GameObject>> m_gameObjectList;
 
     std::shared_ptr<Camera> m_mainCamera;
 
@@ -36,7 +39,7 @@ public:
 
     Quad* screenFrame;
 
-    FrameBuffer frameBuffer;
+    Skybox* m_skybox;
     bool _wireframe = false;
 
     UniformBuffer testUni;

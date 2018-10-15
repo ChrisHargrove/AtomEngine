@@ -52,7 +52,10 @@ bool CubeMap::Load(const std::string & fileName)
 
     SDL_Surface* image;
     for (int i = 0; i < (int)m_faces.size(); i++) {
-        if (image = IMG_Load((filePath + "_" + m_faces[i] + extension).c_str())) {
+
+        std::string fullPath = (filePath + "_" + m_faces[i] + extension);
+
+        if (image = IMG_Load(fullPath.c_str())) {
             //Check to see if image was loaded.
             if (!image) {
                 Logger::Instance()->LogError("Image: " + filePath + "_" + m_faces[i] + extension + " Failed to load!");

@@ -52,6 +52,7 @@ bool LoadState::Initialize()
     Shaders::Instance()->AddShader("PHONG", "phong");
     Shaders::Instance()->AddShader("BASIC", "basic");
     Shaders::Instance()->AddShader("FRAMETEST", "postProcessing");
+    Shaders::Instance()->AddShader("SKYBOX", "skybox");
 
     std::shared_ptr<GameObject> camera = std::make_shared<GameObject>();
     m_mainCamera = std::make_shared<Camera>();
@@ -133,8 +134,8 @@ void LoadState::Input()
 {
     //DRAWING INPUTS
     if (Input::Instance()->IsKeyPressed(SDLK_F1)) {
-        _wireframe = !_wireframe;
-    }    
+        m_wireFrame = !m_wireFrame;
+    }
     //QUIT INPUT
     if (Input::Instance()->IsKeyPressed(SDLK_ESCAPE)) {
         Input::Instance()->RequestQuit();
@@ -147,33 +148,33 @@ void LoadState::Update(float delta)
         obj->Update(delta);
 
     }
-    rotation.y += delta;
+    m_rotation.y += delta;
 }
 
 void LoadState::Render()
 {
-
-    glm::mat4 view = GameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
+    glm::mat4 view = m_gameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
+   // m_testUni.SetSubData(&MatriceBuffer::m_view, &view);
     testUni.SetSubData(&MatriceBuffer::view, &view);
 
-    frameBuffer.Bind();
+    m_frameBuffer.Bind();
     Screen::Instance()->CreateViewport();
     Screen::Instance()->EnableDepthTesting(true);
     Screen::Instance()->Clear();
 
-    if (_wireframe) {
+    if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
     Shaders::Instance()->UseShader("PHONG");
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
-    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", GameObjectList.front()->GetComponent<Transform>()->GetPosition());
+    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_gameObjectList.front()->GetComponent<Transform>()->GetPosition());
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
-    for (std::shared_ptr<GameObject> obj : GameObjectList) {
-        Mesh* mesh = obj.get()->GetComponent<Mesh>();
+    for (const std::shared_ptr<GameObject>& obj : m_gameObjectList) {
+        auto mesh = obj.get()->GetComponent<Mesh>();
         if (mesh != nullptr) {
             Shaders::Instance()->GetCurrentShader()->SetMat4("model", mesh->GetComponent<Transform>()->GetTransform());
             mesh->GetComponent<Transform>()->Rotate(glm::vec3(1 * 0.01f, 0, 0));
@@ -181,11 +182,15 @@ void LoadState::Render()
         }
     }
 
-    if (_wireframe) {
+    if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    frameBuffer.Unbind();
+    Shaders::Instance()->UseShader("SKYBOX");
+    Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
+    m_skybox->Render();
+
+    m_frameBuffer.Unbind();
     Screen::Instance()->CreateViewport();
     Screen::Instance()->EnableDepthTesting(false);
     Screen::Instance()->Clear(ClearBits::COLOR);
@@ -194,21 +199,18 @@ void LoadState::Render()
     Shaders::Instance()->GetShader("FRAMETEST")->SetInt("myTexture", 0);
 
     glActiveTexture(GL_TEXTURE0);
-    frameBuffer.BindTexture(0);
-    screenFrame->Render();
-    frameBuffer.BindTexture();
-
+    m_frameBuffer.BindTexture(0);
+    m_screenFrame->Render();
+    m_frameBuffer.BindTexture();
 }
 
 bool LoadState::Shutdown()
 {
-    GameObject* temp;
-
-    for (int i = 0; i < GameObjectList.size(); i++) {
-        temp = GameObjectList[i].get();
-        GameObject::Destroy(GameObjectList[i]);
+    for (auto& obj : m_gameObjectList) {
+        auto temp = obj.get();
+        GameObject::Destroy(obj);
     }
-    GameObjectList.clear();
+    m_gameObjectList.clear();
     return true;
 }
 

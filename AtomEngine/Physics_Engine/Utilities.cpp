@@ -1,7 +1,7 @@
 #include "Utilities.h"
 
 namespace StringUtils {
-    std::string SplitEnd(const std::string & string, const std::string & delimeter, bool include)
+    std::string SplitEnd(std::string string, const std::string & delimeter, bool include)
     {
         unsigned int position = 0;
         //Get the position of the first character after the delimeter.
@@ -12,7 +12,7 @@ namespace StringUtils {
         return string.substr(position, string.length() - position);
     }
 
-    std::string SplitFront(const std::string & string, const std::string & delimeter, bool include)
+    std::string SplitFront(std::string string, const std::string & delimeter, bool include)
     {
         unsigned int position = 0;
         //Get the position of the delimeter.
