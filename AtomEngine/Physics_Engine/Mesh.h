@@ -42,6 +42,10 @@ public:
     */
     void Render();
 
+    void Render(int instanceCount);
+
+    Buffer* GetVAO();
+
 private:
     unsigned int m_drawCount;               /*!< The number of vertices that need to be drawn. */
     std::vector<ComplexVertex> m_vertices;  /*!< A vector of vertex data. */
@@ -96,9 +100,13 @@ public:
     */
     void Render();
 
+    void Render(int instanceCount);
+
+    std::vector<SubMesh*> GetSubMeshList();
+
     template<class Archive>
     void serialize(Archive &archive) {
-        archive(cereal::make_nvp("Mesh Name", m_meshName));
+        archive(cereal::make_nvp("MeshName", m_meshName));
     }
 
 

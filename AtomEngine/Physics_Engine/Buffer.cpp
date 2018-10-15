@@ -88,6 +88,17 @@ void Buffer::AddAttributePointer(unsigned int locationID, int size, VariableType
     }
 }
 
+void Buffer::AddAtributeDivisor(BufferAttribute attribute, int passes)
+{
+    if(m_type != VAO)
+    {
+        glVertexAttribDivisor((unsigned int)attribute, passes);
+    }else
+    {
+        Logger::Instance()->LogWarning("You can't assign a attribute divisor too a Vertex Array Object!");
+    }
+}
+
 void Buffer::AddAttributePointer(BufferAttribute attribute, int size, VariableType type, int stride, int offset)
 {
     AddAttributePointer((unsigned int)attribute, size, type, stride, offset);
@@ -155,7 +166,9 @@ void FrameBuffer::Destroy()
 bool FrameBuffer::IsFrameBufferComplete()
 {
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
+#ifdef DEBUG
         Logger::Instance()->LogDebug("FrameBuffer Completed Succesfully!");
+#endif
         Unbind();
         return true;
     }

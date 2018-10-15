@@ -61,7 +61,11 @@ enum ATOM_API BufferAttribute {
     NORMAL,         /*!< Specifies Normals as Attribute 1. */
     UV,             /*!< Specifies Texture Coords as Attribute 2. */
     TANGENT,        /*!< Specifies Tangents as Attribute 3. */
-    BITANGENT       /*!< Specifies Bitangents as Attribute 4. */
+    BITANGENT,      /*!< Specifies Bitangents as Attribute 4. */
+    INSTANCE_MAT_1, /*!< Specifies Instance Matrix as Attribute 5. */
+    INSTANCE_MAT_2, /*!< And 6. */
+    INSTANCE_MAT_3, /*!< And 7. */
+    INSTANCE_MAT_4  /*!< And 8. */
 };
 
 /*!
@@ -138,6 +142,8 @@ public:
         * \param offset How far from the beginning is this data inside the vertex in bytes.
     */
     void AddAttributePointer(unsigned int locationID, int size, VariableType type, int stride, int offset = 0);
+
+    void AddAtributeDivisor(BufferAttribute attribute, int passes);
 
     /*!
     * \brief Enables attribute pointers inside the GPU.

@@ -85,6 +85,20 @@ void Mesh::Render()
     }
 }
 
+void Mesh::Render(int instanceCount)
+{
+    for (auto subMesh : m_subMeshList) {
+        if (subMesh->m_drawCount > 0) {
+            subMesh->Render(instanceCount);
+        }
+    }
+}
+
+std::vector<SubMesh*> Mesh::GetSubMeshList()
+{
+    return m_subMeshList;
+}
+
 SubMesh::SubMesh() :
     m_drawCount(0)
 {
@@ -106,4 +120,16 @@ void SubMesh::Render()
     m_vertexArray.Bind();
     glDrawElements(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0);
     m_vertexArray.Unbind();
+}
+
+void SubMesh::Render(int instanceCount)
+{
+    m_vertexArray.Bind();
+    glDrawElementsInstanced(GL_TRIANGLES, m_drawCount, GL_UNSIGNED_INT, 0, instanceCount);
+    m_vertexArray.Unbind();
+}
+
+Buffer* SubMesh::GetVAO()
+{
+    return &m_vertexArray;
 }
