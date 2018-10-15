@@ -33,10 +33,6 @@ LoadState::~LoadState()
 {
 }
 
-struct MatriceBuffer {
-    glm::mat4 projection;
-    glm::mat4 view;
-};
 
 bool LoadState::Initialize()
 {
