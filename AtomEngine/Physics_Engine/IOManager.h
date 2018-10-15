@@ -1,3 +1,10 @@
+/*!
+    * \class IOManager "IOManager.h"
+    * \brief Manager for handing all input output operation , such as serialization
+    * 
+    * This class will handle all the serialization for the game engine. Can output data to different formats.
+    * Not to be used for basic file reading.
+*/
 #pragma once
 
 #ifdef BUILDING_DLL
@@ -11,6 +18,7 @@
 
 #include <string>
 #include <fstream>
+#include <CEREAL/cereal.hpp>
 
 class ATOM_API IOManager : public AlignedAllocation<BYTE16>
 {
@@ -23,10 +31,13 @@ public:
     template<class Archive, class T>
     void Serialize(T& t);
 
+    template<class Archive, class T>
+    void Serialize(T& t, const std::string& name);
+
 private:
 
     IOManager() {};
-    IOManager(const IOManager&);
+    IOManager(const IOManager&) {};
     ~IOManager() {};
 
     std::fstream m_fileStream;
@@ -41,6 +52,13 @@ inline void IOManager::Serialize(T& t)
 {
     Archive archive(m_fileStream);
     archive(t);
+}
+
+template <class Archive, class T>
+inline void IOManager::Serialize(T& t, const std::string& name)
+{
+    Archive archive(m_fileStream);
+    archive(cereal::make_nvp(name, t));
 }
 
 

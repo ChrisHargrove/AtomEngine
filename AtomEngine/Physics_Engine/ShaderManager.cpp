@@ -23,7 +23,9 @@ bool ShaderManager::AddShader(const std::string & name, const std::string & file
     else {
         Shader* newShader = new Shader(fileName);
         m_shaderList.emplace(std::make_pair(name, newShader));
+#ifdef DEBUG
         Logger::Instance()->LogDebug("Shader: " + name + " Added successfully!");
+#endif
     }
     return true;
 }

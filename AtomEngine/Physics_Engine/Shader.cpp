@@ -33,7 +33,9 @@ Shader::Shader(const std::string & fileName)
         Logger::Instance()->LogError(fileName + ": Shader Files Not Successfully Read!");
         return;
     }
+#ifdef DEBUG
     Logger::Instance()->LogDebug(fileName + ": Shader Files Read Successfully!");
+#endif
 
     const char* vShaderCode = vertexCode.c_str();
     const char* fShaderCode = fragmentCode.c_str();
@@ -46,7 +48,9 @@ Shader::Shader(const std::string & fileName)
     glCompileShader(vertex);
     //check for problems
     if (!HasCompileErrors(vertex, "VERTEX")) {
+#ifdef DEBUG
         Logger::Instance()->LogDebug("Vertex Shader Compiled OK.");
+#endif
     }
 
     //fragment shader
@@ -55,7 +59,9 @@ Shader::Shader(const std::string & fileName)
     glCompileShader(fragment);
     //check for problems
     if (!HasCompileErrors(fragment, "FRAGMENT")) {
+#ifdef DEBUG
         Logger::Instance()->LogDebug("Fragment Shader Compiled OK.");
+#endif
     }
 
     //shader program
@@ -65,7 +71,9 @@ Shader::Shader(const std::string & fileName)
     glLinkProgram(m_ID);
     //check for problems
     if (!HasCompileErrors(m_ID, "PROGRAM")) {
+#ifdef DEBUG
         Logger::Instance()->LogDebug("Shader Program Linked Successfully.");
+#endif
     }
 
     //delete the shaders as they are no longer needed after linking.

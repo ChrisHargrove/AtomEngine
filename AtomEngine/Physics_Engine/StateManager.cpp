@@ -51,7 +51,9 @@ bool StateManager::Shutdown()
     }
     m_stateList.clear();
 
+#ifdef DEBUG
     Logger::Instance()->LogDebug("State Machine Shutdown Successfull! StateManager.cpp - Line 54.");
+#endif
     return true;
 }
 
@@ -81,7 +83,9 @@ bool StateManager::ChangeState(const std::string & stateName)
             }
         }
     }
+#ifdef DEBUG
     Logger::Instance()->LogDebug(stateName + "Change successfull!");
+#endif
     return true;
 }
 
@@ -120,7 +124,9 @@ bool StateManager::PushState(const std::string & stateName, bool search)
             return false;
         }
     }
+#ifdef DEBUG
     Logger::Instance()->LogDebug(stateName + "Push Successfull!");
+#endif
     return true;
 }
 

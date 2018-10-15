@@ -87,7 +87,7 @@ public:
 
 
 protected:
-    std::string m_name;
+    std::string m_name;                 /*!< A string containing the name of the Component. Used to identify component during serialization.*/
     std::weak_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
 
 private:

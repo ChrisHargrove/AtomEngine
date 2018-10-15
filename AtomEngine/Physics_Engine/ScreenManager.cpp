@@ -6,7 +6,9 @@ bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
 {
     m_size = size;
     
+#ifdef DEBUG
     Logger::Instance()->LogDebug("Initializing ScreenManager...");
+#endif
 
     //Attempt to initialize all of SDL.
     if (SDL_Init(SDL_INIT_EVERYTHING) == -1) {
@@ -38,12 +40,16 @@ bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
     if (core) {
         //Set OpenGL Core mode.
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#ifdef DEBUG
         Logger::Instance()->LogDebug("OpenGL Set to Core Profile");
+#endif
     }
     else {
         //Set OpenGL Comapatability mode.
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+#ifdef DEBUG
         Logger::Instance()->LogDebug("OpenGL Set to Compatability Profile");
+#endif
     }
 
 
@@ -54,8 +60,10 @@ bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
         Logger::Instance()->LogError("SDL_CreateWindow() Failed: " + temp);
         return false;
     }
+#ifdef DEBUG
     Logger::Instance()->LogDebug("Window Created: " + std::to_string(m_size.x) + "x" + std::to_string(m_size.y));
-
+#endif
+    
     //Create OpenGL Context
     m_context = SDL_GL_CreateContext(m_window);
     if (m_context == NULL) {
@@ -112,7 +120,9 @@ bool ScreenManager::EnableVSync(bool enable)
 
 void ScreenManager::Close()
 {
+#ifdef DEBUG
     Logger::Instance()->LogDebug("Closing ScreenManager...");
+#endif
     SDL_GL_DeleteContext(m_context);	// Free memory to the context
     SDL_DestroyWindow(m_window);		// Free memory to the window
     SDL_Quit();						// Close all SDL subsystems
@@ -167,13 +177,17 @@ bool ScreenManager::CaptureMouse(bool capture)
 {
     if (capture) {
         if (SDL_SetRelativeMouseMode(SDL_TRUE) != -1) {
+#ifdef DEBUG
             Logger::Instance()->LogDebug("Grabbing Mouse and hiding Cursor...");
+#endif
             return true;
         }
     }
     else {
         if (SDL_SetRelativeMouseMode(SDL_FALSE) != -1) {
+#ifdef DEBUG
             Logger::Instance()->LogDebug("Releasing Mouse and showing Cursor...");
+#endif
             return true;
         }
     }
