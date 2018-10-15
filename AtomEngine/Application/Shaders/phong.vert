@@ -15,7 +15,13 @@ uniform mat4 model;
 
 void main()
 {
+    mat4 mvp = projection * view * model;
+    mat3 normalMatrix = mat3(model);
+    normalMatrix = inverse(normalMatrix);
+    normalMatrix = transpose(normalMatrix);
+    normalMatrix = normalMatrix;
+
     fPos = vec3(model * vec4(aPos, 1.0f));
-    fNormal = mat3(transpose(inverse(model))) *aNormal;
-    gl_Position = projection * view * model * vec4(fPos, 1.0f);
+    fNormal = normalize(normalMatrix * aNormal);
+    gl_Position = mvp * vec4(aPos, 1.0f);
 }
