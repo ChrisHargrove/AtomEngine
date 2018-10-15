@@ -25,6 +25,9 @@
     <Filter Include="Header Files\Behaviours">
       <UniqueIdentifier>{d6c7bed3-62c3-4244-946f-7b9718876ea3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Behaviours">
+      <UniqueIdentifier>{03b57bd2-8de4-4a1b-94a1-d86ef67eb142}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -34,7 +37,7 @@
       <Filter>Source Files\Game States</Filter>
     </ClCompile>
     <ClCompile Include="CameraControls.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Behaviours</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,7 +45,7 @@
       <Filter>Header Files\Game States</Filter>
     </ClInclude>
     <ClInclude Include="CameraControls.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +71,18 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\postProcessing.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\skybox.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\skybox.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phongInstance.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\phongInstance.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

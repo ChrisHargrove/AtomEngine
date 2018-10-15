@@ -24,6 +24,8 @@ template<size_t Alignment>
 class ATOM_API AlignedAllocation
 {
 public:
+    virtual ~AlignedAllocation() = default;
+
     /*!
         * \brief Overloaded new operator to allow for alignment to that specified.
         *
