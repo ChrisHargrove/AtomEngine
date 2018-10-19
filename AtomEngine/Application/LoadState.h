@@ -2,18 +2,11 @@
 
 #include "State.h"
 
-#include "GameObject.h"
-#include <vector>
-#include <GLM/glm.hpp>
-
 #include "Buffer.h"
-#include "Camera.h"
 #include "Quad.h"
 
-#include <memory>
-
-#include "Skybox.h"
-
+#include "Scene.h"
+#include <memory>   
 
 class LoadState : public State
 {
@@ -31,17 +24,12 @@ public:
     virtual void Resume() override;
     virtual bool IsPaused() override;
 
-    std::vector<std::shared_ptr<GameObject>> m_gameObjectList;
+    Quad* m_screenFrame;
 
-    std::shared_ptr<Camera> m_mainCamera;
+    FrameBuffer m_frameBuffer;
+    bool m_wireFrame = false;
 
-    glm::vec3 rotation;
-
-    Quad* screenFrame;
-
-    Skybox* m_skybox;
-    bool _wireframe = false;
-
-    UniformBuffer testUni;
+    std::shared_ptr<Scene> m_scene;
+    std::vector<GameObject*> m_gameObjects;
 };
 

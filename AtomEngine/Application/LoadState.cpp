@@ -11,19 +11,19 @@
 #include "ScreenManager.h"
 #include "IOManager.h"
 
-#include "Cuboid.h"
 #include "Mesh.h"
 #include "Buffer.h"
-#include "Utilities.h"
 #include "Kernel.h"
 
-#include <CEREAL/cereal.hpp>
+#include <CEREAL/types/vector.hpp>
 
 #include "SerialRegister.h"
 #include "SerialExtensions.h"
+#include "IMGUI/imgui.h"
 
 
-LoadState::LoadState()
+LoadState::LoadState(): 
+m_screenFrame(nullptr)
 {
     JobSystem::Instance();
 }
@@ -31,7 +31,9 @@ LoadState::LoadState()
 
 LoadState::~LoadState()
 {
+    m_scene.reset();
 }
+
 
 
 bool LoadState::Initialize()
@@ -47,82 +49,66 @@ bool LoadState::Initialize()
 
     Shaders::Instance()->AddShader("PHONG", "phong");
     Shaders::Instance()->AddShader("BASIC", "basic");
-    Shaders::Instance()->AddShader("FRAMETEST", "postProcessing");
+    Shaders::Instance()->AddShader("INSTANCE", "phongInstance");
     Shaders::Instance()->AddShader("SKYBOX", "skybox");
+    Shaders::Instance()->AddShader("POST", "postProcessing");
 
-    std::shared_ptr<GameObject> camera = std::make_shared<GameObject>();
-    m_mainCamera = std::make_shared<Camera>();
-    camera->AddComponent<Transform>();
-    camera->AddComponent(m_mainCamera);
-    camera->AddComponent<CameraControls>();
+    IO::Instance()->Open("GameScene.xml", std::ios::in);
+    IO::Instance()->Serialize<cereal::XMLInputArchive>(m_scene);
+    IO::Instance()->Close();
 
-
-    //LOADING MODELS IS SUCCESSFUL
-    std::shared_ptr<GameObject> meshTest = std::make_shared<GameObject>();
-    meshTest->AddComponent<Transform>();
-    std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-    mesh->SetMesh("Assets/Models/cactus_one.obj");
-    meshTest->AddComponent(mesh);
-
-    //TESTING QUAD
-    screenFrame = new Quad(true);
-
-    GameObjectList.push_back(camera);
-    GameObjectList.push_back(meshTest);
-
-    for (auto obj : GameObjectList) {
-        obj->Initialize();
+    if(m_scene == nullptr)
+    {
+        m_scene = std::make_shared<Scene>();
     }
 
-    rotation = glm::vec3(0, 0, 0);
+    //std::shared_ptr<GameObject> camera = std::make_shared<GameObject>();
+    //m_mainCamera = std::make_shared<Camera>();
+    //camera->AddComponent<Transform>();
+    //camera->AddComponent(m_mainCamera);
+    //camera->AddComponent<CameraControls>();
 
-    camera->GetComponent<Transform>()->SetPosition(glm::vec3(0, 0, -4));
 
-    frameBuffer.Create(Screen::Instance()->GetSize());
-    frameBuffer.AddAttachment(TEXTURE);
-    frameBuffer.AddRenderBuffer(DEPTH_STENCIL);
-    if (!frameBuffer.IsFrameBufferComplete()) {
+    ////LOADING MODELS IS SUCCESSFUL
+    //std::shared_ptr<GameObject> meshTest = std::make_shared<GameObject>();
+    //meshTest->AddComponent<Transform>();
+    //std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+    //mesh->SetMesh("Assets/Models/sphere.obj");
+    //meshTest->AddComponent(mesh);
+
+    //TESTING QUAD
+    m_screenFrame = new Quad(true);
+
+    m_frameBuffer.Create(Screen::Instance()->GetSize());
+    m_frameBuffer.AddAttachment(TEXTURE);
+    m_frameBuffer.AddRenderBuffer(DEPTH_STENCIL);
+    if (!m_frameBuffer.IsFrameBufferComplete()) {
         return false;
     }
 
     Screen::Instance()->Enable3D();
 
-    MatriceBuffer testBuffer = { Screen::Instance()->GetProjection(), m_mainCamera->GetViewMatrix() };
+    /*IO::Instance()->Open("cereal.test.xml", std::ios::in);
+    IO::Instance()->Serialize<cereal::XMLInputArchive>(m_gameObjectList);
+    IO::Instance()->Close();*/
 
-    Shaders::Instance()->GetShader("PHONG")->BindUniformBuffer("Matrices", UniformBufferBinding::MATRICES);
-    Shaders::Instance()->GetShader("FRAMETEST")->SetKernel(Kernel::Identity);
+    Shaders::Instance()->GetShader("POST")->SetKernel(Kernel::Identity);
     
-    testUni.Create(sizeof(testBuffer));
-    testUni.BindBuffer(UniformBufferBinding::MATRICES);
-    testUni.SetSubData(&MatriceBuffer::projection, &testBuffer.projection);
-    testUni.SetSubData(&MatriceBuffer::view, &testBuffer.view);
+    /*IO::Instance()->Open("cereal.test.xml", std::ios::out);
+    IO::Instance()->Serialize<cereal::XMLOutputArchive>(m_gameObjectList);
+    IO::Instance()->Close();*/
 
-    //Screen::Instance()->CaptureMouse();
+    m_scene->Initialize();
 
-    //{
-    //    std::ofstream output;
-    //    output.open("cereal.test.xml");
-    //    cereal::XMLOutputArchive archive(output);
+    m_gameObjects = m_scene->GetGameObjects();
+    for(auto& obj : m_gameObjects)
+    {
+        if(obj->GetComponent<Camera>() != nullptr)
+        {
+            obj->AddComponent<CameraControls>();
+        }
+    }
 
-    //    //TODO: Test if serializign individual objects works better!!! bugs when using the whole
-    //    //vector currrently :/
-    //    //28/9/18
-
-    //    for (int i = 0; i < GameObjectList.size(); i++) {
-    //        archive(CEREAL_NVP(GameObjectList[i]));
-    //    }
-    //}
-
-    IO::Instance()->Open("cereal.test.xml", std::ios::out);
-    IO::Instance()->Serialize<cereal::XMLOutputArchive>(GameObjectList[0]);
-    IO::Instance()->Close();
-
-    std::shared_ptr<GameObject> test = std::make_shared<GameObject>();
-
-    IO::Instance()->Open("cereal.test.xml", std::ios::in);
-    IO::Instance()->Serialize<cereal::XMLInputArchive>(test);
-    IO::Instance()->Close();
-       
     return true;
 }
 
@@ -140,18 +126,14 @@ void LoadState::Input()
 
 void LoadState::Update(float delta)
 {
-    for (auto obj : GameObjectList) {
+    for (auto& obj : m_gameObjects) {
         obj->Update(delta);
-
     }
-    m_rotation.y += delta;
 }
 
 void LoadState::Render()
 {
-    glm::mat4 view = m_gameObjectList.front()->GetComponent<Camera>()->GetViewMatrix();
-   // m_testUni.SetSubData(&MatriceBuffer::m_view, &view);
-    testUni.SetSubData(&MatriceBuffer::view, &view);
+    glm::mat4 view = m_scene->GetMainCamera()->GetViewMatrix();
 
     m_frameBuffer.Bind();
     Screen::Instance()->CreateViewport();
@@ -162,51 +144,51 @@ void LoadState::Render()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    Shaders::Instance()->UseShader("PHONG");
+    Shaders::Instance()->UseShader("INSTANCE");
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
-    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_gameObjectList.front()->GetComponent<Transform>()->GetPosition());
+    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetMainCamera()->GetComponent<Transform>()->GetPosition());
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
-    for (const std::shared_ptr<GameObject>& obj : m_gameObjectList) {
+    /*for (const std::shared_ptr<GameObject>& obj : m_gameObjects) {
         auto mesh = obj.get()->GetComponent<Mesh>();
         if (mesh != nullptr) {
             Shaders::Instance()->GetCurrentShader()->SetMat4("model", mesh->GetComponent<Transform>()->GetTransform());
             mesh->GetComponent<Transform>()->Rotate(glm::vec3(1 * 0.01f, 0, 0));
             mesh->Render();
         }
-    }
+    }*/
+
+    m_scene->Render();
 
     if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-
-    Shaders::Instance()->UseShader("SKYBOX");
-    Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
-    m_skybox->Render();
 
     m_frameBuffer.Unbind();
     Screen::Instance()->CreateViewport();
     Screen::Instance()->EnableDepthTesting(false);
     Screen::Instance()->Clear(ClearBits::COLOR);
 
-    Shaders::Instance()->UseShader("FRAMETEST");
-    Shaders::Instance()->GetShader("FRAMETEST")->SetInt("myTexture", 0);
+    Shaders::Instance()->UseShader("POST");
+    Shaders::Instance()->GetShader("POST")->SetInt("myTexture", 0);
 
     glActiveTexture(GL_TEXTURE0);
     m_frameBuffer.BindTexture(0);
     m_screenFrame->Render();
     m_frameBuffer.BindTexture();
+
+    ImGui::ShowDemoWindow();
 }
 
 bool LoadState::Shutdown()
 {
-    for (auto& obj : m_gameObjectList) {
+    /*for (auto& obj : m_gameObjectList) {
         auto temp = obj.get();
         GameObject::Destroy(obj);
     }
-    m_gameObjectList.clear();
+    m_gameObjectList.clear();*/
     return true;
 }
 
