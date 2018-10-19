@@ -5,6 +5,8 @@
 #include <sstream>
 #include <GLEW/glew.h>
 
+//TODO: Need to add error handling for if the shader doesn't exist, as it gives wrong ID and throws error!
+
 Shader::Shader(const std::string & fileName)
 {
     std::string vertexCode;
