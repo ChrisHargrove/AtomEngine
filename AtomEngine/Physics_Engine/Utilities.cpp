@@ -3,6 +3,8 @@
 namespace StringUtils {
     std::string SplitEnd(std::string string, const std::string & delimeter, bool include)
     {
+        //TODO: Handle errors for when delimeter is not found!!
+
         unsigned int position = 0;
         //Get the position of the first character after the delimeter.
         position = string.find(delimeter);
