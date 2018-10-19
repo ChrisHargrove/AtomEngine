@@ -50,15 +50,19 @@ typedef Singleton<IOManager> IO;
 template<class Archive, class T>
 inline void IOManager::Serialize(T& t)
 {
-    Archive archive(m_fileStream);
-    archive(t);
+    if(m_fileStream.is_open()) {
+        Archive archive(m_fileStream);
+        archive(t);
+    }
 }
 
 template <class Archive, class T>
 inline void IOManager::Serialize(T& t, const std::string& name)
 {
-    Archive archive(m_fileStream);
-    archive(cereal::make_nvp(name, t));
+    if(m_fileStream.is_open()) {
+        Archive archive(m_fileStream);
+        archive(cereal::make_nvp(name, t));
+    }
 }
 
 
