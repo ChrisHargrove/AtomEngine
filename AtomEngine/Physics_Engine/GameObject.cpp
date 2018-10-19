@@ -2,7 +2,8 @@
 #include "Component.h"
 #include "Transform.h"
 
-GameObject::GameObject()
+GameObject::GameObject() : 
+m_hasInitialized(false)
 {
 }
 
@@ -36,6 +37,7 @@ void GameObject::Initialize()
     for (auto child : m_childObjects) {
         child->Initialize();
     }
+    m_hasInitialized = true;
 }
 
 GameObject * GameObject::GetParent()

@@ -1,9 +1,13 @@
 #include "CameraControls.h"
-#include "Transform.h"
 #include "SDL/SDL.h"
 
 #include "InputManager.h"
 #include "ScreenManager.h"
+
+#include "Camera.h"
+#include "LogManager.h"
+
+#include <GLM/gtx/vector_angle.hpp>
 
 CameraControls::CameraControls()
 {
@@ -22,29 +26,44 @@ void CameraControls::Initialize()
 
 void CameraControls::Update(float deltaTime)
 {
-    auto transform = (Transform*)_transform;
+    auto camera = GetComponent<Camera>();
 
     if (Input::Instance()->IsKeyHeld(SDLK_w)) {
-        transform->Translate(transform->GetForward());
+        _transform->Translate(_transform->GetForward());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_s)) {
-        transform->Translate(-transform->GetForward());
+        _transform->Translate(-_transform->GetForward());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_a)) {
-        transform->Translate(transform->GetRight());
+        _transform->Translate(_transform->GetRight());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_d)) {
-        transform->Translate(-transform->GetRight());
+        _transform->Translate(-_transform->GetRight());
     }
     if (Input::Instance()->IsKeyHeld(SDLK_SPACE)) {
-        transform->Translate(glm::vec3(0, 1, 0));
+        _transform->Translate(glm::vec3(0, 1, 0));
     }
     if (Input::Instance()->IsKeyHeld(SDLK_LSHIFT)) {
-        transform->Translate(-glm::vec3(0, 1, 0));
+        _transform->Translate(-glm::vec3(0, 1, 0));
     }
     if (Input::Instance()->HasMouseMoved() && _mouseCaptured) {
+
         glm::vec2 rot = glm::vec2(Input::Instance()->GetMouseMove().m_relativeX * deltaTime, Input::Instance()->GetMouseMove().m_relativeY * deltaTime);
-        transform->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
+        _transform->Rotate(glm::vec3(rot.x, -rot.y, 0.0));
+
+        if(camera->IsPitchConstrained()) {
+            auto front = glm::cross(_transform->GetRight(), glm::vec3(0, 1, 0));
+            auto pitch = glm::degrees(glm::angle(front, _transform->GetForward()));
+
+            if(pitch > 85.0f)
+            {
+                _transform->Rotate(glm::vec3(0, rot.y, 0));
+            }
+            else if( pitch < -85.0f)
+            {
+                _transform->Rotate(glm::vec3(0, rot.y, 0));
+            }
+                    }
     }
     if (Input::Instance()->IsKeyPressed(SDLK_LALT)) {
         _mouseCaptured = !_mouseCaptured;

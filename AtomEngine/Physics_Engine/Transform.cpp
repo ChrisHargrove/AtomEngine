@@ -43,6 +43,11 @@ void Transform::SetRotation(glm::vec3 rotation)
     m_rotation = rotation;
 }
 
+void Transform::SetRotation(glm::quat rotation)
+{
+    m_rotation = rotation;
+}
+
 void Transform::SetScale(glm::vec3 scale)
 {
     m_scale = scale;

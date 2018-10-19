@@ -61,10 +61,7 @@ public:
     */
     void SetTarget(glm::vec3 target);
 
-    
-
-private:
-    friend class cereal::access;
+    bool IsPitchConstrained();
 
     /*!
         * \brief Virtual Update function that is called each frame.
@@ -72,14 +69,17 @@ private:
         *
         * This function is where the component behaviour is applied.
     */
-    virtual void Update(float deltaTime) override;
+    void Update(float deltaTime) override;
 
     /*!
         * \brief Virtual Initialize function that is only called once.
         *
         * This function is where the initial setup for this component is set.
     */
-    virtual void Initialize() override;
+    void Initialize() override;
+
+private:
+    friend class cereal::access;
 
     float m_zoom;               /*!< The zoom value of the camera. */
     bool m_isPitchConstrained;  /*!< Should the camera pitch be contrained. */

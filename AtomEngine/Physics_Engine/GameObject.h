@@ -164,6 +164,8 @@ protected:
 
 private:
 
+    bool m_hasInitialized; /*!< Whether the game object has already been initialized or not. */
+
     friend class cereal::access; // Allows for private serialization methods //
 
     /*!
@@ -206,6 +208,11 @@ inline void GameObject::AddComponent()
     std::shared_ptr<T> component = std::make_shared<T>();
     component->SetParent(shared_from_this());
     m_componentList.push_back(component);
+
+    if(m_hasInitialized)
+    {
+        component->Initialize();
+    }
 }
 
 template<class T>

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Transform.h"
 
 class CameraControls : public Component
 {
@@ -16,7 +17,7 @@ public:
     }
 
 private:
-    Component* _transform;
+    Transform* _transform;
     bool _mouseCaptured;
 };
 

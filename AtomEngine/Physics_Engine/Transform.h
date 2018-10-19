@@ -41,6 +41,15 @@ public:
     void SetRotation(glm::vec3 rotation);
 
     /*!
+        * \brief Sets the rotation for this component.
+        * \param rotation A 4 component quaternion to set rotation.
+        *
+        * Will set the rotation for the component using a quaternion. The parent GameObject
+        * can retrieve this rotational data.
+    */
+    void SetRotation(glm::quat rotation);
+
+    /*!
         * \brief Sets the scale for this component.
         * \param scale A 3 component vector to set the scale.
         *
@@ -116,26 +125,24 @@ public:
     */
     void Scale(glm::vec3 scale);
 
-    
-
-private:
-
-    friend class cereal::access;
-
     /*!
         * \brief Virtual Update function that is called each frame.
         * \param deltaTime The time passed since last frame.
         *
         * This function is where the component behaviour is applied.
     */
-    virtual void Update(float deltaTime) override;
+    void Update(float deltaTime) override;
 
     /*!
         * \brief Virtual Initialize function that is only called once.
         *
         * This function is where the initial setup for this component is set.
     */
-    virtual void Initialize() override;
+    void Initialize() override;
+
+private:
+
+    friend class cereal::access;
 
     /*!
         * \brief Calculates the transformation matrix.

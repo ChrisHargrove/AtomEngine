@@ -109,22 +109,23 @@ public:
         archive(cereal::make_nvp("MeshName", m_meshName));
     }
 
-
-private:
     /*!
         * \brief A virtual Update function that is called every frame.
         * \param deltaTime The time passed since the last frame.
         *
         * This function is where the component behaviour is applied.
     */
-    virtual void Update(float deltaTime) override;
+    void Update(float deltaTime) override;
 
     /*!
         * \brief A virtual Initialize function that is only called once.
         *
         * This function is where the initial setup for this component is set.
     */
-    virtual void Initialize() override;
+    void Initialize() override;
+
+private:
+    
 
     std::string m_meshName;                 /*!< The name of the overall Mesh. */
     std::vector<SubMesh*> m_subMeshList;    /*!< The list of sub-mesh's. */

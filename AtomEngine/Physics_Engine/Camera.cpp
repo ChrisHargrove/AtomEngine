@@ -35,7 +35,7 @@ glm::mat4 Camera::GetViewMatrix()
 {
     if (_transform == nullptr) return glm::mat4();
 
-    Transform* transform = (Transform*)_transform;
+    Transform* transform = static_cast<Transform*>(_transform);
 
     m_viewMatrix = glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->GetForward(), transform->GetUp());
     return m_viewMatrix;
@@ -44,7 +44,7 @@ glm::mat4 Camera::GetViewMatrix()
 glm::mat4 Camera::GetOrthoMatrix()
 {
     if (_transform == nullptr) return glm::mat4();
-    Transform* transform = (Transform*)_transform;
+    Transform* transform = static_cast<Transform*>(_transform);
 
     return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform->GetUp());
 }
@@ -57,5 +57,10 @@ void Camera::EnablePitchConstraint(bool enable)
 void Camera::SetTarget(glm::vec3 target)
 {
     m_target = target;
+}
+
+bool Camera::IsPitchConstrained()
+{
+    return m_isPitchConstrained;;
 }
 
