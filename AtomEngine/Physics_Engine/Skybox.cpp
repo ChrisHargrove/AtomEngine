@@ -3,7 +3,9 @@
 #include "ShaderManager.h"
 
 Skybox::Skybox() :
-m_texture(nullptr)
+m_cubemapName(""),
+m_texture(nullptr),
+m_drawCount(0)
 {
 }
 
@@ -98,4 +100,9 @@ void Skybox::Render()
 
     glDepthFunc(GL_LESS);
 
+}
+
+std::string Skybox::GetName()
+{
+    return m_cubemapName;
 }
