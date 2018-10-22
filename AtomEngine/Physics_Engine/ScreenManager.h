@@ -127,6 +127,12 @@ public:
     SDL_Window* GetWindow();
 
     /*!
+        * \brief Gets a pointer to the SDL GL Context.
+        * \return Pointer to the SDL GL Context structure.
+    */
+    SDL_GLContext* GetContext();
+
+    /*!
         * \brief Gets the size of the window.
         * \return The size of the window as a 2 component vector.
     */

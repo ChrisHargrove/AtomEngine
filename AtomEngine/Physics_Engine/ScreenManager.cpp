@@ -2,6 +2,8 @@
 #include "LogManager.h"
 #include "GLM/gtc/matrix_transform.hpp"
 
+
+
 bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
 {
     m_size = size;
@@ -166,6 +168,11 @@ void ScreenManager::SetVersion(unsigned int major, unsigned int minor)
 SDL_Window * ScreenManager::GetWindow()
 {
     return m_window;
+}
+
+SDL_GLContext* ScreenManager::GetContext()
+{
+    return &m_context;
 }
 
 glm::vec2& ScreenManager::GetSize()

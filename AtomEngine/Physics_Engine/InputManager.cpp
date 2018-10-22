@@ -1,12 +1,16 @@
 #include "InputManager.h"
 #include "ScreenManager.h"
 #include "LogManager.h"
+#include "GUIManager.h"
 #include <SDL/SDL.h>
+
 
 void InputManager::Update()
 {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
+        GUI::Instance()->ProcessInput(&e);
+
         switch (e.type) {
         case SDL_KEYDOWN:
             AddKeyboardEvent(e.key.keysym.sym, e.key.state, e.key.keysym.mod);

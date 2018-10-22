@@ -3,9 +3,9 @@
 #include "StateManager.h"
 #include "InputManager.h"
 #include "ScreenManager.h"
+#include "GUIManager.h"
 
 #include "Timing.h"
-
 
 Engine::Engine()
 {
@@ -25,6 +25,9 @@ bool Engine::Initialize(float width, float height, const std::string & title, co
         return false;
     }
     Screen::Instance()->InitializeProjection();
+
+    GUI::Instance()->Initialize();
+
     return false;
 }
 
@@ -49,7 +52,11 @@ void Engine::Render()
 {
     Screen::Instance()->Clear();
 
+    GUI::Instance()->StartFrame();
+
     StateMachine::Instance()->Render();
+
+    GUI::Instance()->Render();
 
     Screen::Instance()->Swap();
 }
@@ -79,7 +86,10 @@ bool Engine::Shutdown()
         Logger::Instance()->LogError("Game Engine Shutdown Failed!...");
         return false;
     }
+
+    GUI::Instance()->Shutdown();
+
     Screen::Instance()->Close();
     Logger::Instance()->Shutdown();
-    return false;
+    return true;
 }

@@ -19,6 +19,7 @@
 #include <string>
 #include <fstream>
 #include <CEREAL/cereal.hpp>
+#include <CEREAL/types/vector.hpp>
 
 class ATOM_API IOManager : public AlignedAllocation<BYTE16>
 {

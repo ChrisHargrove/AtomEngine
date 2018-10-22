@@ -52,9 +52,6 @@
     <Filter Include="Header Files\Engine\Graphics\Managers">
       <UniqueIdentifier>{029c2d60-d956-4995-b1f2-ab8789e03339}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IMGUI">
-      <UniqueIdentifier>{5a886879-30cc-4b58-a07e-8632cbe7ab49}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\Core\Memory">
       <UniqueIdentifier>{d22adcb7-617d-43c8-b038-9a19cc66fe06}</UniqueIdentifier>
     </Filter>
@@ -118,6 +115,18 @@
     <Filter Include="Source Files\Engine\ECS\Components">
       <UniqueIdentifier>{b545c0f0-6092-463a-8ec0-72f6e0376ea8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\GUI">
+      <UniqueIdentifier>{8f5f96a8-17d4-49c1-b1e1-110b85978e51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\GUI\IMGUI">
+      <UniqueIdentifier>{6e7f28a5-8fb1-468d-adde-76a20678911b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\GUI">
+      <UniqueIdentifier>{c41d2806-be95-4149-a2c3-cc1b1914701e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\GUI\IMGUI">
+      <UniqueIdentifier>{0ecb4d97-e4ac-40c6-8ea6-c1ad619b562a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogManager.cpp">
@@ -146,15 +155,6 @@
     </ClCompile>
     <ClCompile Include="Engine.cpp">
       <Filter>Source Files\Engine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui.cpp">
-      <Filter>IMGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_demo.cpp">
-      <Filter>IMGUI</Filter>
-    </ClCompile>
-    <ClCompile Include="IMGUI\imgui_draw.cpp">
-      <Filter>IMGUI</Filter>
     </ClCompile>
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Engine\Core\Memory</Filter>
@@ -216,6 +216,27 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IMGUI\imgui.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_demo.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_draw.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_impl_opengl3.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_impl_sdl.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUI\imgui_widgets.cpp">
+      <Filter>Source Files\Engine\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUIManager.cpp">
+      <Filter>Source Files\Engine\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogManager.h">
@@ -250,24 +271,6 @@
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>Header Files\Engine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imconfig.h">
-      <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui.h">
-      <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\imgui_internal.h">
-      <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\stb_rect_pack.h">
-      <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\stb_textedit.h">
-      <Filter>IMGUI</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUI\stb_truetype.h">
-      <Filter>IMGUI</Filter>
     </ClInclude>
     <ClInclude Include="ThreadPool.h">
       <Filter>Header Files\Engine\Core\Memory</Filter>
@@ -352,6 +355,33 @@
     </ClInclude>
     <ClInclude Include="UniformBufferTypes.h">
       <Filter>Header Files\Engine\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imconfig.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_impl_opengl3.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_impl_sdl.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imgui_internal.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_rectpack.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_textedit.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUI\imstb_truetype.h">
+      <Filter>Header Files\Engine\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUIManager.h">
+      <Filter>Header Files\Engine\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

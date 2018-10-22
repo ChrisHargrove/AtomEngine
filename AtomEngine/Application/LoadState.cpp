@@ -4,22 +4,17 @@
 #include "InputManager.h"
 
 #include "GameObject.h"
-#include "Camera.h"
-#include "CameraControls.h"
-#include "Transform.h"
 #include "ShaderManager.h"
 #include "ScreenManager.h"
 #include "IOManager.h"
 
-#include "Mesh.h"
 #include "Buffer.h"
 #include "Kernel.h"
-
-#include <CEREAL/types/vector.hpp>
 
 #include "SerialRegister.h"
 #include "SerialExtensions.h"
 #include "IMGUI/imgui.h"
+#include "CameraControls.h"
 
 
 LoadState::LoadState(): 
@@ -62,21 +57,6 @@ bool LoadState::Initialize()
         m_scene = std::make_shared<Scene>();
     }
 
-    //std::shared_ptr<GameObject> camera = std::make_shared<GameObject>();
-    //m_mainCamera = std::make_shared<Camera>();
-    //camera->AddComponent<Transform>();
-    //camera->AddComponent(m_mainCamera);
-    //camera->AddComponent<CameraControls>();
-
-
-    ////LOADING MODELS IS SUCCESSFUL
-    //std::shared_ptr<GameObject> meshTest = std::make_shared<GameObject>();
-    //meshTest->AddComponent<Transform>();
-    //std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
-    //mesh->SetMesh("Assets/Models/sphere.obj");
-    //meshTest->AddComponent(mesh);
-
-    //TESTING QUAD
     m_screenFrame = new Quad(true);
 
     m_frameBuffer.Create(Screen::Instance()->GetSize());
@@ -88,26 +68,13 @@ bool LoadState::Initialize()
 
     Screen::Instance()->Enable3D();
 
-    /*IO::Instance()->Open("cereal.test.xml", std::ios::in);
-    IO::Instance()->Serialize<cereal::XMLInputArchive>(m_gameObjectList);
-    IO::Instance()->Close();*/
-
     Shaders::Instance()->GetShader("POST")->SetKernel(Kernel::Identity);
-    
-    /*IO::Instance()->Open("cereal.test.xml", std::ios::out);
-    IO::Instance()->Serialize<cereal::XMLOutputArchive>(m_gameObjectList);
-    IO::Instance()->Close();*/
 
     m_scene->Initialize();
 
     m_gameObjects = m_scene->GetGameObjects();
-    for(auto& obj : m_gameObjects)
-    {
-        if(obj->GetComponent<Camera>() != nullptr)
-        {
-            obj->AddComponent<CameraControls>();
-        }
-    }
+
+    m_scene->GetMainCamera()->GetParent()->AddComponent<CameraControls>();
 
     return true;
 }
@@ -150,15 +117,6 @@ void LoadState::Render()
     Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetMainCamera()->GetComponent<Transform>()->GetPosition());
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
-
-    /*for (const std::shared_ptr<GameObject>& obj : m_gameObjects) {
-        auto mesh = obj.get()->GetComponent<Mesh>();
-        if (mesh != nullptr) {
-            Shaders::Instance()->GetCurrentShader()->SetMat4("model", mesh->GetComponent<Transform>()->GetTransform());
-            mesh->GetComponent<Transform>()->Rotate(glm::vec3(1 * 0.01f, 0, 0));
-            mesh->Render();
-        }
-    }*/
 
     m_scene->Render();
 
