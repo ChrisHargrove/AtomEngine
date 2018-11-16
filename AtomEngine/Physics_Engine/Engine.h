@@ -17,6 +17,7 @@
 #include "AlignedAllocation.h"
 
 #include <string>
+#include <functional>
 
 class ATOM_API Engine : public AlignedAllocation<BYTE16>
 {
@@ -70,6 +71,18 @@ public:
         * Calls the shutdown function of the StateMachine and closes the application gently.
     */
     bool Shutdown();
+
+    void SetGUIInitializeCallback(std::function<void()> callback);
+    void SetGUIStartFrameCallback(std::function<void()> callback);
+    void SetGUIRenderFrameCallback(std::function<void()> callback);
+    void SetGUIShutdownCallback(std::function<void()> callback);
+
+private:
+
+    std::function<void()> m_guiInitializeCallback;
+    std::function<void()> m_guiShutdownCallback;
+    std::function<void()> m_guiStartFrameCallback;
+    std::function<void()> m_guiRenderFrameCallback;
 
 };
 

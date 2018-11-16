@@ -17,6 +17,8 @@
 
 #include "Singleton.h"
 #include "AlignedAllocation.h"
+#include <functional>
+#include <SDL/SDL.h>
 
 /*!
     * \struct KeyEvent "InputManager.h"
@@ -304,7 +306,11 @@ public:
     */
     bool IsMouseCaptured();
 
+    void SetGUICallback(std::function<void(SDL_Event* evt)> callback);
+
 private:
+    std::function<void(SDL_Event* evt)> m_guiInputCallback;
+
     /*!
         * \brief Adds a keyboard event to be processed.
         * \param keyCode The keycode of the key being added.

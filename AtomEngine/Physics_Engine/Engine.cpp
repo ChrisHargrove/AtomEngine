@@ -3,7 +3,6 @@
 #include "StateManager.h"
 #include "InputManager.h"
 #include "ScreenManager.h"
-#include "GUIManager.h"
 
 #include "Timing.h"
 
@@ -26,7 +25,7 @@ bool Engine::Initialize(float width, float height, const std::string & title, co
     }
     Screen::Instance()->InitializeProjection();
 
-    GUI::Instance()->Initialize();
+    if (m_guiInitializeCallback != nullptr) m_guiInitializeCallback();
 
     return false;
 }
@@ -52,11 +51,11 @@ void Engine::Render()
 {
     Screen::Instance()->Clear();
 
-    GUI::Instance()->StartFrame();
+    if (m_guiStartFrameCallback != nullptr) m_guiStartFrameCallback();
 
     StateMachine::Instance()->Render();
 
-    GUI::Instance()->Render();
+    if(m_guiRenderFrameCallback != nullptr) m_guiRenderFrameCallback();
 
     Screen::Instance()->Swap();
 }
@@ -87,9 +86,29 @@ bool Engine::Shutdown()
         return false;
     }
 
-    GUI::Instance()->Shutdown();
+    if (m_guiShutdownCallback != nullptr) m_guiShutdownCallback();
 
     Screen::Instance()->Close();
     Logger::Instance()->Shutdown();
     return true;
+}
+
+void Engine::SetGUIInitializeCallback(std::function<void()> callback)
+{
+    m_guiInitializeCallback = callback;
+}
+
+void Engine::SetGUIShutdownCallback(std::function<void()> callback)
+{
+    m_guiShutdownCallback = callback;
+}
+
+void Engine::SetGUIStartFrameCallback(std::function<void()> callback)
+{
+    m_guiStartFrameCallback = callback;
+}
+
+void Engine::SetGUIRenderFrameCallback(std::function<void()> callback)
+{
+    m_guiRenderFrameCallback = callback;
 }

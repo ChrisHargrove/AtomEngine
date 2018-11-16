@@ -6,16 +6,15 @@
 #include "GameObject.h"
 #include "ShaderManager.h"
 #include "ScreenManager.h"
-#include "IOManager.h"
+//#include "IOManager.h"
 
 #include "Buffer.h"
 #include "Kernel.h"
 
-#include "SerialRegister.h"
-#include "SerialExtensions.h"
-#include "IMGUI/imgui.h"
+//#include "SerialRegister.h"
+//#include "SerialExtensions.h"
 #include "CameraControls.h"
-
+#include "GUIManager.h"
 
 LoadState::LoadState(): 
 m_screenFrame(nullptr)
@@ -34,6 +33,8 @@ LoadState::~LoadState()
 bool LoadState::Initialize()
 {
 
+    Input::Instance()->SetGUICallback([](SDL_Event* evt) {GUI::Instance()->ProcessInput(evt); });
+
    /*auto test = JobSystem::Instance()->AddJob([] {
         Logger::Instance()->LogDebug("Single Test");
     });
@@ -48,9 +49,9 @@ bool LoadState::Initialize()
     Shaders::Instance()->AddShader("SKYBOX", "skybox");
     Shaders::Instance()->AddShader("POST", "postProcessing");
 
-    IO::Instance()->Open("GameScene.xml", std::ios::in);
+    /*IO::Instance()->Open("GameScene.xml", std::ios::in);
     IO::Instance()->Serialize<cereal::XMLInputArchive>(m_scene);
-    IO::Instance()->Close();
+    IO::Instance()->Close();*/
 
     if(m_scene == nullptr)
     {
@@ -93,9 +94,12 @@ void LoadState::Input()
 
 void LoadState::Update(float delta)
 {
+    GUI::Instance()->SetSceneData(m_scene);
+    m_gameObjects = m_scene->GetGameObjects();
     for (auto& obj : m_gameObjects) {
         obj->Update(delta);
     }
+    m_scene->Update();
 }
 
 void LoadState::Render()
@@ -137,7 +141,9 @@ void LoadState::Render()
     m_screenFrame->Render();
     m_frameBuffer.BindTexture();
 
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
+
+    GUI::Instance()->ShowGUI();
 }
 
 bool LoadState::Shutdown()

@@ -1,7 +1,6 @@
 #include "InputManager.h"
 #include "ScreenManager.h"
 #include "LogManager.h"
-#include "GUIManager.h"
 #include <SDL/SDL.h>
 
 
@@ -9,7 +8,8 @@ void InputManager::Update()
 {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
-        GUI::Instance()->ProcessInput(&e);
+        //GUI::Instance()->ProcessInput(&e);
+        if(m_guiInputCallback != nullptr) m_guiInputCallback(&e);
 
         switch (e.type) {
         case SDL_KEYDOWN:
@@ -193,6 +193,11 @@ void InputManager::CaptureMouse(bool capture)
 bool InputManager::IsMouseCaptured()
 {
     return m_isMouseCaptured;
+}
+
+void InputManager::SetGUICallback(std::function<void(SDL_Event* evt)> callback)
+{
+    m_guiInputCallback = callback;
 }
 
 void InputManager::AddKeyboardEvent(int keyCode, int state, int modifier)

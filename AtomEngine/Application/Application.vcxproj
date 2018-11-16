@@ -81,7 +81,7 @@
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)libs</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Physics_Engine.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2main.lib;SDL2.lib;SDL2_image.lib;glew32.lib;opengl32.lib;assimp-vc140-mt.lib;Physics_Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -124,11 +124,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CameraControls.cpp" />
+    <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraControls.h" />
+    <ClInclude Include="GUIManager.h" />
     <ClInclude Include="LoadState.h" />
   </ItemGroup>
   <ItemGroup>
