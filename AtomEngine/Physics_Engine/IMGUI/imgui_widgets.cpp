@@ -3455,7 +3455,7 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
             }
 
             // User callback
-            if ((flags & (ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackAlways)) != 0)
+            if ((flags & (ImGuiInputTextFlags_CallbackOnEnter | ImGuiInputTextFlags_CallbackCompletion | ImGuiInputTextFlags_CallbackHistory | ImGuiInputTextFlags_CallbackAlways)) != 0)
             {
                 IM_ASSERT(callback != NULL);
 
@@ -3466,6 +3466,11 @@ bool ImGui::InputTextEx(const char* label, char* buf, int buf_size, const ImVec2
                 {
                     event_flag = ImGuiInputTextFlags_CallbackCompletion;
                     event_key = ImGuiKey_Tab;
+                }
+                if((flags & ImGuiInputTextFlags_CallbackOnEnter) != 0 && IsKeyPressedMap(ImGuiKey_Enter))
+                {
+                    event_flag = ImGuiInputTextFlags_CallbackOnEnter;
+                    event_key = ImGuiKey_Enter;
                 }
                 else if ((flags & ImGuiInputTextFlags_CallbackHistory) != 0 && IsKeyPressedMap(ImGuiKey_UpArrow))
                 {

@@ -8,6 +8,7 @@
 Mesh::Mesh()
 {
     m_name = "Mesh";
+    m_typeInfo = &typeid(this);
 }
 
 
@@ -25,10 +26,9 @@ void Mesh::Update(float deltaTime)
 void Mesh::Initialize()
 {
     if (m_meshName == "") {
-        LoadMesh();
+        return;
     }
     else {
-
         if (LoadMesh(m_meshName)) {
 
             for (auto subMesh : m_subMeshList) {
@@ -58,17 +58,18 @@ void Mesh::SetMesh(const std::string& meshName)
     m_meshName = meshName;
 }
 
+const std::string& Mesh::GetMesh()
+{
+    return m_meshName;
+}
+
 bool Mesh::LoadMesh()
 {
-    //TODO: Load all mesh data using ASSIMP
-
-    //This function is to be used a loader for when reading from serialized data.
-    return false;
+    return LoadMesh(m_meshName);
 }
 
 bool Mesh::LoadMesh(const std::string& meshName)
 {
-    //TODO: Load all mesh data using ASSIMP
     if (ModelLoader::LoadModel(meshName, this)) {
         Logger::Instance()->LogInfo("Successfully Loaded: " + meshName);
         return true;

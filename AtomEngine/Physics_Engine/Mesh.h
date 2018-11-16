@@ -73,6 +73,8 @@ public:
     */
     void SetMesh(const std::string& meshName);
 
+    const std::string& GetMesh();
+
     /*!
         * \brief Loads a mesh from its already stored mesh name.
         * \return Returns a boolean as to whether it was successful or not. False = failure.
@@ -125,8 +127,6 @@ public:
     void Initialize() override;
 
 private:
-    
-
     std::string m_meshName;                 /*!< The name of the overall Mesh. */
     std::vector<SubMesh*> m_subMeshList;    /*!< The list of sub-mesh's. */
 };

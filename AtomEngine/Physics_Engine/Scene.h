@@ -17,6 +17,8 @@
 #include <memory>
 
 #include <CEREAL/archives/xml.hpp>
+#include <CEREAL/types/string.hpp>
+#include <CEREAL/types/vector.hpp>
 
 class ATOM_API Scene
 {
@@ -31,9 +33,18 @@ public:
     Camera* GetMainCamera();
     void SetMainCamera(Camera* camera);
 
+    void SetName(const std::string& name);
+    std::string GetName();
+
+    void AddGameObject();
+    void AddMesh(Mesh* mesh);
+
     std::vector<GameObject*> GetGameObjects();
+    void RemoveGameObject(GameObject* obj);
 
 private:
+    std::string m_name;
+
     Camera* m_mainCamera;
 
     std::shared_ptr<Camera> m_sceneCamera;
@@ -51,8 +62,7 @@ private:
     friend class cereal::access;
 
     template<class Archive>
-    void serialize(Archive& archive)
-    {
-        archive(cereal::make_nvp("Skybox", m_skybox), cereal::make_nvp("GameObjectList", m_gameObjectList));
+    void serialize(Archive& archive) {
+        archive(cereal::make_nvp("Name", m_name), cereal::make_nvp("Skybox", m_skybox), cereal::make_nvp("GameObjectList", m_gameObjectList));
     }
 };

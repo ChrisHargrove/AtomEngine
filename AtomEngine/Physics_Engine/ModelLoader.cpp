@@ -4,7 +4,6 @@
 #include <vector>
 
 #include <ASSIMP/Importer.hpp>
-
 #include <ASSIMP/postprocess.h>
 
 bool ModelLoader::LoadModel(const std::string & fileName, Mesh* mesh)

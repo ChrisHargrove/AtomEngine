@@ -10,6 +10,7 @@ Camera::Camera() :
     m_viewMatrix(glm::mat4(1.0f))
 {
     m_name = "Camera";
+    m_typeInfo = &typeid(this);
 }
 
 Camera::~Camera()
@@ -21,12 +22,13 @@ void Camera::Initialize()
     _transform = GetComponent<Transform>();
 }
 
+
 void Camera::Update(float deltaTime)
 {
 
 }
 
-float Camera::GetZoom()
+float Camera::GetZoom() const
 {
     return m_zoom;
 }
@@ -35,16 +37,16 @@ glm::mat4 Camera::GetViewMatrix()
 {
     if (_transform == nullptr) return glm::mat4();
 
-    Transform* transform = static_cast<Transform*>(_transform);
+    auto* transform = dynamic_cast<Transform*>(_transform);
 
     m_viewMatrix = glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->GetForward(), transform->GetUp());
     return m_viewMatrix;
 }
 
-glm::mat4 Camera::GetOrthoMatrix()
+glm::mat4 Camera::GetOrthoMatrix() const
 {
     if (_transform == nullptr) return glm::mat4();
-    Transform* transform = static_cast<Transform*>(_transform);
+    auto transform = dynamic_cast<Transform*>(_transform);
 
     return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform->GetUp());
 }
@@ -59,7 +61,7 @@ void Camera::SetTarget(glm::vec3 target)
     m_target = target;
 }
 
-bool Camera::IsPitchConstrained()
+bool Camera::IsPitchConstrained() const
 {
     return m_isPitchConstrained;;
 }

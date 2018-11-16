@@ -80,8 +80,8 @@ void Buffer::Destroy()
 void Buffer::AddAttributePointer(unsigned int locationID, int size, VariableType type,int stride, int offset)
 {
     if (m_type != VAO) {
-        glVertexAttribPointer(locationID, size, type, GL_FALSE, stride, (void*)offset);
         glEnableVertexAttribArray(locationID);
+        glVertexAttribPointer(locationID, size, type, GL_FALSE, stride, (void*)offset);
     }
     else {
         Logger::Instance()->LogWarning("You can't assign a attribute pointer too a Vertex Array Object!");

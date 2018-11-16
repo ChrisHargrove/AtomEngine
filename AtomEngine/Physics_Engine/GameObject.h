@@ -73,6 +73,8 @@ public:
     template<class T>
     void RemoveComponent();
 
+    void RemoveComponent(Component* comp);
+
     /*!
         * \brief Removes all components of type specified from the GameObject.
         *
@@ -144,7 +146,19 @@ public:
     */
     void AddChild(std::shared_ptr<GameObject> child);
 
+    /*!
+        * \brief Adds a child GameObject to this GameObject.
+        *
+        * Will add an empty GameObject to the current GameObject and set it as the
+        * child objects parent.
+    */
+    void AddChild();
+
     //TODO: Add Remove Child function, this will require some sort of ID system...maybe GUID?
+
+    std::vector<GameObject*> GetChildren();
+
+    std::vector<Component*> GetComponents();
 
     /*!
         * \brief Destroys a GameObject.
@@ -157,12 +171,17 @@ public:
     */
     static void Destroy(std::shared_ptr<GameObject> &obj);
 
+    std::string GetName();
+
+    void SetName(const std::string& name);
+
 protected:
     std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
     std::weak_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
     std::vector<std::shared_ptr<GameObject>> m_childObjects; /*!< The list of child objects attached to the GameObject. */
 
 private:
+    std::string m_name;
 
     bool m_hasInitialized; /*!< Whether the game object has already been initialized or not. */
 

@@ -3,6 +3,7 @@
 #include "Transform.h"
 
 GameObject::GameObject() : 
+m_name("GameObject"),
 m_hasInitialized(false)
 {
 }
@@ -40,6 +41,43 @@ void GameObject::Initialize()
     m_hasInitialized = true;
 }
 
+void GameObject::RemoveComponent(Component* comp)
+{
+    /*for(auto component : m_componentList)
+    {
+        if(typeid(*component.get()) == typeid(comp))
+        {
+            m_componentList.erase(*component);
+        }
+    }
+
+    for(int i = m_componentList.size() - 1; i >= 0; i-- )
+    {
+        if (typeid(*m_componentList[i].get()) == typeid(comp))
+        {
+            m_componentList.erase(m_componentList[i]);
+        }
+    }*/
+
+    /*for(auto& it = m_componentList.end() - 1; it >= m_componentList.begin(); --it)
+    {
+        if ((*it)->GetTypeInfo() == comp->GetTypeInfo())
+        {
+            m_componentList.erase(it);
+        }
+    }*/
+
+    for (auto& it = m_componentList.begin(); it != m_componentList.end(); ) 
+    {
+        if ((*it)->GetTypeInfo() == comp->GetTypeInfo()) {
+            it = m_componentList.erase(it);
+        }
+        else{
+            ++it;
+        }
+    }
+}
+
 GameObject * GameObject::GetParent()
 {
     if (m_parentObject.lock() != NULL) {
@@ -61,6 +99,32 @@ void GameObject::AddChild(std::shared_ptr<GameObject> child)
     m_childObjects.push_back(child);
 }
 
+void GameObject::AddChild()
+{
+    std::shared_ptr<GameObject> empty = std::make_shared<GameObject>();
+    AddChild(empty);
+}
+
+std::vector<GameObject*> GameObject::GetChildren()
+{
+    std::vector<GameObject*> returnVal;
+    for(auto& c_obj : m_childObjects)
+    {
+        returnVal.push_back(c_obj.get());
+    }
+    return returnVal;
+}
+
+std::vector<Component*> GameObject::GetComponents()
+{
+    std::vector<Component*> returnVal;
+    for(auto& comp : m_componentList)
+    {
+        returnVal.push_back(comp.get());
+    }
+    return returnVal;
+}
+
 void GameObject::Destroy(std::shared_ptr<GameObject> &obj)
 {
     for (int i = 0; i < obj->m_childObjects.size(); i++) {
@@ -73,4 +137,14 @@ void GameObject::Destroy(std::shared_ptr<GameObject> &obj)
         obj->m_componentList[i].reset();
     }
     obj.reset();
+}
+
+std::string GameObject::GetName()
+{
+    return m_name;
+}
+
+void GameObject::SetName(const std::string& name)
+{
+    m_name = name;
 }

@@ -35,8 +35,9 @@ public:
         * \brief Sets the rotation for this component.
         * \param rotation A 3 component vector to set rotation.
         *
-        * Will set the rotation for the component using Eular Angles. The parent GameObject
+        * Will set the rotation for the component using Euler Angles. The parent GameObject
         * can retrieve this rotational data.
+        * Each component pertains to its axis, so X value is on the x-axis etc.
     */
     void SetRotation(glm::vec3 rotation);
 
@@ -54,7 +55,7 @@ public:
         * \param scale A 3 component vector to set the scale.
         *
         * Will set the scale for the component using a 3 component vector which denotes scale
-        * in each axis repsectively, x, y, z. The parent GameObject can then retrieve this data.
+        * in each axis respectively, x, y, z. The parent GameObject can then retrieve this data.
     */
     void SetScale(glm::vec3 scale);
 
@@ -62,20 +63,26 @@ public:
         * \brief Gets the current translation of the component.
         * \return A 3 component vector containing translation data.
     */
-    glm::vec3 GetPosition();
+    glm::vec3& GetPosition();
 
     /*!
         * \brief Gets the current rotation of the component.
-        * \return A 3 component vector containing rotation data as Eular Angles.
+        * \return A 4 component quaternion containing rotation data.
     */
-    glm::quat GetRotation();
+    glm::quat& GetRotation();
+
+    /*!
+        * \brief Gets the current rotation angles as Euler Angles.
+        * \return A 3 component vector containing rotation data as Euler Angles
+    */
+    glm::vec3& GetEulerAngles();
 
     /*!
         * \brief Gets the current scale of the component.
         * \return A 3 component vector containing scale data, where each part of the
         * vector represents scale on x,y,z axis
     */
-    glm::vec3 GetScale();
+    glm::vec3& GetScale();
 
     /*!
         * \brief Get the transform matrix for the component.
@@ -84,10 +91,10 @@ public:
     glm::mat4 GetTransform();
 
     /*!
-        * \brief Gets the Formward Vector of the transform.
+        * \brief Gets the Forward Vector of the transform.
         * \return Returns a 3 component vector representing the forward direction.
         * 
-        * Calculates the Forward vector by dissasembling the transformation matrix.
+        * Calculates the Forward vector by disassembling the transformation matrix.
     */
     glm::vec3 GetForward();
 
@@ -95,7 +102,7 @@ public:
         * \brief Gets the Right Vector of the transform.
         * \return Returns a 3 component vector representing the Right direction.
         *
-        * Calculates the Right vector by dissasembling the transformation matrix.
+        * Calculates the Right vector by disassembling the transformation matrix.
     */
     glm::vec3 GetRight();
 
@@ -103,13 +110,13 @@ public:
         * \brief Gets the Up Vector of the transform.
         * \return Returns a 3 component vector representing the Up direction.
         *
-        * Calculates the Up vector by dissasembling the transformation matrix.
+        * Calculates the Up vector by disassembling the transformation matrix.
     */
     glm::vec3 GetUp();
 
     /*!
         * \brief Rotates the Transform
-        * \param rotation The amount to rotate, represented as Yaw, Pitch, Roll repsectively.
+        * \param rotation The amount to rotate, represented as Yaw, Pitch, Roll respectively.
     */
     void Rotate(glm::vec3 rotation);
 
@@ -140,6 +147,8 @@ public:
     */
     void Initialize() override;
 
+    
+
 private:
 
     friend class cereal::access;
@@ -149,13 +158,15 @@ private:
     */
     void CalculateTransform();
 
+    void CalculateRotation();
+
     glm::vec3 m_position;    /*!< A 3 component vector containing translation data for the Transform. */
     glm::quat m_rotation;       /*!< A 3 component vector containing rotation data for the transform. */
+    glm::vec3 m_eulerAngles;
     glm::vec3 m_scale;          /*!< A 3 component vector containing scale data for the transform. */
     glm::mat4 m_tranformMatrix; /*!< A 4x4 Matrix containing all transform data. */
 
     Transform* m_parentTransform; /*!< A parent Transform Component. */
-
 
     template<class Archive>
     void serialize(Archive &archive) {

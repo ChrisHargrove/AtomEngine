@@ -23,9 +23,9 @@ public:
 
     /*!
         * \brief Gets the zoom value of the camera.
-        * \returns Returns a float shoing the level of zoom.
+        * \returns Returns a float showing the level of zoom.
     */
-    float GetZoom();
+    float GetZoom() const;
 
     /*!
         * \brief Gets the View Matrix from the Camera.
@@ -42,11 +42,11 @@ public:
         *
         * This function recalculates the current orthographic view matrix when it is called.
     */
-    glm::mat4 GetOrthoMatrix();
+    glm::mat4 GetOrthoMatrix() const;
 
     /*!
-        * \brief Sets whether or not the camera should have its pitch contrained.
-        * \param enable Should Pitch contraint be enabled. Defaults to true.
+        * \brief Sets whether or not the camera should have its pitch constrained.
+        * \param enable Should Pitch constraint be enabled. Defaults to true.
         *
         * This is primarily to stop the camera from spinning up and over. More used in FPS 
         * style cameras.
@@ -61,7 +61,11 @@ public:
     */
     void SetTarget(glm::vec3 target);
 
-    bool IsPitchConstrained();
+    /*!
+        * \brief Gets if the camera pitch has been constrained.
+        * \return Returns a boolean value as to whether the camera is constrained.
+    */
+    bool IsPitchConstrained() const;
 
     /*!
         * \brief Virtual Update function that is called each frame.
@@ -77,6 +81,7 @@ public:
         * This function is where the initial setup for this component is set.
     */
     void Initialize() override;
+
 
 private:
     friend class cereal::access;
@@ -95,6 +100,7 @@ private:
             cereal::make_nvp("PitchConstrained", m_isPitchConstrained),
             cereal::make_nvp("Target", m_target));
     }
+    
 };
 
 CEREAL_REGISTER_TYPE_WITH_NAME(Camera, "CameraObject");
