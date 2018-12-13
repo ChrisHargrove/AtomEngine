@@ -24,7 +24,7 @@ struct callback {
     }
     static int RenameMeshPath(ImGuiInputTextCallbackData* data) {
         static_cast<Mesh*>(data->UserData)->SetMesh(std::string(data->Buf));
-        if(static_cast<Mesh*>(data->UserData)->LoadMesh())
+        if(static_cast<Mesh*>(data->UserData)->Initialize())
         {
             GUI::Instance()->GetScene()->AddMesh(static_cast<Mesh*>(data->UserData));
         }
