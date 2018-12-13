@@ -23,10 +23,10 @@ void Mesh::Update(float deltaTime)
 {
 }
 
-void Mesh::Initialize()
+bool Mesh::Initialize()
 {
-    if (m_meshName == "") {
-        return;
+    if (m_meshName.empty()) {
+        return false;
     }
     else {
         if (LoadMesh(m_meshName)) {
@@ -48,9 +48,9 @@ void Mesh::Initialize()
 
                 subMesh->m_vertexArray.Unbind();
             }
-            
         }
     }
+    return true;
 }
 
 void Mesh::SetMesh(const std::string& meshName)

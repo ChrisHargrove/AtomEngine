@@ -145,7 +145,7 @@ public:
         *
         * This function is where the initial setup for this component is set.
     */
-    void Initialize() override;
+    bool Initialize() override;
 
     
 

@@ -46,7 +46,7 @@ public:
         *
         * Will call the appropriate function for each component by polymorphism.
     */
-    virtual void Initialize() = 0;
+    virtual bool Initialize() = 0;
 
     /*!
         * \brief Sets the owning parent object.

@@ -19,10 +19,13 @@ CameraControls::~CameraControls()
 {
 }
 
-void CameraControls::Initialize()
+bool CameraControls::Initialize()
 {
     _transform = GetComponent<Transform>();
     _mouseCaptured = Input::Instance()->IsMouseCaptured();
+    if (_transform != nullptr) return true;
+
+    return false;
 }
 
 void CameraControls::Update(float deltaTime)

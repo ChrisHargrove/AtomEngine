@@ -26,8 +26,9 @@ void Transform::Update(float deltaTime)
     CalculateTransform();
 }
 
-void Transform::Initialize()
+bool Transform::Initialize()
 {
+    return true;
 }
 
 void Transform::CalculateTransform()

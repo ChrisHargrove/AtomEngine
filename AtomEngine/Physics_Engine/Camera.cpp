@@ -17,9 +17,11 @@ Camera::~Camera()
 {
 }
 
-void Camera::Initialize()
+bool Camera::Initialize()
 {
     _transform = GetComponent<Transform>();
+    if (_transform != nullptr) return true;
+    return false;
 }
 
 

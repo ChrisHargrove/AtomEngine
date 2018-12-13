@@ -10,7 +10,7 @@ public:
     virtual ~CameraControls();
 
     virtual void Update(float deltaTime) override;
-    virtual void Initialize() override;
+    virtual bool Initialize() override;
 
     template<class Archive>
     void serialize(Archive &archive) {
