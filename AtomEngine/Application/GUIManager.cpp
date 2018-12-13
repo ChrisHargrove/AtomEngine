@@ -37,6 +37,26 @@ struct callback {
         GUI::Instance()->CloseWindow(WindowID::SAVE_AS);
         return 0;
     }
+    static int NewScene(ImGuiInputTextCallbackData* data)
+    {
+        
+        return 0;
+    }
+    static int LoadScene(ImGuiInputTextCallbackData* data)
+    {
+        std::shared_ptr<Scene> loadedScene = std::make_shared<Scene>();
+        
+        IO::Instance()->Open(std::string(data->Buf), std::ios::in);
+        IO::Instance()->Serialize<cereal::XMLInputArchive>(loadedScene);
+        IO::Instance()->Close();
+        GUI::Instance()->CloseWindow(WindowID::LOAD);
+
+        (*static_cast<std::shared_ptr<Scene>*>(data->UserData))->Reload(&loadedScene);
+
+        loadedScene.reset();
+
+        return 0;
+    }
 };
 
 void GUIManager::Initialize()
@@ -106,6 +126,9 @@ void GUIManager::CloseWindow(WindowID id)
     case WindowID::SAVE_AS:
         m_showSaveWindow = false;
         break;
+    case WindowID::LOAD:
+        m_showLoadWindow = false;
+        break;
     default: ;
     }
 }
@@ -117,6 +140,7 @@ void GUIManager::ShowGUI()
     if (m_showHeirarchyWindow) ShowHeirarchyWindow();
     if (m_showObjectEditorWindow) ShowObjectEditorWindow();
     if (m_showSaveWindow) ShowSaveWindow();
+    if (m_showLoadWindow) ShowLoadWindow();
 }
 
 bool GUIManager::QuitCalled()
@@ -124,14 +148,14 @@ bool GUIManager::QuitCalled()
     return m_quitCalled;
 }
 
-void GUIManager::SetSceneData(std::weak_ptr<Scene> scene)
+void GUIManager::SetSceneData(std::shared_ptr<Scene>* scene)
 {
     m_scene = scene;
 }
 
 Scene* GUIManager::GetScene()
 {
-    return m_scene.lock().get();
+    return m_scene->get();
 }
 
 void GUIManager::ShowHeirarchyWindow()
@@ -143,13 +167,13 @@ void GUIManager::ShowHeirarchyWindow()
         return;
     }
 
-    if(m_scene.lock() != nullptr)
+    if(m_scene != nullptr)
     {
-        if(ImGui::TreeNode(m_scene.lock()->GetName().c_str()))
+        if(ImGui::TreeNode(m_scene->get()->GetName().c_str()))
         {
             int index = 0;
 
-            for (auto& obj : m_scene.lock()->GetGameObjects())
+            for (auto& obj : m_scene->get()->GetGameObjects())
             {
                 ShowGameObjectNode(obj, index);
                 index++;
@@ -168,7 +192,7 @@ void GUIManager::ShowHeirarchyWindow()
     {
         if(ImGui::MenuItem("Add Empty Object"))
         {
-            m_scene.lock()->AddGameObject();
+            m_scene->get()->AddGameObject();
         }
         ImGui::EndPopup();
     }
@@ -190,7 +214,7 @@ void GUIManager::ShowObjectEditorWindow()
 
         auto componentList = m_objectSelected->GetComponents();
 
-        for(auto component : componentList)
+        for(auto& component : componentList)
         {
             if(ImGui::CollapsingHeader(component->GetName().c_str()))
             {
@@ -200,12 +224,14 @@ void GUIManager::ShowObjectEditorWindow()
             {
                 if (ImGui::MenuItem("Delete Component"))
                 {
+                    if (dynamic_cast<Mesh*>(component) != nullptr)
+                    {
+                        m_scene->get()->RemoveMesh(dynamic_cast<Mesh*>(component));
+                    }
                     m_objectSelected->RemoveComponent(component);
                 }
-
                 ImGui::EndPopup();
             }
-
         }
 
         //If Right Clicking In Window
@@ -270,7 +296,7 @@ void GUIManager::ShowGameObjectNode(GameObject* obj, int& index)
             {
                 m_objectSelected = nullptr;
             }
-            m_scene.lock()->RemoveGameObject(obj);
+            m_scene->get()->RemoveGameObject(obj);
         }
         if(ImGui::MenuItem("Add Empty Object"))
         {
@@ -321,7 +347,7 @@ void GUIManager::ShowMenu()
     }
     if(ImGui::MenuItem("Load"))
     {
-        
+        m_showLoadWindow = true;
     }
     if(ImGui::MenuItem("Save"))
     {
@@ -342,10 +368,21 @@ void GUIManager::ShowSaveWindow()
     }
 
     char path[64] = "";
-    if (ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::SaveScene, &m_scene))
-    {
+    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::SaveScene, m_scene);
 
+    ImGui::End();
+}
+
+void GUIManager::ShowLoadWindow()
+{
+    if(!ImGui::Begin("Load"))
+    {
+        ImGui::End();
+        return;
     }
+
+    char path[64] = "";
+    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::LoadScene, m_scene);
 
     ImGui::End();
 }

@@ -13,7 +13,8 @@ enum class WindowID
 {
     HEIRARCHY = 0,
     OBJECT_EDITOR,
-    SAVE_AS
+    SAVE_AS,
+    LOAD
 };
 
 class GUIManager
@@ -37,7 +38,7 @@ public:
     void ShowGUI();
     bool QuitCalled();
 
-    void SetSceneData(std::weak_ptr<Scene> scene);
+    void SetSceneData(std::shared_ptr<Scene>* scene);
     Scene* GetScene();
 
 private:
@@ -49,8 +50,9 @@ private:
     bool m_showHeirarchyWindow;
     bool m_showObjectEditorWindow;
     bool m_showSaveWindow;
+    bool m_showLoadWindow;
 
-    std::weak_ptr<Scene> m_scene;
+    std::shared_ptr<Scene>* m_scene;
 
     //Heirachy Window Variables 
     int m_nodeClicked;
@@ -68,6 +70,7 @@ private:
     void ShowHeirarchyWindow();
     void ShowObjectEditorWindow();
     void ShowSaveWindow();
+    void ShowLoadWindow();
 
     void ShowComponontInfo(Component* component);
 
