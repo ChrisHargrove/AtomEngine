@@ -32,7 +32,7 @@ struct callback {
     }
     static int SaveScene(ImGuiInputTextCallbackData* data) {
         IO::Instance()->Open(std::string(data->Buf), std::ios::out);
-        IO::Instance()->Serialize<cereal::XMLOutputArchive>(*static_cast<std::weak_ptr<Scene>*>(data->UserData));
+        IO::Instance()->Serialize<cereal::XMLOutputArchive>(*static_cast<std::shared_ptr<Scene>*>(data->UserData));
         IO::Instance()->Close();
         GUI::Instance()->CloseWindow(WindowID::SAVE_AS);
         return 0;
