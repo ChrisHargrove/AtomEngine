@@ -27,36 +27,36 @@ public:
     ~Scene();
 
     void Initialize();
-    void Update();
+    void Update(float delta);
     void Render();
 
-    Camera* GetMainCamera();
-    void SetMainCamera(Camera* camera);
+    void Reload(std::shared_ptr<Scene>* loadedScene);
+
+    Camera* GetSceneCamera();
+    std::shared_ptr<GameObject> GetSceneCameraObject();
 
     void SetName(const std::string& name);
     std::string GetName();
 
     void AddGameObject();
     void AddMesh(Mesh* mesh);
+    void RemoveMesh(Mesh* mesh);
 
     std::vector<GameObject*> GetGameObjects();
+    std::vector<std::shared_ptr<GameObject>> GetGameObjectPointers();
     void RemoveGameObject(GameObject* obj);
 
 private:
     std::string m_name;
 
-    Camera* m_mainCamera;
-
-    std::shared_ptr<Camera> m_sceneCamera;
+    std::shared_ptr<GameObject> m_sceneCamera;
     std::shared_ptr<Skybox> m_skybox;
 
-    Buffer m_instanceBuffer;
     UniformBuffer m_matriceBuffer;
-
     std::vector<std::shared_ptr<GameObject>> m_gameObjectList;
 
     std::map<std::string, std::pair<Mesh*, int>> m_renderList;
-    std::map<std::string, std::vector<glm::mat4>> m_renderTranforms;
+    std::map<std::string, std::vector<glm::mat4>> m_renderTransforms;
     std::map<std::string, Buffer> m_renderInstanceBuffers;
 
     friend class cereal::access;

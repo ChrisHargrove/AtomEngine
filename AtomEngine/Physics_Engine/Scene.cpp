@@ -4,13 +4,13 @@
 
 #include "ScreenManager.h"
 #include "ShaderManager.h"
+#include "LogManager.h"
 
 Scene::Scene(): 
-m_mainCamera(nullptr),
+m_sceneCamera(nullptr),
 m_name("Scene")
 {
 }
-
 
 Scene::~Scene()
 {
@@ -24,21 +24,20 @@ void Scene::Initialize()
         m_skybox->Load("OM_skybox/OM.jpg");
     }
 
-    //LOAD A SCENE CAMERA
-    std::shared_ptr<GameObject> sceneCam = std::make_shared<GameObject>();
-    sceneCam->AddComponent<Transform>();
-    std::shared_ptr<Camera> camera = std::make_shared<Camera>();
-    sceneCam->AddComponent(camera);
-    sceneCam->Initialize();
-
-    m_sceneCamera = camera;
-
+    //LOAD A SCENE CAMERA IF NONE EXIST
+    if(!m_sceneCamera) {
+        m_sceneCamera = std::make_shared<GameObject>();
+        m_sceneCamera->AddComponent<Transform>();
+        m_sceneCamera->AddComponent<Camera>();
+        m_sceneCamera->Initialize();
+    }
 
     auto testModel = std::make_shared<GameObject>();
     auto testMesh = std::make_shared<Mesh>();
     testMesh->SetMesh("Assets/Models/sphere.obj");
     testModel->AddComponent<Transform>();
     testModel->AddComponent(testMesh);
+    testModel->SetName("SphereShape");
     m_gameObjectList.push_back(testModel);
 
     std::vector<Mesh*> meshList;
@@ -47,19 +46,10 @@ void Scene::Initialize()
     for(auto& obj : m_gameObjectList) {
         //INITIALIZE EACH ONE
         obj->Initialize();
-        //IF THE OBJECT HAS A CAMERA ATTACHED STORE A POINTER TO IT
-        if(obj->GetComponent<Camera>() != nullptr) {
-            m_mainCamera = obj->GetComponent<Camera>();
-        }
         //IF THE OBJECT HAS A MESH STORE IT
         if(obj->GetComponent<Mesh>() != nullptr) {
             meshList.push_back(obj->GetComponent<Mesh>());
         }
-    }
-    //IF NO GAME CAMERA FOUND ASSIGN SCENE CAM TO IT
-    if(m_mainCamera == nullptr) {
-        m_gameObjectList.push_back(sceneCam);
-        m_mainCamera = m_sceneCamera.get();
     }
 
     //LOOP THROUGH ALL MESHES
@@ -69,19 +59,19 @@ void Scene::Initialize()
         //AND STORE ITS TRANSFORM IN A LIST OF TRANSFORMS
         if(meshName == mesh->GetMesh()) {
             m_renderList[meshName].second += 1;
-            m_renderTranforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
         }
         //IF ITS THE FIRST MESH OF THIS OF THIS NAME STORE IT AND IVE IT A COUNT OF 1
         //AND STORE ITS TRANSFORM TOO
         else {
             meshName = mesh->GetMesh();
             m_renderList.emplace(std::make_pair(meshName, std::make_pair(mesh, 1)));
-            m_renderTranforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
         }
     }
 
     //SET UP A COMMON MATRIX BUFFER FOR VIEW AND PROJECTION
-    MatriceBuffer matrixBuffer = { Screen::Instance()->GetProjection(), m_sceneCamera->GetViewMatrix() };
+    MatriceBuffer matrixBuffer = { Screen::Instance()->GetProjection(), m_sceneCamera->GetComponent<Camera>()->GetViewMatrix() };
     Shaders::Instance()->SetUniformBufferBinding("Matrices", UniformBufferBinding::MATRICES);
 
     m_matriceBuffer.Create(sizeof(matrixBuffer));
@@ -96,7 +86,7 @@ void Scene::Initialize()
         m_renderInstanceBuffers[mesh.first].Bind();
         //FILL THE BUFFER WITH THE MESHES TRANSFORMS
         std::vector<glm::mat4> transformList;
-        transformList = m_renderTranforms[mesh.first];
+        transformList = m_renderTransforms[mesh.first];
         m_renderInstanceBuffers[mesh.first].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
         
         auto submeshList = mesh.second.first->GetSubMeshList();
@@ -119,10 +109,11 @@ void Scene::Initialize()
     }
 }
 
-void Scene::Update()
+void Scene::Update(float delta)
 {
     std::vector<Mesh*> meshes;
-    
+
+    m_sceneCamera->Update(delta);
 
     for(auto& obj : m_gameObjectList)
     {
@@ -130,20 +121,20 @@ void Scene::Update()
         if(mesh != nullptr)
         {
             meshes.push_back(mesh);
-            m_renderTranforms[mesh->GetMesh()].clear();
+            m_renderTransforms[mesh->GetMesh()].clear();
         }
     }
     for(auto& mesh : meshes)
     {
-        m_renderTranforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
-        auto transformList = m_renderTranforms[mesh->GetMesh()];
+        m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+        auto transformList = m_renderTransforms[mesh->GetMesh()];
         m_renderInstanceBuffers[mesh->GetMesh()].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
     }
 }
 
 void Scene::Render()
 {
-    m_matriceBuffer.SetSubData(&MatriceBuffer::m_view, &m_sceneCamera->GetViewMatrix());
+    m_matriceBuffer.SetSubData(&MatriceBuffer::m_view, &m_sceneCamera->GetComponent<Camera>()->GetViewMatrix());
 
     Shaders::Instance()->UseShader("INSTANCE");
     for(auto& mesh : m_renderList) {
@@ -156,18 +147,38 @@ void Scene::Render()
     m_skybox->Render();
 }
 
-Camera* Scene::GetMainCamera()
+void Scene::Reload(std::shared_ptr<Scene>* loadedScene)
 {
-    if(m_mainCamera == nullptr)
-    {
-        return m_sceneCamera.get();
+    //Before Loading a new Scene make sure to remove all old data
+    m_gameObjectList.clear();
+    m_name.clear();
+    m_sceneCamera.reset();
+    m_skybox.reset();
+
+    m_renderList.clear();
+    m_renderTransforms.clear();
+
+    for(auto& buffer : m_renderInstanceBuffers) {
+        buffer.second.Destroy();
     }
-    return m_mainCamera;
+    m_renderInstanceBuffers.clear();
+
+    //Now all data is removed, start pushing new scene data
+    m_gameObjectList = loadedScene->get()->GetGameObjectPointers();
+    m_name = loadedScene->get()->GetName();
+    m_sceneCamera = loadedScene->get()->GetSceneCameraObject();
+
+    Initialize();
 }
 
-void Scene::SetMainCamera(Camera* camera)
+Camera* Scene::GetSceneCamera()
 {
-    m_mainCamera = camera;
+    return m_sceneCamera->GetComponent<Camera>();
+}
+
+std::shared_ptr<GameObject> Scene::GetSceneCameraObject()
+{
+    return m_sceneCamera;
 }
 
 void Scene::SetName(const std::string& name)
@@ -189,14 +200,18 @@ void Scene::AddGameObject()
 
 void Scene::AddMesh(Mesh* mesh)
 {
-    auto renderList = m_renderList;
+    if(mesh->GetMesh().empty()) {
+        return;
+    }
+
+    std::map<std::string, std::pair<Mesh*, int>> renderList(m_renderList);
 
     if(renderList.empty())
     {
         m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
-        m_renderTranforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+        m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
 
-        auto transformList = m_renderTranforms[mesh->GetMesh()];
+        auto transformList = m_renderTransforms[mesh->GetMesh()];
 
         m_renderInstanceBuffers[mesh->GetMesh()].Create(VBO);
         m_renderInstanceBuffers[mesh->GetMesh()].Bind();
@@ -222,18 +237,17 @@ void Scene::AddMesh(Mesh* mesh)
     }
 
     for(auto& renderable : renderList) {
-        if(mesh->GetName() == renderable.second.first->GetName()) {
+        if(mesh->GetMesh() == renderable.second.first->GetMesh()) {
             m_renderList[mesh->GetMesh()].second += 1;
-            m_renderTranforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
 
-            auto transformList = m_renderTranforms[mesh->GetMesh()];
+            auto transformList = m_renderTransforms[mesh->GetMesh()];
             m_renderInstanceBuffers[mesh->GetMesh()].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
         }
         else {
             m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
-            m_renderTranforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
-
-            auto transformList = m_renderTranforms[mesh->GetMesh()];
+            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            auto transformList = m_renderTransforms[mesh->GetMesh()];
 
             m_renderInstanceBuffers[mesh->GetMesh()].Create(VBO);
             m_renderInstanceBuffers[mesh->GetMesh()].Bind();
@@ -258,6 +272,19 @@ void Scene::AddMesh(Mesh* mesh)
     }
 }
 
+void Scene::RemoveMesh(Mesh* mesh)
+{
+    m_renderList.at(mesh->GetMesh()).second--;
+    if(m_renderList.at(mesh->GetMesh()).second == 0) {
+        m_renderList.erase(mesh->GetMesh());
+    }
+    m_renderTransforms.at(mesh->GetMesh()).erase(std::remove_if(m_renderTransforms[mesh->GetMesh()].begin(), m_renderTransforms[mesh->GetMesh()].end(),
+        [mesh](glm::mat4 transform) { return transform == mesh->GetComponent<Transform>()->GetTransform(); }), m_renderTransforms[mesh->GetMesh()].end());
+    if(m_renderTransforms.at(mesh->GetMesh()).empty()) {
+        m_renderTransforms.erase(mesh->GetMesh());
+    }
+}
+
 std::vector<GameObject*> Scene::GetGameObjects()
 {
     std::vector<GameObject*> returnList;
@@ -268,6 +295,11 @@ std::vector<GameObject*> Scene::GetGameObjects()
     return returnList;
 }
 
+std::vector<std::shared_ptr<GameObject>> Scene::GetGameObjectPointers()
+{
+    return m_gameObjectList;
+}
+
 void Scene::RemoveGameObject(GameObject* obj)
 {
     int index = 0;
@@ -275,6 +307,14 @@ void Scene::RemoveGameObject(GameObject* obj)
     {
         if(obj == m_gameObjectList[i].get())
         {
+            auto mesh = obj->GetComponent<Mesh>();
+            if(mesh != nullptr)
+            {
+                m_renderList.at(mesh->GetMesh()).second--;
+                m_renderTransforms.at(mesh->GetMesh()).erase(std::remove_if(m_renderTransforms[mesh->GetMesh()].begin(), m_renderTransforms[mesh->GetMesh()].end(),
+                    [obj](glm::mat4 transform) { return transform == obj->GetComponent<Transform>()->GetTransform(); }), m_renderTransforms[mesh->GetMesh()].end());
+            }
+
             GameObject::Destroy(m_gameObjectList[i]);
             index = i;
         }

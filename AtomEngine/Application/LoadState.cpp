@@ -22,13 +22,10 @@ m_screenFrame(nullptr)
     JobSystem::Instance();
 }
 
-
 LoadState::~LoadState()
 {
     m_scene.reset();
 }
-
-
 
 bool LoadState::Initialize()
 {
@@ -75,7 +72,7 @@ bool LoadState::Initialize()
 
     m_gameObjects = m_scene->GetGameObjects();
 
-    m_scene->GetMainCamera()->GetParent()->AddComponent<CameraControls>();
+    m_scene->GetSceneCamera()->GetParent()->AddComponent<CameraControls>();
 
     return true;
 }
@@ -94,17 +91,17 @@ void LoadState::Input()
 
 void LoadState::Update(float delta)
 {
-    GUI::Instance()->SetSceneData(m_scene);
+    GUI::Instance()->SetSceneData(&m_scene);
     m_gameObjects = m_scene->GetGameObjects();
     for (auto& obj : m_gameObjects) {
         obj->Update(delta);
     }
-    m_scene->Update();
+    m_scene->Update(delta);
 }
 
 void LoadState::Render()
 {
-    glm::mat4 view = m_scene->GetMainCamera()->GetViewMatrix();
+    glm::mat4 view = m_scene->GetSceneCamera()->GetViewMatrix();
 
     m_frameBuffer.Bind();
     Screen::Instance()->CreateViewport();
@@ -118,7 +115,7 @@ void LoadState::Render()
     Shaders::Instance()->UseShader("INSTANCE");
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
-    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetMainCamera()->GetComponent<Transform>()->GetPosition());
+    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetSceneCamera()->GetComponent<Transform>()->GetPosition());
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
