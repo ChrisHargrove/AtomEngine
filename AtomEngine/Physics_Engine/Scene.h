@@ -38,6 +38,8 @@ public:
     void SetName(const std::string& name);
     std::string GetName();
 
+    void SetSkybox(std::string name);
+
     void AddGameObject();
     void AddMesh(Mesh* mesh);
     void RemoveMesh(Mesh* mesh);

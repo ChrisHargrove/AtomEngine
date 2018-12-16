@@ -6,15 +6,13 @@
 #include "GameObject.h"
 #include "ShaderManager.h"
 #include "ScreenManager.h"
-//#include "IOManager.h"
 
 #include "Buffer.h"
 #include "Kernel.h"
 
-//#include "SerialRegister.h"
-//#include "SerialExtensions.h"
 #include "CameraControls.h"
 #include "GUIManager.h"
+#include "ResourceManager.h"
 
 LoadState::LoadState(): 
 m_screenFrame(nullptr)
@@ -73,6 +71,13 @@ bool LoadState::Initialize()
     m_gameObjects = m_scene->GetGameObjects();
 
     m_scene->GetSceneCamera()->GetParent()->AddComponent<CameraControls>();
+
+    std::shared_ptr<Skybox> test = std::make_shared<Skybox>();
+    test->Load("OM_skybox/OM.jpg");
+
+    Resource::Instance()->AddResource("skybox", test);
+
+    m_scene->SetSkybox("skybox");
 
     return true;
 }

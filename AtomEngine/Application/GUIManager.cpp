@@ -2,6 +2,7 @@
 
 #include "ScreenManager.h"
 #include "LogManager.h"
+#include "InputManager.h"
 #include "Scene.h"
 
 #include "GameObject.h"
@@ -13,11 +14,12 @@
 #include "IOManager.h"
 #include "SerialRegister.h"
 #include "SerialExtensions.h"
+#include "CameraControls.h"
 
 GUIManager* GUIManager::m_instance = nullptr;
 
 //Renaming Field
-struct callback {
+struct GUI_Callback {
     static int RenameObject(ImGuiInputTextCallbackData* data) {
         static_cast<GameObject*>(data->UserData)->SetName(std::string(data->Buf));
         return 0;
@@ -31,27 +33,42 @@ struct callback {
         return 0;
     }
     static int SaveScene(ImGuiInputTextCallbackData* data) {
-        IO::Instance()->Open(std::string(data->Buf), std::ios::out);
+        std::string path = "Assets/Scenes/" + std::string(data->Buf);
+
+        IO::Instance()->Open(path, std::ios::out);
         IO::Instance()->Serialize<cereal::XMLOutputArchive>(*static_cast<std::shared_ptr<Scene>*>(data->UserData));
         IO::Instance()->Close();
         GUI::Instance()->CloseWindow(WindowID::SAVE_AS);
         return 0;
     }
-    static int NewScene(ImGuiInputTextCallbackData* data)
+    static int NewScene(void* scene)
     {
-        
+        std::shared_ptr<Scene> newScene = std::make_shared<Scene>();
+
+        IO::Instance()->Open("Data/DEFAULT_SCENE.xml", std::ios::in);
+        IO::Instance()->Serialize<cereal::XMLInputArchive>(newScene);
+        IO::Instance()->Close();
+
+        (*static_cast<std::shared_ptr<Scene>*>(scene))->Reload(&newScene);
+        (*static_cast<std::shared_ptr<Scene>*>(scene))->GetSceneCameraObject()->AddComponent<CameraControls>();
+
+        newScene.reset();
+
         return 0;
     }
     static int LoadScene(ImGuiInputTextCallbackData* data)
     {
+        std::string path = "Assets/Scenes/" + std::string(data->Buf);
+
         std::shared_ptr<Scene> loadedScene = std::make_shared<Scene>();
         
-        IO::Instance()->Open(std::string(data->Buf), std::ios::in);
+        IO::Instance()->Open(path, std::ios::in);
         IO::Instance()->Serialize<cereal::XMLInputArchive>(loadedScene);
         IO::Instance()->Close();
         GUI::Instance()->CloseWindow(WindowID::LOAD);
 
         (*static_cast<std::shared_ptr<Scene>*>(data->UserData))->Reload(&loadedScene);
+        (*static_cast<std::shared_ptr<Scene>*>(data->UserData))->GetSceneCameraObject()->AddComponent<CameraControls>();
 
         loadedScene.reset();
 
@@ -104,6 +121,7 @@ void GUIManager::Render()
 void GUIManager::ProcessInput(SDL_Event* evt)
 {
     ImGui_ImplSDL2_ProcessEvent(evt);
+    if(m_quitCalled) Input::Instance()->RequestQuit();
 }
 
 void GUIManager::Shutdown()
@@ -210,7 +228,7 @@ void GUIManager::ShowObjectEditorWindow()
 
     if(m_objectSelected != nullptr)
     {
-        ImGui::InputText("Name", m_nameBuffer, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::RenameObject, (void*)m_objectSelected);
+        ImGui::InputText("Name", m_nameBuffer, 64, ImGuiInputTextFlags_CallbackOnEnter, GUI_Callback::RenameObject, (void*)m_objectSelected);
 
         auto componentList = m_objectSelected->GetComponents();
 
@@ -268,7 +286,7 @@ void GUIManager::ShowComponontInfo(Component* component)
     else if (dynamic_cast<Mesh*>(component) != nullptr)
     {
         auto ptr = dynamic_cast<Mesh*>(component);
-        ImGui::InputText("Mesh Name", m_meshName, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::RenameMeshPath, (void*)ptr);
+        ImGui::InputText("Mesh Name", m_meshName, 64, ImGuiInputTextFlags_CallbackOnEnter, GUI_Callback::RenameMeshPath, (void*)ptr);
     }
     else if (dynamic_cast<Camera*>(component) != nullptr)
     {
@@ -343,7 +361,7 @@ void GUIManager::ShowMenu()
 {
     if(ImGui::MenuItem("New"))
     {
-        
+        GUI_Callback::NewScene(m_scene);
     }
     if(ImGui::MenuItem("Load"))
     {
@@ -368,7 +386,7 @@ void GUIManager::ShowSaveWindow()
     }
 
     char path[64] = "";
-    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::SaveScene, m_scene);
+    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, GUI_Callback::SaveScene, m_scene);
 
     ImGui::End();
 }
@@ -382,7 +400,7 @@ void GUIManager::ShowLoadWindow()
     }
 
     char path[64] = "";
-    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, callback::LoadScene, m_scene);
+    ImGui::InputText("Path", path, 64, ImGuiInputTextFlags_CallbackOnEnter, GUI_Callback::LoadScene, m_scene);
 
     ImGui::End();
 }

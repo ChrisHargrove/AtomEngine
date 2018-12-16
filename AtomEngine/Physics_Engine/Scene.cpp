@@ -5,6 +5,7 @@
 #include "ScreenManager.h"
 #include "ShaderManager.h"
 #include "LogManager.h"
+#include "ResourceManager.h"
 
 Scene::Scene(): 
 m_sceneCamera(nullptr),
@@ -19,10 +20,10 @@ Scene::~Scene()
 void Scene::Initialize()
 {
     //LOAD SKYBOX
-    if(m_skybox == nullptr) {
+    /*if(m_skybox == nullptr) {
         m_skybox = std::make_shared<Skybox>();
         m_skybox->Load("OM_skybox/OM.jpg");
-    }
+    }*/
 
     //LOAD A SCENE CAMERA IF NONE EXIST
     if(!m_sceneCamera) {
@@ -31,14 +32,6 @@ void Scene::Initialize()
         m_sceneCamera->AddComponent<Camera>();
         m_sceneCamera->Initialize();
     }
-
-    auto testModel = std::make_shared<GameObject>();
-    auto testMesh = std::make_shared<Mesh>();
-    testMesh->SetMesh("Assets/Models/sphere.obj");
-    testModel->AddComponent<Transform>();
-    testModel->AddComponent(testMesh);
-    testModel->SetName("SphereShape");
-    m_gameObjectList.push_back(testModel);
 
     std::vector<Mesh*> meshList;
 
@@ -142,9 +135,12 @@ void Scene::Render()
         mesh.second.first->Render(instanceCount);
     }
 
-    Shaders::Instance()->UseShader("SKYBOX");
-    Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
-    m_skybox->Render();
+    if(m_skybox) {
+        Shaders::Instance()->UseShader("SKYBOX");
+        Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
+        m_skybox->Render();
+    }
+    
 }
 
 void Scene::Reload(std::shared_ptr<Scene>* loadedScene)
@@ -189,6 +185,11 @@ void Scene::SetName(const std::string& name)
 std::string Scene::GetName()
 {
     return m_name;
+}
+
+void Scene::SetSkybox(std::string name)
+{
+    m_skybox = Resource::Instance()->GetResource<Skybox>(name);
 }
 
 void Scene::AddGameObject()

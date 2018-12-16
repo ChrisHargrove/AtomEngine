@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cereal>
+	<value0>
+		<ptr_wrapper>
+			<id>2147483649</id>
+			<data>
+				<Name>Scene</Name>
+				<Skybox>
+					<ptr_wrapper>
+						<id>2147483650</id>
+						<data>
+							<Skybox></Skybox>
+						</data>
+					</ptr_wrapper>
+				</Skybox>
+				<GameObjectList size="dynamic"/>
+			</data>
+		</ptr_wrapper>
+	</value0>
+</cereal>
+
