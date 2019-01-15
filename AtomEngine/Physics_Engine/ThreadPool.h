@@ -60,8 +60,8 @@ public:
         * as a lambda function. It utilizes varying return types by using a std::future so that
         * any return type may be used.
     */
-    template<class T>
-    auto AddJob(T job)->std::future<decltype(job())>;
+    /*template<class T>
+    auto AddJob(T job)->std::future<decltype(job())>;*/
 
     /*!
     * \brief Adds a "job" to the job pool.
@@ -74,7 +74,7 @@ public:
     * any return type may be used.
     */
     template<class T>
-    auto AddJob(T job, Job_Priority priority)->std::future<decltype(job())>;
+    auto AddJob(T job, Job_Priority priority = Job_Priority::LOW)->std::future<decltype(job())>;
     
     /*!
         * \brief Creates the thread pool.
@@ -95,6 +95,8 @@ public:
     explicit ThreadPool();
 
     ~ThreadPool();
+
+    int m_numThreads;
 
 private:
     /*!
@@ -163,19 +165,19 @@ template ATOM_API ThreadPool* Singleton<ThreadPool>::Instance();
 
 typedef Singleton<ThreadPool> JobSystem;
 
-template<class T>
-auto ThreadPool::AddJob(T job)->std::future<decltype(job())>
-{
-    auto wrapper = std::make_shared<std::packaged_task<decltype(job()) ()>>(std::move(job));
-    {
-        std::unique_lock<std::mutex> lock(m_poolMutex);
-        m_lowPriorityJobs.emplace([=] {
-            (*wrapper)();
-        });
-        m_poolCondition.notify_one();
-        return wrapper->get_future();
-    }
-}
+//template<class T>
+//auto ThreadPool::AddJob(T job)->std::future<decltype(job())>
+//{
+//    auto wrapper = std::make_shared<std::packaged_task<decltype(job()) ()>>(std::move(job));
+//    {
+//        std::unique_lock<std::mutex> lock(m_poolMutex);
+//        m_lowPriorityJobs.emplace([=] {
+//            (*wrapper)();
+//        });
+//        m_poolCondition.notify_one();
+//        return wrapper->get_future();
+//    }
+//}
 
 template<class T>
 auto ThreadPool::AddJob(T job, Job_Priority priority) -> std::future<decltype(job())>
@@ -208,7 +210,7 @@ auto ThreadPool::AddJob(T job, Job_Priority priority) -> std::future<decltype(jo
 /*!
 * \brief Checks to see if a job return value is ready.
 * \param future A reference to the job future being checked.
-* \return Wether the job return value is ready for retrieval or not.
+* \return Whether the job return value is ready for retrieval or not.
 *
 * Takes the return future from a job assignment inside the ThreadPool. It will then check to see if
 * the future return value is ready for retrieval or not. This was a job completing can be checked
@@ -220,7 +222,22 @@ ATOM_API bool IsJobReady(std::future<T> const& future);
 template<class T>
 bool IsJobReady(std::future<T> const & future)
 {
-    //Make the future wait for a non-existant amount and check if the status is ready
+    //Make the future wait for a non-existent amount and check if the status is ready
     //If not ready then job has not completed yet.
     return future.wait_for(std::chrono::seconds(0)) == std::future_status::ready;
+}
+
+template<class T>
+ATOM_API bool AreJobsReady(std::vector<std::future<T>> const& futures);
+
+template<class T>
+bool AreJobsReady(std::vector<std::future<T>> const& futures)
+{
+    bool ready = true;
+    for(auto& future : futures) {
+        if(!IsJobReady(future)) {
+            ready = false;
+        }
+    }
+    return ready;
 }

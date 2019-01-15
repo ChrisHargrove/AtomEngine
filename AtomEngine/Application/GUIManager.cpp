@@ -15,6 +15,11 @@
 #include "SerialRegister.h"
 #include "SerialExtensions.h"
 #include "CameraControls.h"
+#include "RigidBody.h"
+#include "ForceClicker.h"
+#include "BoxCollider.h"
+#include "PhysicsManager.h"
+#include "BallCollider.h"
 
 GUIManager* GUIManager::m_instance = nullptr;
 
@@ -25,7 +30,7 @@ struct GUI_Callback {
         return 0;
     }
     static int RenameMeshPath(ImGuiInputTextCallbackData* data) {
-        static_cast<Mesh*>(data->UserData)->SetMesh(std::string(data->Buf));
+        static_cast<Mesh*>(data->UserData)->SetMesh("Assets/Models/" + std::string(data->Buf));
         if(static_cast<Mesh*>(data->UserData)->Initialize())
         {
             GUI::Instance()->GetScene()->AddMesh(static_cast<Mesh*>(data->UserData));
@@ -53,6 +58,7 @@ struct GUI_Callback {
         (*static_cast<std::shared_ptr<Scene>*>(scene))->GetSceneCameraObject()->AddComponent<CameraControls>();
 
         newScene.reset();
+        Physics::Instance()->Reset();
 
         return 0;
     }
@@ -263,6 +269,23 @@ void GUIManager::ShowObjectEditorWindow()
             {
                 m_objectSelected->AddComponent<Mesh>();
             }
+            if (ImGui::MenuItem("Add Rigid Body"))
+            {
+                m_objectSelected->AddComponent<RigidBody>();
+                Physics::Instance()->AddBody(m_objectSelected->GetComponent<RigidBody>());
+            }
+            if (ImGui::MenuItem("Add Box Collider"))
+            {
+                m_objectSelected->AddComponent<BoxCollider>();
+            }
+            if (ImGui::MenuItem("Add Ball Collider"))
+            {
+                m_objectSelected->AddComponent<BallCollider>();
+            }
+            if (ImGui::MenuItem("Add Clicker"))
+            {
+                m_objectSelected->AddComponent<ForceClicker>();
+            }
             ImGui::EndPopup();
         }
     }
@@ -276,7 +299,10 @@ void GUIManager::ShowComponontInfo(Component* component)
     if(dynamic_cast<Transform*>(component) != nullptr)
     {
         auto ptr = dynamic_cast<Transform*>(component);
-        ImGui::DragFloat3("Position", &ptr->GetPosition().x, 0.1f);
+        if(ImGui::DragFloat3("Position", &ptr->GetPosition().x, 0.1f))
+        {
+            
+        }
         if(ImGui::DragFloat3("Rotation", &ptr->GetEulerAngles().x, 0.1f))
         {
             ptr->SetRotation(glm::quat(glm::radians(ptr->GetEulerAngles())));
@@ -291,6 +317,15 @@ void GUIManager::ShowComponontInfo(Component* component)
     else if (dynamic_cast<Camera*>(component) != nullptr)
     {
         auto ptr = dynamic_cast<Camera*>(component);
+    }
+    else if (dynamic_cast<RigidBody*>(component) != nullptr)
+    {
+        auto ptr = dynamic_cast<RigidBody*>(component);
+        if(ImGui::DragFloat("Mass", &ptr->GetMass(), 0.1f))
+        {
+            ptr->CalculateInertiaTensorIntegral();
+        }
+        ImGui::Checkbox("Uses Gravity", &ptr->UsesGravity());
     }
 }
 
@@ -349,6 +384,18 @@ void GUIManager::ShowMenuBar()
         {
             ImGui::MenuItem("Heirarchy", NULL, &m_showHeirarchyWindow);
             ImGui::MenuItem("Object Editor", NULL, &m_showObjectEditorWindow);
+
+            ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("Physics"))
+        {
+            ImGui::Checkbox("Draw Debug", &Physics::Instance()->ShouldDrawDebug());
+            ImGui::Separator();
+            ImGui::Checkbox("Draw Colliders", &Physics::Instance()->ShouldDrawColliders());
+            ImGui::Checkbox("Draw KD-Tree", &Physics::Instance()->ShouldDrawKDTree());
+            ImGui::Separator();
+            ImGui::Checkbox("Start Simulation", &Physics::Instance()->StartSimulation());
 
             ImGui::EndMenu();
         }

@@ -1,22 +1,20 @@
 #include "ThreadPool.h"
 #include <string>
-#include <chrono>
-
-
 
 ThreadPool::ThreadPool(size_t numThreads) :
-    m_isStopping(false) //Sets initial values.
+    m_isStopping(false), //Sets initial values.
+    m_numThreads(numThreads)
 {
     //Starts the thread pool with the number of threads decided.
     StartPool(numThreads);
 }
-
 
 ThreadPool::ThreadPool() :
     m_isStopping(false)
 {
     //Queries the pc to see how many threads can run on the hardware at once.
     size_t maxNumThreads = std::thread::hardware_concurrency();
+    m_numThreads = maxNumThreads;
     StartPool(maxNumThreads);
 }
 
@@ -78,5 +76,3 @@ void ThreadPool::StopPool()
         thread.join();
     }
 }
-
-

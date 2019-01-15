@@ -3,6 +3,7 @@
 #include "LogManager.h"
 
 #include "ShaderManager.h"
+#include "ResourceManager.h"
 
 
 Mesh::Mesh()
@@ -14,9 +15,6 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-    for (int i = 0; i < m_subMeshList.size(); i++) {
-        delete m_subMeshList[i];
-    }
 }
 
 void Mesh::Update(float deltaTime)
@@ -31,7 +29,7 @@ bool Mesh::Initialize()
     else {
         if (LoadMesh(m_meshName)) {
 
-            for (auto subMesh : m_subMeshList) {
+            for (auto subMesh : *m_subMeshList.get()) {
                 subMesh->m_vertexArray.Bind();
                 subMesh->m_vertexBuffer.Bind();
 
@@ -53,6 +51,16 @@ bool Mesh::Initialize()
     return true;
 }
 
+glm::vec3& Mesh::GetMinimumBounds()
+{
+    return m_meshMinBounds;
+}
+
+glm::vec3& Mesh::GetMaximumBounds()
+{
+    return m_meshMaxBounds;
+}
+
 void Mesh::SetMesh(const std::string& meshName)
 {
     m_meshName = meshName;
@@ -70,8 +78,21 @@ bool Mesh::LoadMesh()
 
 bool Mesh::LoadMesh(const std::string& meshName)
 {
+    if(Resource::Instance()->HasResource<MeshResource>(meshName))
+    {
+        auto resource = Resource::Instance()->GetResource<MeshResource>(meshName);
+        m_subMeshList = resource->m_subMeshList;
+        m_meshMaxBounds = resource->m_maxBounds;
+        m_meshMinBounds = resource->m_minBounds;
+        return true;
+    }
+    //TODO: DRAGONS LAY HERE!!! NEEDS SERIOUS INSPECTION!!
     if (ModelLoader::LoadModel(meshName, this)) {
         Logger::Instance()->LogInfo("Successfully Loaded: " + meshName);
+
+        std::shared_ptr<MeshResource> resource = std::make_shared<MeshResource>(m_subMeshList, m_meshMinBounds, m_meshMaxBounds);
+
+        Resource::Instance()->AddResource<MeshResource>(meshName, resource);
         return true;
     }
     return false;
@@ -79,7 +100,7 @@ bool Mesh::LoadMesh(const std::string& meshName)
 
 void Mesh::Render()
 {
-    for (auto subMesh : m_subMeshList) {
+    for (auto& subMesh : *m_subMeshList.get()) {
         if (subMesh->m_drawCount > 0) {
             subMesh->Render();
         }
@@ -88,7 +109,7 @@ void Mesh::Render()
 
 void Mesh::Render(int instanceCount)
 {
-    for (auto subMesh : m_subMeshList) {
+    for (auto& subMesh : *m_subMeshList.get()) {
         if (subMesh->m_drawCount > 0) {
             subMesh->Render(instanceCount);
         }
@@ -97,7 +118,7 @@ void Mesh::Render(int instanceCount)
 
 std::vector<SubMesh*> Mesh::GetSubMeshList()
 {
-    return m_subMeshList;
+    return *m_subMeshList.get();
 }
 
 SubMesh::SubMesh() :

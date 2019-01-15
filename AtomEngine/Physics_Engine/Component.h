@@ -39,7 +39,7 @@ public:
         *
         * Will call the appropriate function for each component by polymorphism.
     */
-    virtual void Update(float deltaTime) = 0;
+    virtual void Update(float deltaTime) {};
 
     /*!
         * \brief Virtual Initialize Function.
@@ -90,7 +90,7 @@ public:
         * Will check the parent for a Component of specified type and return it.
     */
     template<class T>
-    T* GetComponent();
+    T* GetComponent() const;
 
 
 protected:
@@ -105,7 +105,7 @@ private:
 };
 
 template<class T>
-inline T* Component::GetComponent()
+inline T* Component::GetComponent() const 
 {
     if(m_parent.lock() != nullptr) return m_parent.lock().get()->GetComponent<T>();
     else { return nullptr; }

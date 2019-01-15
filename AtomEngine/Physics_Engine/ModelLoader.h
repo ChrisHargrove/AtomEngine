@@ -54,5 +54,7 @@ private:
     */
     static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, Mesh* mesh);
 
+    static void CalculateMeshBounds(Mesh* mesh);
+
 };
 

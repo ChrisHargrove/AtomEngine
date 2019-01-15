@@ -125,12 +125,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CameraControls.cpp" />
+    <ClCompile Include="ForceClicker.cpp" />
     <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraControls.h" />
+    <ClInclude Include="ForceClicker.h" />
     <ClInclude Include="GUIManager.h" />
     <ClInclude Include="LoadState.h" />
   </ItemGroup>

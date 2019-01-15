@@ -41,6 +41,7 @@ public:
     void SetSkybox(std::string name);
 
     void AddGameObject();
+    void AddGameObject(std::shared_ptr<GameObject>);
     void AddMesh(Mesh* mesh);
     void RemoveMesh(Mesh* mesh);
 
@@ -58,7 +59,7 @@ private:
     std::vector<std::shared_ptr<GameObject>> m_gameObjectList;
 
     std::map<std::string, std::pair<Mesh*, int>> m_renderList;
-    std::map<std::string, std::vector<glm::mat4>> m_renderTransforms;
+    std::map<std::string, std::vector<glm::mat4*>> m_renderTransforms;
     std::map<std::string, Buffer> m_renderInstanceBuffers;
 
     friend class cereal::access;

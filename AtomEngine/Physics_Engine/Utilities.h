@@ -68,6 +68,5 @@ namespace DataUtils {
     {
         return reinterpret_cast<std::size_t>(&(((T*)0)->*member));
     }
-      
 
 }

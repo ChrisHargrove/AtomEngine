@@ -22,6 +22,7 @@ GameObject::~GameObject()
 
 void GameObject::Update(float deltaTime)
 {
+    std::unique_lock<std::mutex> lock(m_mutex);
     for (auto component : m_componentList) {
         component->Update(deltaTime);
     }
@@ -43,30 +44,6 @@ void GameObject::Initialize()
 
 void GameObject::RemoveComponent(Component* comp)
 {
-    /*for(auto component : m_componentList)
-    {
-        if(typeid(*component.get()) == typeid(comp))
-        {
-            m_componentList.erase(*component);
-        }
-    }
-
-    for(int i = m_componentList.size() - 1; i >= 0; i-- )
-    {
-        if (typeid(*m_componentList[i].get()) == typeid(comp))
-        {
-            m_componentList.erase(m_componentList[i]);
-        }
-    }*/
-
-    /*for(auto& it = m_componentList.end() - 1; it >= m_componentList.begin(); --it)
-    {
-        if ((*it)->GetTypeInfo() == comp->GetTypeInfo())
-        {
-            m_componentList.erase(it);
-        }
-    }*/
-
     for (auto& it = m_componentList.begin(); it != m_componentList.end(); ) 
     {
         if ((*it)->GetTypeInfo() == comp->GetTypeInfo()) {

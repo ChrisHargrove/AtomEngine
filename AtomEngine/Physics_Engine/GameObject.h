@@ -19,6 +19,7 @@
 #include <memory>
 
 #include <CEREAL/cereal.hpp>
+#include <mutex>
 
 class Component;
 
@@ -175,6 +176,8 @@ public:
 
     void SetName(const std::string& name);
 
+    
+
 protected:
     std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
     std::weak_ptr<GameObject> m_parentObject; /*!< The parent of this GameObject. */
@@ -182,6 +185,8 @@ protected:
 
 private:
     std::string m_name;
+
+    std::mutex m_mutex;
 
     bool m_hasInitialized; /*!< Whether the game object has already been initialized or not. */
 

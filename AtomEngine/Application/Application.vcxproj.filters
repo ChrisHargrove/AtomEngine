@@ -48,6 +48,9 @@
     <ClCompile Include="GUIManager.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="ForceClicker.cpp">
+      <Filter>Source Files\Behaviours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadState.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="GUIManager.h">
       <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceClicker.h">
+      <Filter>Header Files\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

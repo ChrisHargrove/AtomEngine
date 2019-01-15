@@ -17,6 +17,8 @@ bool ModelLoader::LoadModel(const std::string & fileName, Mesh* mesh)
     
     ProcessNode(scene->mRootNode, scene, mesh);
 
+    CalculateMeshBounds(mesh);
+
     return true;
 }
 
@@ -92,7 +94,52 @@ void ModelLoader::ProcessMesh(aiMesh * aimesh, const aiScene * scene, Mesh* mesh
     subMesh->m_indices = indices;
     subMesh->m_drawCount = indices.size();
 
-    mesh->m_subMeshList.push_back(subMesh);
+    if (!mesh->m_subMeshList) {
+        mesh->m_subMeshList = std::make_shared<SubMeshList>();
+    }
+    mesh->m_subMeshList->push_back(subMesh);
 
+}
+
+void ModelLoader::CalculateMeshBounds(Mesh* mesh)
+{
+    glm::vec3 minBounds(0, 0, 0);
+    glm::vec3 maxBounds(0, 0, 0);
+
+    for(auto& submesh : mesh->GetSubMeshList())
+    {
+        for(auto vertex : submesh->m_vertices)
+        {
+            if(vertex.m_position.x < minBounds.x)
+            {
+                minBounds.x = vertex.m_position.x;
+            }
+            else if(vertex.m_position.x > maxBounds.x)
+            {
+                maxBounds.x = vertex.m_position.x;
+            }
+
+            if (vertex.m_position.y < minBounds.y)
+            {
+                minBounds.y = vertex.m_position.y;
+            }
+            else if (vertex.m_position.y > maxBounds.y)
+            {
+                maxBounds.y = vertex.m_position.y;
+            }
+
+            if (vertex.m_position.z < minBounds.z)
+            {
+                minBounds.z = vertex.m_position.z;
+            }
+            else if (vertex.m_position.z > maxBounds.z)
+            {
+                maxBounds.z = vertex.m_position.z;
+            }
+        }
+    }
+
+    mesh->GetMaximumBounds() = maxBounds;
+    mesh->GetMinimumBounds() = minBounds;
 }
 

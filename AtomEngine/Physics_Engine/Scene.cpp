@@ -6,6 +6,7 @@
 #include "ShaderManager.h"
 #include "LogManager.h"
 #include "ResourceManager.h"
+#include "ThreadPool.h"
 
 Scene::Scene(): 
 m_sceneCamera(nullptr),
@@ -19,12 +20,6 @@ Scene::~Scene()
 
 void Scene::Initialize()
 {
-    //LOAD SKYBOX
-    /*if(m_skybox == nullptr) {
-        m_skybox = std::make_shared<Skybox>();
-        m_skybox->Load("OM_skybox/OM.jpg");
-    }*/
-
     //LOAD A SCENE CAMERA IF NONE EXIST
     if(!m_sceneCamera) {
         m_sceneCamera = std::make_shared<GameObject>();
@@ -52,14 +47,14 @@ void Scene::Initialize()
         //AND STORE ITS TRANSFORM IN A LIST OF TRANSFORMS
         if(meshName == mesh->GetMesh()) {
             m_renderList[meshName].second += 1;
-            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
         }
         //IF ITS THE FIRST MESH OF THIS OF THIS NAME STORE IT AND IVE IT A COUNT OF 1
         //AND STORE ITS TRANSFORM TOO
         else {
             meshName = mesh->GetMesh();
             m_renderList.emplace(std::make_pair(meshName, std::make_pair(mesh, 1)));
-            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
         }
     }
 
@@ -78,7 +73,7 @@ void Scene::Initialize()
         m_renderInstanceBuffers[mesh.first].Create(VBO);
         m_renderInstanceBuffers[mesh.first].Bind();
         //FILL THE BUFFER WITH THE MESHES TRANSFORMS
-        std::vector<glm::mat4> transformList;
+        std::vector<glm::mat4*> transformList;
         transformList = m_renderTransforms[mesh.first];
         m_renderInstanceBuffers[mesh.first].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
         
@@ -104,24 +99,80 @@ void Scene::Initialize()
 
 void Scene::Update(float delta)
 {
-    std::vector<Mesh*> meshes;
-
     m_sceneCamera->Update(delta);
 
-    for(auto& obj : m_gameObjectList)
-    {
-        auto mesh = obj->GetComponent<Mesh>();
-        if(mesh != nullptr)
-        {
-            meshes.push_back(mesh);
-            m_renderTransforms[mesh->GetMesh()].clear();
+    if(!m_gameObjectList.empty()) {
+        //Get Number of threads running in job system, then calculate how many game objects
+        //can be run on each, in parallel
+        auto numThreads = JobSystem::Instance()->m_numThreads;
+        auto numObj = m_gameObjectList.size() / numThreads;
+        if(numObj == 0) {
+            numObj = m_gameObjectList.size() % numThreads;
         }
+
+        //Get the game objects as raw pointers instead of smart pointers
+        auto objs = GetGameObjects();
+        std::vector<GameObject*>::iterator start;
+        std::vector<GameObject*>::iterator end;
+
+        //used to store the last job started, so that the update function can wait on it,
+        //until all objects are updated.
+        std::vector<std::future<void>> jobCompletion;
+
+        bool skipUnnecessary = false;
+
+        //set up a job on each thread
+        for (int i = 0; i < numThreads; i++)
+        {
+            if (skipUnnecessary) continue;
+
+            //calculate the start point of object range for each job
+            if (i == 0) { start = objs.begin(); }
+            else if (numObj < numThreads) { start = objs.begin(); skipUnnecessary = true; }
+            else { start = std::next(objs.begin(), numObj * i); }
+
+            //do the same for the end of the range
+            if (i == numThreads) { end = objs.end(); }
+            else if(numObj < numThreads) { end = objs.end(); }
+            else { end = std::next(objs.begin(), numObj * (i + 1)); }
+
+            //copy the new range into a new vector to pass to the job.
+            auto shortObjectList = std::vector<GameObject*>(start, end);
+
+            //Setup a job that will iterate over the short object range and update them.
+            auto job = [shortObjectList, delta] () {
+                for (auto o : shortObjectList) {
+                    o->Update(delta);
+                }
+            };
+
+            //if creating the last job for the object list, then store the returned
+            //job value into the std::future 
+            if(skipUnnecessary) {
+                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
+            }
+            else if (i != numThreads - 1) {
+                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
+            }
+            else {
+                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
+            }
+
+        }
+
+        //wait here until the last job in the thread pool has finished.
+        while (!AreJobsReady(jobCompletion)) { };
     }
-    for(auto& mesh : meshes)
+    
+    for(auto& mesh : m_renderTransforms)
     {
-        m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
-        auto transformList = m_renderTransforms[mesh->GetMesh()];
-        m_renderInstanceBuffers[mesh->GetMesh()].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
+        //convert all model matrices from pointers to values.
+        std::vector<glm::mat4> converted;
+        for(auto& transform : mesh.second) {
+            converted.push_back(*transform);
+        }
+        //fill instance buffers with updated transforms.
+        m_renderInstanceBuffers[mesh.first].FillBuffer(converted.size() * sizeof(glm::mat4), &converted[0], DYNAMIC);
     }
 }
 
@@ -163,6 +214,7 @@ void Scene::Reload(std::shared_ptr<Scene>* loadedScene)
     m_gameObjectList = loadedScene->get()->GetGameObjectPointers();
     m_name = loadedScene->get()->GetName();
     m_sceneCamera = loadedScene->get()->GetSceneCameraObject();
+    m_skybox = Resource::Instance()->GetResource<Skybox>(loadedScene->get()->m_skybox->GetName());
 
     Initialize();
 }
@@ -197,6 +249,13 @@ void Scene::AddGameObject()
     auto obj = std::make_shared<GameObject>();
     obj->AddComponent<Transform>();
     m_gameObjectList.push_back(obj);
+    obj->Initialize();
+}
+
+void Scene::AddGameObject(std::shared_ptr<GameObject> obj)
+{
+    m_gameObjectList.push_back(obj);
+    obj->Initialize();
 }
 
 void Scene::AddMesh(Mesh* mesh)
@@ -210,9 +269,12 @@ void Scene::AddMesh(Mesh* mesh)
     if(renderList.empty())
     {
         m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
-        m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+        m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
 
-        auto transformList = m_renderTransforms[mesh->GetMesh()];
+        std::vector<glm::mat4> transformList;
+        for (auto& transform : m_renderTransforms[mesh->GetMesh()]) {
+            transformList.push_back(*transform);
+        }
 
         m_renderInstanceBuffers[mesh->GetMesh()].Create(VBO);
         m_renderInstanceBuffers[mesh->GetMesh()].Bind();
@@ -240,15 +302,21 @@ void Scene::AddMesh(Mesh* mesh)
     for(auto& renderable : renderList) {
         if(mesh->GetMesh() == renderable.second.first->GetMesh()) {
             m_renderList[mesh->GetMesh()].second += 1;
-            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
+            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
 
-            auto transformList = m_renderTransforms[mesh->GetMesh()];
+            std::vector<glm::mat4> transformList;
+            for (auto& transform : m_renderTransforms[mesh->GetMesh()]) {
+                transformList.push_back(*transform);
+            }
             m_renderInstanceBuffers[mesh->GetMesh()].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
         }
         else {
             m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
-            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransform());
-            auto transformList = m_renderTransforms[mesh->GetMesh()];
+            m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
+            std::vector<glm::mat4> transformList;
+            for (auto& transform : m_renderTransforms[mesh->GetMesh()]) {
+                transformList.push_back(*transform);
+            }
 
             m_renderInstanceBuffers[mesh->GetMesh()].Create(VBO);
             m_renderInstanceBuffers[mesh->GetMesh()].Bind();
@@ -280,7 +348,7 @@ void Scene::RemoveMesh(Mesh* mesh)
         m_renderList.erase(mesh->GetMesh());
     }
     m_renderTransforms.at(mesh->GetMesh()).erase(std::remove_if(m_renderTransforms[mesh->GetMesh()].begin(), m_renderTransforms[mesh->GetMesh()].end(),
-        [mesh](glm::mat4 transform) { return transform == mesh->GetComponent<Transform>()->GetTransform(); }), m_renderTransforms[mesh->GetMesh()].end());
+        [mesh](glm::mat4* transform) { return transform == mesh->GetComponent<Transform>()->GetTransformPtr(); }), m_renderTransforms[mesh->GetMesh()].end());
     if(m_renderTransforms.at(mesh->GetMesh()).empty()) {
         m_renderTransforms.erase(mesh->GetMesh());
     }
@@ -312,11 +380,20 @@ void Scene::RemoveGameObject(GameObject* obj)
             if(mesh != nullptr)
             {
                 m_renderList.at(mesh->GetMesh()).second--;
+                if(m_renderList.at(mesh->GetMesh()).second <= 0)
+                {
+                    m_renderList.erase(mesh->GetMesh());
+                }
                 m_renderTransforms.at(mesh->GetMesh()).erase(std::remove_if(m_renderTransforms[mesh->GetMesh()].begin(), m_renderTransforms[mesh->GetMesh()].end(),
-                    [obj](glm::mat4 transform) { return transform == obj->GetComponent<Transform>()->GetTransform(); }), m_renderTransforms[mesh->GetMesh()].end());
+                    [obj](glm::mat4* transform) { return transform == obj->GetComponent<Transform>()->GetTransformPtr(); }), m_renderTransforms[mesh->GetMesh()].end());
+                if(m_renderTransforms.at(mesh->GetMesh()).empty())
+                {
+                    m_renderTransforms.erase(mesh->GetMesh());
+                }
             }
 
             GameObject::Destroy(m_gameObjectList[i]);
+            m_gameObjectList.erase(std::remove(m_gameObjectList.begin(), m_gameObjectList.end(), m_gameObjectList[i]), m_gameObjectList.end());
             index = i;
         }
     }

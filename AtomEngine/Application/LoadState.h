@@ -28,6 +28,7 @@ public:
 
     FrameBuffer m_frameBuffer;
     bool m_wireFrame = false;
+    bool m_showDebug = false;
 
     std::shared_ptr<Scene> m_scene;
     std::vector<GameObject*> m_gameObjects;

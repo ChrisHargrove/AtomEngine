@@ -13,6 +13,9 @@
 #include "CameraControls.h"
 #include "GUIManager.h"
 #include "ResourceManager.h"
+#include "PhysicsManager.h"
+#include "BoxCollider.h"
+#include "NumberGenerator.h"
 
 LoadState::LoadState(): 
 m_screenFrame(nullptr)
@@ -27,26 +30,13 @@ LoadState::~LoadState()
 
 bool LoadState::Initialize()
 {
-
     Input::Instance()->SetGUICallback([](SDL_Event* evt) {GUI::Instance()->ProcessInput(evt); });
-
-   /*auto test = JobSystem::Instance()->AddJob([] {
-        Logger::Instance()->LogDebug("Single Test");
-    });
-
-    while (!IsJobReady(test)) {
-        Logger::Instance()->LogDebug("Job Not Done!!");
-    }*/
 
     Shaders::Instance()->AddShader("PHONG", "phong");
     Shaders::Instance()->AddShader("BASIC", "basic");
     Shaders::Instance()->AddShader("INSTANCE", "phongInstance");
     Shaders::Instance()->AddShader("SKYBOX", "skybox");
     Shaders::Instance()->AddShader("POST", "postProcessing");
-
-    /*IO::Instance()->Open("GameScene.xml", std::ios::in);
-    IO::Instance()->Serialize<cereal::XMLInputArchive>(m_scene);
-    IO::Instance()->Close();*/
 
     if(m_scene == nullptr)
     {
@@ -75,9 +65,13 @@ bool LoadState::Initialize()
     std::shared_ptr<Skybox> test = std::make_shared<Skybox>();
     test->Load("OM_skybox/OM.jpg");
 
-    Resource::Instance()->AddResource("skybox", test);
+    Resource::Instance()->AddResource(test.get()->GetName(), test);
 
-    m_scene->SetSkybox("skybox");
+    m_scene->SetSkybox(test.get()->GetName());
+
+    GUI::Instance()->SetSceneData(&m_scene);
+
+    Physics::Instance()->Initialize();
 
     return true;
 }
@@ -88,19 +82,70 @@ void LoadState::Input()
     if (Input::Instance()->IsKeyPressed(SDLK_F1)) {
         m_wireFrame = !m_wireFrame;
     }
+    if(Input::Instance()->IsKeyPressed(SDLK_F2))
+    {
+        m_showDebug = !m_showDebug;
+    }
     //QUIT INPUT
     if (Input::Instance()->IsKeyPressed(SDLK_ESCAPE)) {
         Input::Instance()->RequestQuit();
+    }
+
+    //TESTING
+    if(Input::Instance()->IsKeyPressed(SDLK_F8))
+    {
+        Physics::Instance()->Initialize();
+    }
+    if(Input::Instance()->IsKeyPressed(SDLK_F10))
+    {
+        NumberGenerator random;
+        random.SetRange(-1, 1);
+
+        auto count = 0;
+        for(int x = 0; x < 10; x++)
+        {
+            for (int y = 0; y < 10; y++)
+            {
+                for (int z = 0; z < 10; z++)
+                {
+                    count++;
+                    auto obj = std::make_shared<GameObject>();
+                    obj->AddComponent<Transform>();
+                    auto mesh = std::make_shared<Mesh>();
+                    mesh->SetMesh("Assets/Models/cube.obj");
+                    obj->AddComponent(mesh);
+                    auto rbody = std::make_shared<RigidBody>();
+                    rbody->UsesGravity() = true;
+
+                   
+                    obj->AddComponent(rbody);
+                    Physics::Instance()->AddBody(rbody.get());
+                    obj->AddComponent<BoxCollider>();
+
+                    obj->SetName(std::to_string(count));
+                    m_scene->AddGameObject(obj);
+
+                    rbody->ApplyTorque(glm::vec3(random.GetNumberF(), random.GetNumberF(), random.GetNumberF()) * 100.0f);
+                    rbody->ApplyForce(glm::vec3(random.GetNumberF(), random.GetNumberF(), random.GetNumberF()));
+
+
+                    obj->GetComponent<Transform>()->Translate(glm::vec3(x,y,z) * 4.0f);
+
+                    m_scene->AddMesh(mesh.get());
+                    
+
+                }
+            }
+        }
     }
 }
 
 void LoadState::Update(float delta)
 {
-    GUI::Instance()->SetSceneData(&m_scene);
     m_gameObjects = m_scene->GetGameObjects();
-    for (auto& obj : m_gameObjects) {
-        obj->Update(delta);
-    }
+
+    Physics::Instance()->StepSimulation(delta);
+
     m_scene->Update(delta);
 }
 
@@ -117,6 +162,8 @@ void LoadState::Render()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
+    
+
     Shaders::Instance()->UseShader("INSTANCE");
 
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
@@ -125,6 +172,11 @@ void LoadState::Render()
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
     m_scene->Render();
+
+    //Draw all physics debug stuff
+    Shaders::Instance()->UseShader("BASIC");
+    Physics::Instance()->DrawDebug();
+
 
     if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -143,18 +195,13 @@ void LoadState::Render()
     m_screenFrame->Render();
     m_frameBuffer.BindTexture();
 
-    //ImGui::ShowDemoWindow();
+    ImGui::ShowDemoWindow();
 
     GUI::Instance()->ShowGUI();
 }
 
 bool LoadState::Shutdown()
 {
-    /*for (auto& obj : m_gameObjectList) {
-        auto temp = obj.get();
-        GameObject::Destroy(obj);
-    }
-    m_gameObjectList.clear();*/
     return true;
 }
 
