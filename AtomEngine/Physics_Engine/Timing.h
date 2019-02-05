@@ -50,3 +50,4 @@ private:
     std::chrono::high_resolution_clock::time_point m_endTime; /*!< The time at the end of the frame. */
 };
 
+

@@ -15,6 +15,7 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
+    m_subMeshList.reset();
 }
 
 void Mesh::Update(float deltaTime)
@@ -78,21 +79,24 @@ bool Mesh::LoadMesh()
 
 bool Mesh::LoadMesh(const std::string& meshName)
 {
-    if(Resource::Instance()->HasResource<MeshResource>(meshName))
+    if(Resource::Instance()->HasResource<Mesh>(meshName))
     {
-        auto resource = Resource::Instance()->GetResource<MeshResource>(meshName);
+        auto resource = Resource::Instance()->GetResource<Mesh>(meshName);
         m_subMeshList = resource->m_subMeshList;
-        m_meshMaxBounds = resource->m_maxBounds;
-        m_meshMinBounds = resource->m_minBounds;
+        m_meshMinBounds = resource->m_meshMinBounds;
+        m_meshMaxBounds = resource->m_meshMaxBounds;
         return true;
     }
-    //TODO: DRAGONS LAY HERE!!! NEEDS SERIOUS INSPECTION!!
-    if (ModelLoader::LoadModel(meshName, this)) {
+
+    //DRAGONS LAY HERE!!! NEEDS SERIOUS INSPECTION!!
+    //Don't worry Dragons were tamed :D 17/01/19
+    if(ModelLoader::LoadModel(meshName))
+    {
         Logger::Instance()->LogInfo("Successfully Loaded: " + meshName);
-
-        std::shared_ptr<MeshResource> resource = std::make_shared<MeshResource>(m_subMeshList, m_meshMinBounds, m_meshMaxBounds);
-
-        Resource::Instance()->AddResource<MeshResource>(meshName, resource);
+        auto resource = Resource::Instance()->GetResource<Mesh>(meshName);
+        m_subMeshList = resource->m_subMeshList;
+        m_meshMinBounds = resource->m_meshMinBounds;
+        m_meshMaxBounds = resource->m_meshMaxBounds;
         return true;
     }
     return false;

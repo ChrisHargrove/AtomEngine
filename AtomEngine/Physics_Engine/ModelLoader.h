@@ -15,6 +15,7 @@
 
 #include <ASSIMP/scene.h>
 #include <string>
+#include "Mesh.h"
 
 class Mesh;
 
@@ -32,6 +33,8 @@ public:
     */
     static bool LoadModel(const std::string& fileName, Mesh* mesh);
 
+    static bool LoadModel(const std::string& fileName);
+
 private:
     /*!
         * \brief Processes a node from the scene heirarchy inside the Assimp loader.
@@ -42,6 +45,8 @@ private:
         * This function is used to recursivly get all data out of the scene heirarchy.
     */
     static void ProcessNode(aiNode* node, const aiScene* scene, Mesh* mesh);
+
+    static void ProcessNode(aiNode* node, const aiScene* scene, MeshResource* resource);
 
     /*!
         * \brief Processes a mesh from inside the node of an Assimp scene.
@@ -54,7 +59,10 @@ private:
     */
     static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, Mesh* mesh);
 
+    static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, MeshResource* resource);
+
     static void CalculateMeshBounds(Mesh* mesh);
+    static void CalculateMeshBounds(MeshResource* resource);
 
 };
 

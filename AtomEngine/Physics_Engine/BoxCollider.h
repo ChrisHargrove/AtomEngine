@@ -29,6 +29,12 @@ protected:
 
     virtual void DrawDebug() override;
 
+    friend class cereal::access;
+
+    template <class Archive>
+    void serialize(Archive &archive) {
+    }
+
 private:
 
     //OBB
@@ -43,4 +49,6 @@ private:
     DebugCuboid* m_debugCubeOBB;
 
 };
+
+CEREAL_REGISTER_TYPE_WITH_NAME(BoxCollider, "BoxColliderObject");
 
