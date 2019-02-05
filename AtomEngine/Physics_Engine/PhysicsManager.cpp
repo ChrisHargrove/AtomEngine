@@ -50,7 +50,7 @@ void PhysicsManager::StepSimulation(float deltaTime)
                 else if (numObj < numThreads) { start = m_bodies.begin(); skipUnnecessary = true; }
                 else { start = std::next(m_bodies.begin(), numObj * i); }
 
-                if (i == numThreads) { end = m_bodies.end(); }
+                if (i == numThreads - 1) { end = m_bodies.end(); }
                 else if (numObj < numThreads) { end = m_bodies.end(); }
                 else { end = std::next(m_bodies.begin(), numObj * (i + 1)); }
 
@@ -81,6 +81,7 @@ void PhysicsManager::StepSimulation(float deltaTime)
             while (!AreJobsReady(jobCompletion)) {};
         }
     }
+    if(m_kdTree) m_kdTree->Rebuild();
 }
 
 void PhysicsManager::DrawDebug()

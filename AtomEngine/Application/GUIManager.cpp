@@ -20,6 +20,7 @@
 #include "BoxCollider.h"
 #include "PhysicsManager.h"
 #include "BallCollider.h"
+#include "ResourceManager.h"
 
 GUIManager* GUIManager::m_instance = nullptr;
 

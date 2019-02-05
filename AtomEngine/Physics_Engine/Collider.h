@@ -21,6 +21,11 @@ protected:
 
     virtual void DrawDebug() = 0;
 
+    friend class cereal::access;
+    template <class Archive>
+    void serialize(Archive &archive) {
+    }
+
 protected:
     bool m_initialized;
 

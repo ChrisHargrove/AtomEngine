@@ -3,6 +3,7 @@
 #include "BoxCollider.h"
 #include "ShaderManager.h"
 #include <GLM/gtc/matrix_transform.hpp>
+#include <GLM/gtx/norm.inl>
 
 void CalculateBounds(const std::vector<RigidBody*>& objects, glm::vec3& minimum, glm::vec3& maximum)
 {
@@ -42,7 +43,7 @@ KDNode::KDNode(std::vector<RigidBody*> objects, int depth, int numDimensions):
     }
 
     //calculate which axis we need to sort by.
-    auto axis = depth % numDimensions;
+    m_axis = depth % numDimensions;
     //calculate the median value in vector.
     auto median = objects.size() / 2;
     //if odd number of objects increment median.
@@ -51,20 +52,22 @@ KDNode::KDNode(std::vector<RigidBody*> objects, int depth, int numDimensions):
     }
 
     //Sort objects by the axis previously calculated
-    switch (axis)
+    switch (m_axis)
     {
     case 0: // X-Axis
         std::nth_element(objects.begin(), objects.begin() + median, objects.end(), CompareX());
+        m_splitValue = objects[median]->GetComponent<Transform>()->GetPosition().x;
         break;
     case 1: // Z-Axis
         std::nth_element(objects.begin(), objects.begin() + median, objects.end(), CompareZ());
+        m_splitValue = objects[median]->GetComponent<Transform>()->GetPosition().z;
         break;
     case 2: // Y-Axis
         std::nth_element(objects.begin(), objects.begin() + median, objects.end(), CompareY());
+        m_splitValue = objects[median]->GetComponent<Transform>()->GetPosition().y;
         break;
     }
 
-    m_median = objects[median]->GetComponent<Transform>()->GetPosition();
 
     CalculateBounds(objects, m_minBounds, m_maxBounds);
     m_dimensions = glm::abs(m_maxBounds - m_minBounds);
@@ -78,13 +81,14 @@ KDNode::KDNode(std::vector<RigidBody*> objects, int depth, int numDimensions):
 KDNode::~KDNode()
 {
     if(IsLeaf()) {
+        delete m_debugCube;
         return;
     }
 
     delete m_left;
     delete m_right;
-
     delete m_debugCube;
+    
 }
 
 void KDNode::Insert(RigidBody* object, int depth, int dimensions)
@@ -94,21 +98,20 @@ void KDNode::Insert(RigidBody* object, int depth, int dimensions)
         m_objects.push_back(object);
         return;
     }
-    auto axis = depth % dimensions;
     auto pos = object->GetComponent<Transform>()->GetPosition();
 
-    switch (axis)
+    switch (m_axis)
     {
     case 0: // X-Axis
-        if (pos.x < m_median.x) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.x < m_splitValue) m_left->Insert(object, depth - 1, dimensions);
         else m_right->Insert(object, depth - 1, dimensions);
         break;
     case 1: // Z-Axis
-        if (pos.z < m_median.z) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.z < m_splitValue) m_left->Insert(object, depth - 1, dimensions);
         else m_right->Insert(object, depth - 1, dimensions);
         break;
     case 2: // Y-Axis
-        if (pos.y < m_median.y) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.y < m_splitValue) m_left->Insert(object, depth - 1, dimensions);
         else m_right->Insert(object, depth - 1, dimensions);
         break;
     }
@@ -121,25 +124,81 @@ void KDNode::Remove(RigidBody* object, int depth, int dimensions)
         m_objects.erase(std::remove(m_objects.begin(), m_objects.end(), object), m_objects.end());
         return;
     }
-    auto axis = depth % dimensions;
     auto pos = object->GetComponent<Transform>()->GetPosition();
 
-    switch (axis)
+    switch (m_axis)
     {
     case 0: // X-Axis
-        if (pos.x < m_median.x) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.x < m_splitValue) m_left->Remove(object, depth - 1, dimensions);
         else m_right->Remove(object, depth - 1, dimensions);
         break;
     case 1: // Z-Axis
-        if (pos.z < m_median.z) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.z < m_splitValue) m_left->Remove(object, depth - 1, dimensions);
         else m_right->Remove(object, depth - 1, dimensions);
         break;
     case 2: // Y-Axis
-        if (pos.y < m_median.y) m_left->Insert(object, depth - 1, dimensions);
+        if (pos.y < m_splitValue) m_left->Remove(object, depth - 1, dimensions);
         else m_right->Remove(object, depth - 1, dimensions);
         break;
     }
 }
+
+void KDNode::NearestNeighbour(RigidBody* rbody, RigidBody* neighbour, float& bestDistance)
+{
+    auto position = rbody->GetComponent<Transform>()->GetPosition();
+    if(IsLeaf())
+    {
+        //Find closest point out of current leaf
+        float best = std::numeric_limits<float>::infinity();
+        RigidBody* currentNeighbour = nullptr;
+
+        for(auto body : m_objects) {
+            auto calc = glm::length2(position - body->GetComponent<Transform>()->GetPosition());
+            if (calc < best) {
+                best = calc;
+                currentNeighbour = body;
+            }
+        }
+
+        if(best < bestDistance) {
+            bestDistance = best;
+            neighbour = currentNeighbour;
+        }
+
+    }
+    else
+    {
+        KDNode* searchFirst;
+        float axisPosition;
+
+        switch(m_axis) {
+        case 0: // X-Axis
+            axisPosition = position.x;
+            break;
+        case 1: // Z-Axis
+            axisPosition = position.z;
+            break;
+        case 2: // Y-Axis
+            axisPosition = position.y;
+            break;
+        }
+
+        if(axisPosition <= m_splitValue) {
+            searchFirst = m_left;
+        }else {
+            searchFirst = m_right;
+        }
+
+        if(searchFirst == m_left) {
+            if (axisPosition - bestDistance <= m_splitValue) { m_left->NearestNeighbour(rbody, neighbour, bestDistance); }
+            if (axisPosition + bestDistance > m_splitValue) { m_right->NearestNeighbour(rbody, neighbour, bestDistance); }
+        }else {
+            if (axisPosition + bestDistance > m_splitValue) { m_right->NearestNeighbour(rbody, neighbour, bestDistance); }
+            if (axisPosition - bestDistance <= m_splitValue) { m_left->NearestNeighbour(rbody, neighbour, bestDistance); }
+        }
+    }
+}
+
 
 bool KDNode::IsLeaf() const
 {
@@ -197,6 +256,16 @@ void KDTree::Rebuild()
 {
     delete m_root;
     m_root = new KDNode(m_objects, m_maxDepth, m_numDimensions);
+}
+
+std::pair<RigidBody*, RigidBody*> KDTree::NearestNeighbour(RigidBody* rigidBody)
+{
+    RigidBody* neighbour = nullptr;
+    float bestDistance = std::numeric_limits<float>::infinity();
+
+    m_root->NearestNeighbour(rigidBody, neighbour, bestDistance);
+
+    return std::make_pair(rigidBody, neighbour);
 }
 
 void KDTree::DebugDraw()

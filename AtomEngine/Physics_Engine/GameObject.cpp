@@ -116,7 +116,7 @@ void GameObject::Destroy(std::shared_ptr<GameObject> &obj)
     obj.reset();
 }
 
-std::string GameObject::GetName()
+std::string& GameObject::GetName()
 {
     return m_name;
 }

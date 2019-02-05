@@ -3,7 +3,6 @@
 #include "RigidBody.h"
 #include "Transform.h"
 #include "PhysicsTypes.h"
-#include <algorithm>
 #include "DebugCuboid.h"
 
 struct CompareX {
@@ -43,12 +42,15 @@ public:
 
     void Remove(RigidBody* object, int depth, int dimensions);
 
+    void NearestNeighbour(RigidBody* rbody, RigidBody* neighbour, float& bestDistance);
+
     bool IsLeaf() const;
 
     void DebugDraw();
 
 private:
-    glm::vec3 m_median;
+    float m_splitValue;
+    int m_axis;
     KDNode* m_left;
     KDNode* m_right;
 
@@ -71,6 +73,8 @@ public:
     void Remove(RigidBody* object);
 
     void Rebuild();
+
+    std::pair<RigidBody*, RigidBody*> NearestNeighbour(RigidBody* rigidBody);
 
 protected:
     friend class PhysicsManager;

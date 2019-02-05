@@ -151,6 +151,4 @@ struct MeshResource
     }
 };
 
-
-
 CEREAL_REGISTER_TYPE_WITH_NAME(Mesh, "MeshObject");

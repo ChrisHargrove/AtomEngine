@@ -58,7 +58,7 @@ private:
     UniformBuffer m_matriceBuffer;
     std::vector<std::shared_ptr<GameObject>> m_gameObjectList;
 
-    std::map<std::string, std::pair<Mesh*, int>> m_renderList;
+    std::map<std::string, std::pair<std::shared_ptr<Mesh>, int>> m_renderList;
     std::map<std::string, std::vector<glm::mat4*>> m_renderTransforms;
     std::map<std::string, Buffer> m_renderInstanceBuffers;
 

@@ -7,6 +7,9 @@
 #include "LogManager.h"
 #include "ResourceManager.h"
 #include "ThreadPool.h"
+#include "RigidBody.h"
+
+#include "PhysicsManager.h"
 
 Scene::Scene(): 
 m_sceneCamera(nullptr),
@@ -28,7 +31,7 @@ void Scene::Initialize()
         m_sceneCamera->Initialize();
     }
 
-    std::vector<Mesh*> meshList;
+    std::vector<std::shared_ptr<Mesh>> meshList;
 
     //LOOP THROUGH ALL GAME OBJECTS
     for(auto& obj : m_gameObjectList) {
@@ -36,7 +39,7 @@ void Scene::Initialize()
         obj->Initialize();
         //IF THE OBJECT HAS A MESH STORE IT
         if(obj->GetComponent<Mesh>() != nullptr) {
-            meshList.push_back(obj->GetComponent<Mesh>());
+            meshList.push_back(obj->GetComponentPtr<Mesh>());
         }
     }
 
@@ -53,7 +56,7 @@ void Scene::Initialize()
         //AND STORE ITS TRANSFORM TOO
         else {
             meshName = mesh->GetMesh();
-            m_renderList.emplace(std::make_pair(meshName, std::make_pair(mesh, 1)));
+            m_renderList.emplace(std::make_pair(meshName, std::make_pair(Resource::Instance()->GetResource<Mesh>(mesh->GetMesh()), 1)));
             m_renderTransforms[meshName].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
         }
     }
@@ -133,7 +136,7 @@ void Scene::Update(float delta)
 
             //do the same for the end of the range
             if (i == numThreads) { end = objs.end(); }
-            else if(numObj < numThreads) { end = objs.end(); }
+            else if(numObj < numThreads) { end = objs.end();  }
             else { end = std::next(objs.begin(), numObj * (i + 1)); }
 
             //copy the new range into a new vector to pass to the job.
@@ -181,7 +184,7 @@ void Scene::Render()
     m_matriceBuffer.SetSubData(&MatriceBuffer::m_view, &m_sceneCamera->GetComponent<Camera>()->GetViewMatrix());
 
     Shaders::Instance()->UseShader("INSTANCE");
-    for(auto& mesh : m_renderList) {
+    for(auto mesh : m_renderList) {
         auto instanceCount = mesh.second.second;
         mesh.second.first->Render(instanceCount);
     }
@@ -264,11 +267,11 @@ void Scene::AddMesh(Mesh* mesh)
         return;
     }
 
-    std::map<std::string, std::pair<Mesh*, int>> renderList(m_renderList);
+    std::map<std::string, std::pair<std::shared_ptr<Mesh>, int>> renderList(m_renderList);
 
     if(renderList.empty())
     {
-        m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
+        m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(Resource::Instance()->GetResource<Mesh>(mesh->GetMesh()), 1)));
         m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
 
         std::vector<glm::mat4> transformList;
@@ -311,7 +314,7 @@ void Scene::AddMesh(Mesh* mesh)
             m_renderInstanceBuffers[mesh->GetMesh()].FillBuffer(transformList.size() * sizeof(glm::mat4), &transformList[0], DYNAMIC);
         }
         else {
-            m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(mesh, 1)));
+            m_renderList.emplace(std::make_pair(mesh->GetMesh(), std::make_pair(Resource::Instance()->GetResource<Mesh>(mesh->GetMesh()), 1)));
             m_renderTransforms[mesh->GetMesh()].push_back(mesh->GetComponent<Transform>()->GetTransformPtr());
             std::vector<glm::mat4> transformList;
             for (auto& transform : m_renderTransforms[mesh->GetMesh()]) {
@@ -390,6 +393,11 @@ void Scene::RemoveGameObject(GameObject* obj)
                 {
                     m_renderTransforms.erase(mesh->GetMesh());
                 }
+            }
+
+            auto rbody = obj->GetComponent<RigidBody>();
+            if(rbody != nullptr) {
+                Physics::Instance()->RemoveBody(rbody);
             }
 
             GameObject::Destroy(m_gameObjectList[i]);

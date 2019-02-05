@@ -27,12 +27,6 @@ bool RigidBody::Initialize()
 
 void RigidBody::Simulate(float deltaTime)
 {
-    ////Apply Gravity
-    //if(m_affectedByGravity)
-    //{
-    //    auto gravityForce = glm::vec3(0, -9.81f * m_mass, 0);
-    //    m_linearMomentum += gravityForce * deltaTime;
-    //}
 
     auto velocity = (m_linearMomentum / m_mass) * deltaTime;
 

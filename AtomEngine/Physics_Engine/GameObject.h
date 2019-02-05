@@ -96,6 +96,9 @@ public:
     template<class T>
     T* GetComponent();
 
+    template<class T>
+    std::shared_ptr<T> GetComponentPtr();
+
     /*!
         * \brief Gets a component from the parent object.
         * \return Returns a pointer to the component found, if component type not found returns nullptr.
@@ -172,11 +175,9 @@ public:
     */
     static void Destroy(std::shared_ptr<GameObject> &obj);
 
-    std::string GetName();
+    std::string& GetName();
 
     void SetName(const std::string& name);
-
-    
 
 protected:
     std::vector<std::shared_ptr<Component>> m_componentList;  /*!< The list of components inside the GameObject. */
@@ -278,10 +279,21 @@ inline T* GameObject::GetComponent()
     return nullptr;
 }
 
+template <class T>
+std::shared_ptr<T> GameObject::GetComponentPtr()
+{
+    for (auto component : m_componentList) {
+        if (typeid(*component.get()) == typeid(T)) {
+            return std::dynamic_pointer_cast<T>(component);
+        }
+    }
+    return nullptr;
+}
+
 template<class T>
 inline T* GameObject::GetComponentInParent()
 {
-    for (auto component : m_parentObject.get()->m_componentList) {
+    for (auto component : m_parentObject.lock().get()->m_componentList) {
         if (typeid(*component.get()) == typeid(T)) {
             return component.get();
         }
