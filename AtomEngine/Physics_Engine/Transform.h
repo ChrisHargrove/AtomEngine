@@ -71,6 +71,8 @@ public:
     */
     glm::quat& GetRotation();
 
+    glm::mat3 GetRotationMatrix();
+
     /*!
         * \brief Gets the current rotation angles as Euler Angles.
         * \return A 3 component vector containing rotation data as Euler Angles
@@ -166,7 +168,7 @@ private:
     glm::quat m_orientation;       /*!< A 3 component vector containing rotation data for the transform. */
     glm::vec3 m_eulerAngles;
     glm::vec3 m_scale;          /*!< A 3 component vector containing scale data for the transform. */
-    glm::mat4 m_tranformMatrix; /*!< A 4x4 Matrix containing all transform data. */
+    glm::mat4 m_transformMatrix; /*!< A 4x4 Matrix containing all transform data. */
 
     Transform* m_parentTransform; /*!< A parent Transform Component. */
 

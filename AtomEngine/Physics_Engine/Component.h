@@ -24,6 +24,8 @@
 
 #include "SerialExtensions.h"
 
+class Transform;
+
 class ATOM_API Component
 {
 public:
@@ -92,10 +94,12 @@ public:
     template<class T>
     T* GetComponent() const;
 
+    Transform* m_transform;
 
 protected:
     const std::type_info* m_typeInfo;
     std::string m_name;                 /*!< A string containing the name of the Component. Used to identify component during serialization.*/
+
     std::weak_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
 
 private:

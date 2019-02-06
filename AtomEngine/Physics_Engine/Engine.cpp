@@ -5,6 +5,7 @@
 #include "ScreenManager.h"
 
 #include "Timing.h"
+#include "ProfilerManager.h"
 
 Engine::Engine()
 {
@@ -17,6 +18,7 @@ Engine::~Engine()
 
 bool Engine::Initialize(float width, float height, const std::string & title, const std::string& logFile)
 {
+    Profiler::Instance()->Initialize("AtomProfile.log");
     Logger::Instance()->Initialize(logFile);
     Screen::Instance()->SetVersion();
     if (!Screen::Instance()->Initialize(title, glm::vec2(width, height))) {

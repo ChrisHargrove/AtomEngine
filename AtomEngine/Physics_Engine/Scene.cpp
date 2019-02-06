@@ -10,6 +10,7 @@
 #include "RigidBody.h"
 
 #include "PhysicsManager.h"
+#include "ProfilerManager.h"
 
 Scene::Scene(): 
 m_sceneCamera(nullptr),
@@ -98,6 +99,10 @@ void Scene::Initialize()
         }
         m_renderInstanceBuffers[mesh.first].Unbind();
     }
+
+    Shaders::Instance()->UseShader("SKYBOX");
+    Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
+    Shaders::Instance()->GetCurrentShader()->SetInt("skybox", 0);
 }
 
 void Scene::Update(float delta)
@@ -149,24 +154,14 @@ void Scene::Update(float delta)
                 }
             };
 
-            //if creating the last job for the object list, then store the returned
-            //job value into the std::future 
-            if(skipUnnecessary) {
-                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-            }
-            else if (i != numThreads - 1) {
-                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-            }
-            else {
-                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-            }
+            jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
 
         }
 
         //wait here until the last job in the thread pool has finished.
         while (!AreJobsReady(jobCompletion)) { };
     }
-    
+
     for(auto& mesh : m_renderTransforms)
     {
         //convert all model matrices from pointers to values.
@@ -177,6 +172,7 @@ void Scene::Update(float delta)
         //fill instance buffers with updated transforms.
         m_renderInstanceBuffers[mesh.first].FillBuffer(converted.size() * sizeof(glm::mat4), &converted[0], DYNAMIC);
     }
+
 }
 
 void Scene::Render()
@@ -191,7 +187,6 @@ void Scene::Render()
 
     if(m_skybox) {
         Shaders::Instance()->UseShader("SKYBOX");
-        Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
         m_skybox->Render();
     }
     

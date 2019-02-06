@@ -2,6 +2,8 @@
 
 #include "PhysicsTypes.h"
 
+class RigidBody;
+
 class Collider : public Component
 {
 public:
@@ -12,6 +14,8 @@ public:
 
     glm::vec3 GetMinimumBounds() const;
     glm::vec3 GetMaximumBounds() const;
+
+    RigidBody* m_rigidBody;
 
 protected:
     friend class PhysicsManager;

@@ -18,6 +18,9 @@ BallCollider::~BallCollider()
 
 bool BallCollider::Initialize()
 {
+    m_transform = GetComponent<Transform>();
+    m_rigidBody = GetComponent<RigidBody>();
+
     auto mesh = GetComponent<Mesh>();
     if(mesh != nullptr)
     {
@@ -36,39 +39,37 @@ bool BallCollider::Initialize()
 
 EndPoint BallCollider::GetStartPoint(const Axis axis) const
 {
-    auto body = GetComponent<RigidBody>();
-    auto position = GetComponent<Transform>()->GetPosition();
-    auto scale = GetComponent<Transform>()->GetScale();
+    auto position = m_transform->GetPosition();
+    auto scale = m_transform->GetScale();
 
     switch (axis)
     {
-    case Axis::X: return EndPoint((m_minBounds.x * scale.x) + position.x, body, true); break;
-    case Axis::Y: return EndPoint((m_minBounds.y * scale.y) + position.y, body, true); break;
-    case Axis::Z: return EndPoint((m_minBounds.z * scale.z) + position.z, body, true); break;
+    case Axis::X: return EndPoint((m_minBounds.x * scale.x) + position.x, m_rigidBody, true); break;
+    case Axis::Y: return EndPoint((m_minBounds.y * scale.y) + position.y, m_rigidBody, true); break;
+    case Axis::Z: return EndPoint((m_minBounds.z * scale.z) + position.z, m_rigidBody, true); break;
     default: return EndPoint(0, nullptr, false);
     }
 }
 
 EndPoint BallCollider::GetEndPoint(const Axis axis) const
 {
-    auto body = GetComponent<RigidBody>();
-    auto position = GetComponent<Transform>()->GetPosition();
-    auto scale = GetComponent<Transform>()->GetScale();
+    auto position = m_transform->GetPosition();
+    auto scale = m_transform->GetScale();
 
     switch (axis)
     {
-    case Axis::X: return EndPoint((m_maxBounds.x * scale.x) + position.x, body, false); break;
-    case Axis::Y: return EndPoint((m_maxBounds.y * scale.y) + position.y, body, false); break;
-    case Axis::Z: return EndPoint((m_maxBounds.z * scale.z) + position.z, body, false); break;
+    case Axis::X: return EndPoint((m_maxBounds.x * scale.x) + position.x, m_rigidBody, false); break;
+    case Axis::Y: return EndPoint((m_maxBounds.y * scale.y) + position.y, m_rigidBody, false); break;
+    case Axis::Z: return EndPoint((m_maxBounds.z * scale.z) + position.z, m_rigidBody, false); break;
     default: return EndPoint(0, nullptr, false);
     }
 }
 
 void BallCollider::DrawDebug()
 {
-    m_debugCube->SetDimensions((m_maxBounds - m_minBounds) * GetComponent<Transform>()->GetScale());
+    m_debugCube->SetDimensions((m_maxBounds - m_minBounds) * m_transform->GetScale());
 
     Transform transform;
-    transform.Translate(GetComponent<Transform>()->GetPosition() * GetComponent<Transform>()->GetScale());
+    transform.Translate(m_transform->GetPosition() * m_transform->GetScale());
     m_debugCube->Render(transform.GetTransform());
 }

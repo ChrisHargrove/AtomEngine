@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <future>
+#include <GLM/glm.hpp>
 
 namespace StringUtils{
     /*!

@@ -73,6 +73,16 @@ bool LoadState::Initialize()
 
     Physics::Instance()->Initialize();
 
+    Shaders::Instance()->UseShader("INSTANCE");
+
+    Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
+    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetSceneCamera()->GetComponent<Transform>()->GetPosition());
+    Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+    Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
+
+    Shaders::Instance()->UseShader("POST");
+    Shaders::Instance()->GetShader("POST")->SetInt("myTexture", 0);
+
     return true;
 }
 
@@ -119,11 +129,11 @@ void LoadState::Input()
 
                    
                     obj->AddComponent(rbody);
-                    Physics::Instance()->AddBody(rbody.get());
                     obj->AddComponent<BoxCollider>();
 
                     obj->SetName(std::to_string(count));
                     m_scene->AddGameObject(obj);
+                    Physics::Instance()->AddBody(rbody.get());
 
                     rbody->ApplyTorque(glm::vec3(random.GetNumberF(), random.GetNumberF(), random.GetNumberF()) * 100.0f);
                     rbody->ApplyForce(glm::vec3(random.GetNumberF(), random.GetNumberF(), random.GetNumberF()));
@@ -154,7 +164,6 @@ void LoadState::Render()
     glm::mat4 view = m_scene->GetSceneCamera()->GetViewMatrix();
 
     m_frameBuffer.Bind();
-    Screen::Instance()->CreateViewport();
     Screen::Instance()->EnableDepthTesting(true);
     Screen::Instance()->Clear();
 
@@ -162,14 +171,7 @@ void LoadState::Render()
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    
-
     Shaders::Instance()->UseShader("INSTANCE");
-
-    Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
-    Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", m_scene->GetSceneCamera()->GetComponent<Transform>()->GetPosition());
-    Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-    Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
 
     m_scene->Render();
 
@@ -177,25 +179,22 @@ void LoadState::Render()
     Shaders::Instance()->UseShader("BASIC");
     Physics::Instance()->DrawDebug();
 
-
     if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     m_frameBuffer.Unbind();
-    Screen::Instance()->CreateViewport();
     Screen::Instance()->EnableDepthTesting(false);
     Screen::Instance()->Clear(ClearBits::COLOR);
 
     Shaders::Instance()->UseShader("POST");
-    Shaders::Instance()->GetShader("POST")->SetInt("myTexture", 0);
 
     glActiveTexture(GL_TEXTURE0);
     m_frameBuffer.BindTexture(0);
     m_screenFrame->Render();
     m_frameBuffer.BindTexture();
 
-    ImGui::ShowDemoWindow();
+    //ImGui::ShowDemoWindow();
 
     GUI::Instance()->ShowGUI();
 }

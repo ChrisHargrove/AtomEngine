@@ -255,6 +255,9 @@
     <ClCompile Include="KDTree.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="ProfilerManager.cpp">
+      <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LogManager.h">
@@ -415,6 +418,9 @@
     </ClInclude>
     <ClInclude Include="KDTree.h">
       <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ProfilerManager.h">
+      <Filter>Header Files\Engine\Core\Managers</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -81,7 +81,7 @@ void PhysicsManager::StepSimulation(float deltaTime)
             while (!AreJobsReady(jobCompletion)) {};
         }
     }
-    if(m_kdTree) m_kdTree->Rebuild();
+    //if(m_kdTree) m_kdTree->Rebuild();
 }
 
 void PhysicsManager::DrawDebug()

@@ -5,6 +5,8 @@
 #include "ShaderManager.h"
 #include "ResourceManager.h"
 
+#include "Transform.h"
+
 
 Mesh::Mesh()
 {
@@ -24,6 +26,8 @@ void Mesh::Update(float deltaTime)
 
 bool Mesh::Initialize()
 {
+    m_transform = GetComponent<Transform>();
+
     if (m_meshName.empty()) {
         return false;
     }

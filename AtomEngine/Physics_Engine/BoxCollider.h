@@ -4,6 +4,7 @@
 #include "DebugCuboid.h"
 #include "Collider.h"
 #include "PhysicsTypes.h"
+#include <array>
 
 #ifdef BUILDING_DLL
 #define ATOM_API __declspec(dllexport)
@@ -37,9 +38,12 @@ protected:
 
 private:
 
+    //optimizing
+    void RecalculateOBB(std::array<glm::vec3, 8>& vertices);
+
     //OBB
     std::vector<glm::vec3> RecalculateOBB();
-    glm::vec3 m_verticesOBB[8];
+    std::array<glm::vec3, 8> m_verticesOBB;
 
     //AABB
     void RecalculateAABB();

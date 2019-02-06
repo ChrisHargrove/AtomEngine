@@ -92,8 +92,6 @@ private:
     glm::vec3 m_target;         /*!< The camera target. */
     glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
 
-    Component* _transform;
-
     template<class Archive>
     void serialize(Archive &archive) {
         archive(cereal::make_nvp("Zoom", m_zoom),

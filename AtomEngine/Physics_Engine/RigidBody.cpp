@@ -1,6 +1,7 @@
 ﻿#include "RigidBody.h"
 #include "Transform.h"
 #include "LogManager.h"
+#include "../Application/LoadState.h"
 
 RigidBody::RigidBody()
 {
@@ -15,12 +16,14 @@ RigidBody::~RigidBody()
 
 bool RigidBody::Initialize()
 {
+    m_transform = GetComponent<Transform>();
+
     m_linearMomentum = glm::vec3(0,0,0);
     m_angularMomentum = glm::vec3(0, 0, 0);
 
     m_mass = 1.0f;
 
-    CalculateInertiaTensorIntegral(GetComponent<Transform>()->GetScale());
+    CalculateInertiaTensorIntegral(m_transform->GetScale());
 
     return true;
 }
@@ -30,9 +33,9 @@ void RigidBody::Simulate(float deltaTime)
 
     auto velocity = (m_linearMomentum / m_mass) * deltaTime;
 
-    GetComponent<Transform>()->Translate(velocity);
+    m_transform->Translate(velocity);
 
-    auto orientationMatrix = glm::mat3_cast(GetComponent<Transform>()->GetRotation());
+    auto orientationMatrix = m_transform->GetRotationMatrix();
 
     auto inverseInertia = orientationMatrix * m_inverseInertiaTensorIntegral * glm::transpose(orientationMatrix);
 
@@ -40,9 +43,9 @@ void RigidBody::Simulate(float deltaTime)
 
     auto q = glm::quat(0, angularVelocity.x, angularVelocity.y, angularVelocity.z);
 
-    auto spin = 0.5f * (q * GetComponent<Transform>()->GetRotation());
+    auto spin = 0.5f * (q * m_transform->GetRotation());
 
-    GetComponent<Transform>()->GetRotation() += spin;
+    m_transform->GetRotation() += spin;
 }
 
 void RigidBody::ApplyForce(glm::vec3 force)
@@ -58,7 +61,7 @@ void RigidBody::ApplyForce(float x, float y, float z)
 void RigidBody::ApplyForce(glm::vec3 force, glm::vec3 position)
 {
     m_linearMomentum += force;
-    m_angularMomentum += glm::cross(position - GetComponent<Transform>()->GetPosition(), force);
+    m_angularMomentum += glm::cross(position - m_transform->GetPosition(), force);
 }
 
 void RigidBody::ApplyTorque(glm::vec3 torque)

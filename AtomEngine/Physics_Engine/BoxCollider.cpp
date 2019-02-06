@@ -19,6 +19,9 @@ BoxCollider::~BoxCollider()
 
 bool BoxCollider::Initialize()
 {
+    m_transform = GetComponent<Transform>();
+    m_rigidBody = GetComponent<RigidBody>();
+
     auto mesh = GetComponent<Mesh>();
     if(mesh != nullptr)
     {
@@ -51,48 +54,55 @@ void BoxCollider::Update(float deltaTime)
 
 EndPoint BoxCollider::GetStartPoint(const Axis axis) const
 {
-    auto body = GetComponent<RigidBody>();
-    auto position = GetComponent<Transform>()->GetPosition();
-    auto scale = GetComponent<Transform>()->GetScale();
+    auto position = m_transform->GetPosition();
+    auto scale = m_transform->GetScale();
 
     switch(axis)
     {
-    case Axis::X: return EndPoint((m_minBounds.x * scale.x) + position.x, body, true); break;
-    case Axis::Y: return EndPoint((m_minBounds.y * scale.y) + position.y, body, true); break;
-    case Axis::Z: return EndPoint((m_minBounds.z * scale.z) + position.z, body, true); break;
+    case Axis::X: return EndPoint((m_minBounds.x * scale.x) + position.x, m_rigidBody, true); break;
+    case Axis::Y: return EndPoint((m_minBounds.y * scale.y) + position.y, m_rigidBody, true); break;
+    case Axis::Z: return EndPoint((m_minBounds.z * scale.z) + position.z, m_rigidBody, true); break;
     default: return EndPoint(0, nullptr, false);
     }
 }
 
 EndPoint BoxCollider::GetEndPoint(const Axis axis) const
 {
-    auto body = GetComponent<RigidBody>();
-    auto position = GetComponent<Transform>()->GetPosition();
-    auto scale = GetComponent<Transform>()->GetScale();
+    auto position = m_transform->GetPosition();
+    auto scale = m_transform->GetScale();
 
     switch (axis)
     {
-    case Axis::X: return EndPoint((m_maxBounds.x * scale.x) + position.x, body, false); break;
-    case Axis::Y: return EndPoint((m_maxBounds.y * scale.y) + position.y, body, false); break;
-    case Axis::Z: return EndPoint((m_maxBounds.z * scale.z) + position.z, body, false); break;
+    case Axis::X: return EndPoint((m_maxBounds.x * scale.x) + position.x, m_rigidBody, false); break;
+    case Axis::Y: return EndPoint((m_maxBounds.y * scale.y) + position.y, m_rigidBody, false); break;
+    case Axis::Z: return EndPoint((m_maxBounds.z * scale.z) + position.z, m_rigidBody, false); break;
     default: return EndPoint(0, nullptr, false);
     }
 }
 
 void BoxCollider::DrawDebug()
 {
-    m_debugCubeOBB->Render(GetComponent<Transform>()->GetTransform());
+    m_debugCubeOBB->Render(m_transform->GetTransform());
 
-    m_debugCubeAABB->SetDimensions((m_maxBounds - m_minBounds) * GetComponent<Transform>()->GetScale());
+    m_debugCubeAABB->SetDimensions((m_maxBounds - m_minBounds) * m_transform->GetScale());
 
     Transform transform;
-    transform.Translate(GetComponent<Transform>()->GetPosition() * GetComponent<Transform>()->GetScale());
+    transform.Translate(m_transform->GetPosition() * m_transform->GetScale());
     m_debugCubeAABB->Render(transform.GetTransform());
+}
+
+void BoxCollider::RecalculateOBB(std::array<glm::vec3, 8>& vertices)
+{
+    const auto rotation = glm::mat3_cast(m_transform->GetRotation());
+    for(auto& vert : vertices) {
+        vert = rotation * vert;
+    }
 }
 
 std::vector<glm::vec3> BoxCollider::RecalculateOBB()
 {
-    const auto rotation = glm::mat3_cast(GetComponent<Transform>()->GetRotation());
+    //TODO: This function takes too much time needs to be optimised!!
+    const auto rotation = glm::mat3_cast(m_transform->GetRotation());
     std::vector<glm::vec3> newOBB;
     for(int i = 0; i < 8; i++) {
         newOBB.push_back(rotation * m_verticesOBB[i]);
@@ -102,22 +112,24 @@ std::vector<glm::vec3> BoxCollider::RecalculateOBB()
 
 void BoxCollider::RecalculateAABB()
 {
-    auto changedOBB = RecalculateOBB();
+    auto vertices = m_verticesOBB;
+
+    RecalculateOBB(vertices);
 
     for(int i = 0; i < 8; i++) {
         if(i == 0) {
-            m_minBounds.x = m_maxBounds.x = changedOBB[i].x;
-            m_minBounds.y = m_maxBounds.y = changedOBB[i].y;
-            m_minBounds.z = m_maxBounds.z = changedOBB[i].z;
+            m_minBounds.x = m_maxBounds.x = vertices[i].x;
+            m_minBounds.y = m_maxBounds.y = vertices[i].y;
+            m_minBounds.z = m_maxBounds.z = vertices[i].z;
         }
         else {
-            if (changedOBB[i].x > m_maxBounds.x) m_maxBounds.x = changedOBB[i].x;
-            if (changedOBB[i].y > m_maxBounds.y) m_maxBounds.y = changedOBB[i].y;
-            if (changedOBB[i].z > m_maxBounds.z) m_maxBounds.z = changedOBB[i].z;
+            if (vertices[i].x > m_maxBounds.x) m_maxBounds.x = vertices[i].x;
+            if (vertices[i].y > m_maxBounds.y) m_maxBounds.y = vertices[i].y;
+            if (vertices[i].z > m_maxBounds.z) m_maxBounds.z = vertices[i].z;
 
-            if (changedOBB[i].x < m_minBounds.x) m_minBounds.x = changedOBB[i].x;
-            if (changedOBB[i].y < m_minBounds.y) m_minBounds.y = changedOBB[i].y;
-            if (changedOBB[i].z < m_minBounds.z) m_minBounds.z = changedOBB[i].z;
+            if (vertices[i].x < m_minBounds.x) m_minBounds.x = vertices[i].x;
+            if (vertices[i].y < m_minBounds.y) m_minBounds.y = vertices[i].y;
+            if (vertices[i].z < m_minBounds.z) m_minBounds.z = vertices[i].z;
         }
     }
 }
