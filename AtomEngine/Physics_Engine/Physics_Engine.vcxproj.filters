@@ -133,6 +133,15 @@
     <Filter Include="Source Files\Engine\Physics\Manager">
       <UniqueIdentifier>{2a5bb3a0-d654-4a95-b973-a647c4c2d9ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Engine\Physics\Colliders">
+      <UniqueIdentifier>{fa861db0-9ba5-4385-b883-f2dab94412c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Physics\Colliders">
+      <UniqueIdentifier>{427189d6-8d28-46dc-a77c-35a6c8f3774a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics\CollisionDetection">
+      <UniqueIdentifier>{33534c44-44a6-49c3-ad09-b01e03d22f53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogManager.cpp">
@@ -243,20 +252,23 @@
     <ClCompile Include="PhysicsManager.cpp">
       <Filter>Source Files\Engine\Physics\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="BallCollider.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="KDTree.cpp">
       <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
     <ClCompile Include="ProfilerManager.cpp">
       <Filter>Source Files\Engine\Core\Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="BallCollider.cpp">
+      <Filter>Source Files\Engine\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="BoxCollider.cpp">
+      <Filter>Source Files\Engine\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Engine\Physics\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="SortAndSweep.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -407,20 +419,26 @@
     <ClInclude Include="PhysicsTypes.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="BallCollider.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="KDTree.h">
       <Filter>Header Files\Engine\Physics</Filter>
     </ClInclude>
     <ClInclude Include="ProfilerManager.h">
       <Filter>Header Files\Engine\Core\Managers</Filter>
+    </ClInclude>
+    <ClInclude Include="BallCollider.h">
+      <Filter>Header Files\Engine\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxCollider.h">
+      <Filter>Header Files\Engine\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Engine\Physics\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadPhase.h">
+      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="SortAndSweep.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

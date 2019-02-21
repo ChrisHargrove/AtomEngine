@@ -20,9 +20,6 @@ public:
 protected:
     friend class PhysicsManager;
 
-    virtual EndPoint GetStartPoint(const Axis axis) const = 0;
-    virtual EndPoint GetEndPoint(const Axis axis) const = 0;
-
     virtual void DrawDebug() = 0;
 
     friend class cereal::access;

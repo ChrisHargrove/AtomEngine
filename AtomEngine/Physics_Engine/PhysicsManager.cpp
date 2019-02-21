@@ -3,6 +3,7 @@
 #include "BoxCollider.h"
 #include "BallCollider.h"
 #include "ThreadPool.h"
+#include "ProfilerManager.h"
 
 void PhysicsManager::Initialize()
 {
@@ -27,6 +28,16 @@ void PhysicsManager::StepSimulation(float deltaTime)
 {
     if (m_stepSimulation)
     {
+        Profiler::Instance()->Start("BroadPhase");
+        //Update All AABB's
+        broadphase.UpdateAABBList(m_bodies);
+        //BroadPhase
+        auto list = broadphase.GenerateOverlapList();
+
+        Profiler::Instance()->End();
+
+
+        //Update All Motion
         if (!m_bodies.empty())
         {
             auto numThreads = JobSystem::Instance()->m_numThreads;
@@ -67,21 +78,13 @@ void PhysicsManager::StepSimulation(float deltaTime)
                     }
                 };
 
-                if (skipUnnecessary) {
-                    jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-                }
-                else if (i != numThreads - 1) {
-                    jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-                }
-                else {
-                    jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
-                }
+                jobCompletion.push_back(JobSystem::Instance()->AddJob(job));
 
             }
             while (!AreJobsReady(jobCompletion)) {};
         }
     }
-    //if(m_kdTree) m_kdTree->Rebuild();
+    
 }
 
 void PhysicsManager::DrawDebug()
@@ -154,4 +157,6 @@ bool& PhysicsManager::ShouldDrawKDTree()
 {
     return m_drawKDTree;
 }
+
+
 

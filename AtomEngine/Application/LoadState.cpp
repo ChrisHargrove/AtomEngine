@@ -111,12 +111,14 @@ void LoadState::Input()
         NumberGenerator random;
         random.SetRange(-1, 1);
 
+        int num = 10;
+
         auto count = 0;
-        for(int x = 0; x < 10; x++)
+        for(int x = 0; x < num; x++)
         {
-            for (int y = 0; y < 10; y++)
+            for (int y = 0; y < num; y++)
             {
-                for (int z = 0; z < 10; z++)
+                for (int z = 0; z < num; z++)
                 {
                     count++;
                     auto obj = std::make_shared<GameObject>();

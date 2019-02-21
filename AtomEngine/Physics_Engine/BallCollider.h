@@ -22,9 +22,6 @@ public:
 
 protected:
 
-    virtual EndPoint GetStartPoint(const Axis axis) const override;
-    virtual EndPoint GetEndPoint(const Axis axis) const override;
-
     virtual void DrawDebug() override;
 
     float m_radius;

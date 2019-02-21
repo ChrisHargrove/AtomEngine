@@ -2,6 +2,7 @@
 #include "Component.h"
 
 class PhysicsManager;
+class Collider;
 
 #ifdef BUILDING_DLL
 #define ATOM_API __declspec(dllexport)
@@ -34,6 +35,7 @@ public:
     void CalculateInertiaTensorIntegral();
     void CalculateInertiaTensorIntegral(glm::vec3 dimensions);
 
+    Collider* m_collider;
 
 protected:
     glm::vec3 m_dimensions;

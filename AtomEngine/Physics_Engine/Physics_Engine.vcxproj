@@ -169,6 +169,7 @@
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Skybox.cpp" />
+    <ClCompile Include="SortAndSweep.cpp" />
     <ClCompile Include="StateManager.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
@@ -180,6 +181,7 @@
     <ClInclude Include="BallCollider.h" />
     <ClInclude Include="BoxCollider.h" />
     <ClInclude Include="AlignedAllocation.h" />
+    <ClInclude Include="BroadPhase.h" />
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
@@ -222,6 +224,7 @@
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="SortAndSweep.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="Texture.h" />

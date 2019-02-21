@@ -1,7 +1,6 @@
 ﻿#include "RigidBody.h"
 #include "Transform.h"
 #include "LogManager.h"
-#include "../Application/LoadState.h"
 
 RigidBody::RigidBody()
 {

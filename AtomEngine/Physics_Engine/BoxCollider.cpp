@@ -10,7 +10,6 @@ BoxCollider::BoxCollider()
     m_typeInfo = &typeid(this);
     m_initialized = false;
     m_debugCubeAABB = new DebugCuboid(1, 1, 1, glm::vec3(0,0, 1));
-    m_debugCubeOBB = new DebugCuboid(1, 1, 1, glm::vec3(1, 1, 0));
 }
 
 BoxCollider::~BoxCollider()
@@ -21,6 +20,7 @@ bool BoxCollider::Initialize()
 {
     m_transform = GetComponent<Transform>();
     m_rigidBody = GetComponent<RigidBody>();
+    m_rigidBody->m_collider = this;
 
     auto mesh = GetComponent<Mesh>();
     if(mesh != nullptr)
@@ -37,8 +37,6 @@ bool BoxCollider::Initialize()
         m_verticesOBB[6] = glm::vec3(m_minBounds.x, m_maxBounds.y, m_maxBounds.z);
         m_verticesOBB[7] = m_maxBounds;
 
-        m_debugCubeOBB->SetDimensions(m_maxBounds - m_minBounds);
-
         m_initialized = true;
         return true;
     }
@@ -52,38 +50,8 @@ void BoxCollider::Update(float deltaTime)
     }
 }
 
-EndPoint BoxCollider::GetStartPoint(const Axis axis) const
-{
-    auto position = m_transform->GetPosition();
-    auto scale = m_transform->GetScale();
-
-    switch(axis)
-    {
-    case Axis::X: return EndPoint((m_minBounds.x * scale.x) + position.x, m_rigidBody, true); break;
-    case Axis::Y: return EndPoint((m_minBounds.y * scale.y) + position.y, m_rigidBody, true); break;
-    case Axis::Z: return EndPoint((m_minBounds.z * scale.z) + position.z, m_rigidBody, true); break;
-    default: return EndPoint(0, nullptr, false);
-    }
-}
-
-EndPoint BoxCollider::GetEndPoint(const Axis axis) const
-{
-    auto position = m_transform->GetPosition();
-    auto scale = m_transform->GetScale();
-
-    switch (axis)
-    {
-    case Axis::X: return EndPoint((m_maxBounds.x * scale.x) + position.x, m_rigidBody, false); break;
-    case Axis::Y: return EndPoint((m_maxBounds.y * scale.y) + position.y, m_rigidBody, false); break;
-    case Axis::Z: return EndPoint((m_maxBounds.z * scale.z) + position.z, m_rigidBody, false); break;
-    default: return EndPoint(0, nullptr, false);
-    }
-}
-
 void BoxCollider::DrawDebug()
 {
-    m_debugCubeOBB->Render(m_transform->GetTransform());
-
     m_debugCubeAABB->SetDimensions((m_maxBounds - m_minBounds) * m_transform->GetScale());
 
     Transform transform;
@@ -101,7 +69,8 @@ void BoxCollider::RecalculateOBB(std::array<glm::vec3, 8>& vertices)
 
 std::vector<glm::vec3> BoxCollider::RecalculateOBB()
 {
-    //TODO: This function takes too much time needs to be optimised!!
+    //This function takes too much time needs to be optimised!!
+    //Semi fixed with function overload?...
     const auto rotation = glm::mat3_cast(m_transform->GetRotation());
     std::vector<glm::vec3> newOBB;
     for(int i = 0; i < 8; i++) {

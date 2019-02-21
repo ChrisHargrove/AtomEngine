@@ -25,9 +25,6 @@ public:
 
 protected:
 
-    virtual EndPoint GetStartPoint(const Axis axis) const override;
-    virtual EndPoint GetEndPoint(const Axis axis) const override;
-
     virtual void DrawDebug() override;
 
     friend class cereal::access;
@@ -50,7 +47,6 @@ private:
 
     //Debug Drawing
     DebugCuboid* m_debugCubeAABB;
-    DebugCuboid* m_debugCubeOBB;
 
 };
 
