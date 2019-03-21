@@ -18,6 +18,7 @@
 #include "Mesh.h"
 
 class Mesh;
+class POD_Mesh;
 
 class ATOM_API ModelLoader
 {
@@ -35,6 +36,8 @@ public:
 
     static bool LoadModel(const std::string& fileName);
 
+    static bool LoadModel(const std::string& fileName, POD_Mesh* mesh);
+
 private:
     /*!
         * \brief Processes a node from the scene heirarchy inside the Assimp loader.
@@ -48,6 +51,8 @@ private:
 
     static void ProcessNode(aiNode* node, const aiScene* scene, MeshResource* resource);
 
+    static void ProcessNode(aiNode* node, const aiScene* scene, POD_Mesh* mesh);
+
     /*!
         * \brief Processes a mesh from inside the node of an Assimp scene.
         * \param aimesh The mesh to be processed.
@@ -59,10 +64,14 @@ private:
     */
     static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, Mesh* mesh);
 
+    static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, POD_Mesh* mesh);
+
     static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, MeshResource* resource);
 
     static void CalculateMeshBounds(Mesh* mesh);
     static void CalculateMeshBounds(MeshResource* resource);
+
+    static void CalculateMeshBounds(POD_Mesh* mesh);
 
 };
 

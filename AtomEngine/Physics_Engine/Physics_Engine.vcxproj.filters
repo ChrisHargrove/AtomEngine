@@ -106,14 +106,8 @@
     <Filter Include="Header Files\Engine\ECS">
       <UniqueIdentifier>{090db566-eead-418d-9bdc-d3a770117474}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\ECS\Components">
-      <UniqueIdentifier>{72fbfd92-2929-478c-9cb9-438a9fa83fae}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Engine\ECS">
       <UniqueIdentifier>{d3468184-0ee7-48e8-93ca-76cac1e11680}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\ECS\Components">
-      <UniqueIdentifier>{b545c0f0-6092-463a-8ec0-72f6e0376ea8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\GUI">
       <UniqueIdentifier>{8f5f96a8-17d4-49c1-b1e1-110b85978e51}</UniqueIdentifier>
@@ -141,6 +135,30 @@
     </Filter>
     <Filter Include="Header Files\Engine\Physics\CollisionDetection">
       <UniqueIdentifier>{33534c44-44a6-49c3-ad09-b01e03d22f53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS\Old">
+      <UniqueIdentifier>{8a1fba90-2f95-4148-81c9-59c4174348ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS\Old\Components">
+      <UniqueIdentifier>{72fbfd92-2929-478c-9cb9-438a9fa83fae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\ECS\Old">
+      <UniqueIdentifier>{be9dbe83-9e6d-4e4d-a864-8b3a9d6f5cab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\ECS\Old\Components">
+      <UniqueIdentifier>{b545c0f0-6092-463a-8ec0-72f6e0376ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS\Components">
+      <UniqueIdentifier>{5874fa8a-105c-4888-a6f3-7e7e9dd204c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS\Components\Data">
+      <UniqueIdentifier>{1ec2f5ca-a3e7-425d-b1b5-42cc5b1d6d81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\ECS\Systems">
+      <UniqueIdentifier>{7a5a5e99-3717-4405-aa79-ffff6d964a12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\ECS\Components">
+      <UniqueIdentifier>{404f6b39-b425-446f-b283-eb2628d73da8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,17 +192,14 @@
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Engine\Core\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Engine\ECS</Filter>
-    </ClCompile>
     <ClCompile Include="Transform.cpp">
-      <Filter>Source Files\Engine\ECS\Components</Filter>
+      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Engine\Core\Managers</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Engine\ECS\Components</Filter>
+      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
     </ClCompile>
     <ClCompile Include="Cuboid.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
@@ -193,7 +208,7 @@
       <Filter>Source Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Engine\ECS\Components</Filter>
+      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
     </ClCompile>
     <ClCompile Include="ModelLoader.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry</Filter>
@@ -267,8 +282,23 @@
     <ClCompile Include="Collider.cpp">
       <Filter>Source Files\Engine\Physics\Colliders</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Engine\ECS\Old</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS_Component.cpp">
+      <Filter>Source Files\Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS_System.cpp">
+      <Filter>Source Files\Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="ECS_Manager.cpp">
+      <Filter>Source Files\Engine\ECS</Filter>
+    </ClCompile>
+    <ClCompile Include="POD_Mesh.cpp">
+      <Filter>Source Files\Engine\ECS\Components</Filter>
+    </ClCompile>
     <ClCompile Include="SortAndSweep.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -308,14 +338,11 @@
     <ClInclude Include="ThreadPool.h">
       <Filter>Header Files\Engine\Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Engine\ECS</Filter>
-    </ClInclude>
     <ClInclude Include="Component.h">
-      <Filter>Header Files\Engine\ECS\Components</Filter>
+      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
-      <Filter>Header Files\Engine\ECS\Components</Filter>
+      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Header Files\Engine\Core\Managers</Filter>
@@ -324,7 +351,7 @@
       <Filter>Header Files\Engine\Core\Components</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Header Files\Engine\ECS\Components</Filter>
+      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
     </ClInclude>
     <ClInclude Include="Cuboid.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
@@ -336,7 +363,7 @@
       <Filter>Header Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Engine\ECS\Components</Filter>
+      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
     </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Header Files\Engine\Core\Components</Filter>
@@ -437,8 +464,38 @@
     <ClInclude Include="BroadPhase.h">
       <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
     </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Engine\ECS\Old</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS_Component.h">
+      <Filter>Header Files\Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS_System.h">
+      <Filter>Header Files\Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="ECS_Manager.h">
+      <Filter>Header Files\Engine\ECS</Filter>
+    </ClInclude>
+    <ClInclude Include="POD_Transform.h">
+      <Filter>Header Files\Engine\ECS\Components\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformComponent.h">
+      <Filter>Header Files\Engine\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshComponent.h">
+      <Filter>Header Files\Engine\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderMeshSystem.h">
+      <Filter>Header Files\Engine\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="POD_Mesh.h">
+      <Filter>Header Files\Engine\ECS\Components\Data</Filter>
+    </ClInclude>
     <ClInclude Include="SortAndSweep.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Engine\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Header Files\Engine\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -79,6 +79,9 @@ public:
     const std::vector<std::pair<int, int>>& GenerateOverlapList() override;
 
 private:
+
+    std::mutex mut;
+
     std::vector<Collider*> m_AABBList;
     std::vector<EndPoint> m_XAxisEndPoints;
     std::vector<EndPoint> m_YAxisEndPoints;

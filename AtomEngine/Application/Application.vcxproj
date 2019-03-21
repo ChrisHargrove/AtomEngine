@@ -129,12 +129,14 @@
     <ClCompile Include="GUIManager.cpp" />
     <ClCompile Include="LoadState.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="NewECS.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CameraControls.h" />
     <ClInclude Include="ForceClicker.h" />
     <ClInclude Include="GUIManager.h" />
     <ClInclude Include="LoadState.h" />
+    <ClInclude Include="NewECS.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\basic.frag" />

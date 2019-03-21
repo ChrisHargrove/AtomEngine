@@ -134,7 +134,7 @@ void SortAndSweep::UpdateEndPoints()
 
 void SortAndSweep::UpdateIntervalEvents(std::vector<EndPoint>& endpoints, std::vector<int>& lookup)
 {
-    std::mutex mut;
+
     std::unique_lock<std::mutex> intervalLock(mut);
 
     int i = 0;

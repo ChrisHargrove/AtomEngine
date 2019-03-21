@@ -51,6 +51,9 @@
     <ClCompile Include="ForceClicker.cpp">
       <Filter>Source Files\Behaviours</Filter>
     </ClCompile>
+    <ClCompile Include="NewECS.cpp">
+      <Filter>Source Files\Game States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadState.h">
@@ -64,6 +67,9 @@
     </ClInclude>
     <ClInclude Include="ForceClicker.h">
       <Filter>Header Files\Behaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="NewECS.h">
+      <Filter>Header Files\Game States</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

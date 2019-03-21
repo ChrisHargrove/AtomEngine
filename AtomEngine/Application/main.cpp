@@ -1,9 +1,14 @@
 //#include "InputManager.h"
 #include "Engine.h"
 
-#include "LoadState.h"
 #include "StateManager.h"
 #include "GUIManager.h"
+#include "NewECS.h"
+#include "LoadState.h"
+
+#ifdef main
+#undef main
+#endif
 
 int main(int argc, char** argv) {
 
@@ -18,8 +23,8 @@ int main(int argc, char** argv) {
 
     game->Initialize(1330, 768, "Atom Engine v2.0", "AtomEngine.log");
 
-    if (StateMachine::Instance()->AddState("LOAD:", new LoadState())) {
-        StateMachine::Instance()->PushState("LOAD:");
+    if (StateMachine::Instance()->AddState("ECS:", new NewECS())) {
+        StateMachine::Instance()->PushState("ECS:");
     }
 
     return game->Run();

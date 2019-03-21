@@ -54,6 +54,7 @@ private:
     Buffer m_vertexArray;       /*!< The Vertex Array Object. */
     Buffer m_vertexBuffer;      /*!< The Vertex Buffer Object. */
     Buffer m_elementBuffer;     /*!< The Element Array Buffer. */
+    Buffer m_instanceBuffer;    /*!< The Instance Array Buffer. */
 };
 
 typedef std::vector<SubMesh*> SubMeshList;

@@ -135,6 +135,7 @@ SubMesh::SubMesh() :
     m_vertexArray.Create(VAO);
     m_vertexBuffer.Create(VBO);
     m_elementBuffer.Create(EBO);
+    m_instanceBuffer.Create(VBO);
 }
 
 SubMesh::~SubMesh()
