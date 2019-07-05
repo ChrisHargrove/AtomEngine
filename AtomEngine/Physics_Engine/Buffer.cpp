@@ -140,6 +140,8 @@ GLuint FrameBuffer::GetTexture(unsigned int index)
 
 void FrameBuffer::BindTexture(int index)
 {
+    glActiveTexture(GL_TEXTURE0);
+
     if (index <= -1) {
         glBindTexture(GL_TEXTURE_2D, index);
         return;

@@ -22,14 +22,15 @@ public:
     void Shutdown();
 
     void Start(const std::string& label);
-    void End();
+    void End(const std::string& label);
 
 private:
     std::ofstream* m_fileStream;
     std::mutex m_profilerLock;
 
-    std::deque<std::string> m_labelOrder;
-    std::map<std::string, std::chrono::high_resolution_clock::time_point> m_profiles;
+    std::map<std::string,std::chrono::high_resolution_clock::time_point> m_startTimes;
+    std::map<std::string, std::deque<float>> m_averageTimes;
+
 private:
     ProfilerManager() {};
     ProfilerManager(const ProfilerManager&);

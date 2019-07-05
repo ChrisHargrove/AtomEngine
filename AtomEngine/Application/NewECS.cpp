@@ -12,11 +12,13 @@
 #include "NumberGenerator.h"
 
 #include <GLM/gtx/rotate_vector.hpp>
+#include "RigidBodyComponent.h"
+#include "BoundingVolumeHeirarchy.h"
 
 
 NewECS::NewECS() :
-m_screenFrame(nullptr),
-m_renderMeshSystem(m_renderer)
+m_renderMeshSystem(m_instanceRenderer),
+m_renderDebugSystem(m_debugRenderer)
 {
     JobSystem::Instance();
 }
@@ -26,77 +28,84 @@ NewECS::~NewECS()
 {
 }
 
+void NewECS::CreateSimulation()
+{
+    TransformComponent transform;
+    transform.m_transform.SetPosition(glm::vec3(0, 0, 5));
+    transform.m_transform.SetScale(glm::vec3(1.0f));
+    MeshComponent meshComp;
+    meshComp.m_mesh.LoadMesh("Assets/Models/cube.obj");
+    RigidBodyComponent* rigidbody;
+    AABBComponent* aabb;
+
+    NumberGenerator genny;
+    genny.SetSeed(0);
+    genny.SetRange(-20, 20);
+
+    //Create Entities;
+    for (int x = -5; x < 5; x++) {
+        for (int y = -5; y < 5; y++) {
+            for (int z = -5; z < 5; z++) {
+                transform.m_transform.SetPosition(glm::vec3(x, y , z ));
+                transform.m_transform.SetScale(glm::vec3(std::abs(genny.GetNumberF()) + 0.1f, std::abs(genny.GetNumberF()) + 0.1f, std::abs(genny.GetNumberF()) + 0.1f) * 0.1f);
+
+                auto entity = m_ecs.MakeEntity();
+                m_ecs.AddComponent(entity, &transform);
+                m_ecs.AddComponent(entity, &meshComp);
+                rigidbody = new RigidBodyComponent(m_ecs.GetComponent<TransformComponent>(entity)->m_transform);
+                rigidbody->m_rigidBody.SetMass(3.0f);
+                //rigidbody->m_rigidBody.UseGravity();
+
+                rigidbody->m_rigidBody.ApplyTorque(glm::vec3(0.01f, 0.01f, 0.01f));
+                rigidbody->m_rigidBody.ApplyForce(glm::vec3(genny.GetNumberF(), genny.GetNumberF(), genny.GetNumberF()) * 0.1f);
+
+                m_ecs.AddComponent(entity, rigidbody);
+
+                aabb = new AABBComponent(&m_ecs.GetComponent<MeshComponent>(entity)->m_mesh);
+                m_ecs.AddComponent(entity, aabb);
+            }
+        }
+    }
+}
+
 bool NewECS::Initialize()
 {
     camTransform = new POD_Transform();
+    camTransform->SetPosition(glm::vec3(0, 0, -20));
     
     Input::Instance()->SetGUICallback([](SDL_Event* evt) { GUI::Instance()->ProcessInput(evt); });
 
-    Shaders::Instance()->AddShader("INSTANCE", "phongInstance");
-    Shaders::Instance()->AddShader("SKYBOX", "skybox");
-    Shaders::Instance()->AddShader("POST", "postProcessing");
+    m_debugRenderer.Initialize("DEBUG", "debugInstance");
+    m_skyboxRenderer.Initialize("SKYBOX", "skybox");
+    m_skyboxRenderer.SetSkybox("OM_skybox/OM.jpg");
+    m_instanceRenderer.Initialize("INSTANCE", "phongInstance");
+    m_mainRenderer.Initialize("POST", "postProcessing");
 
-    m_screenFrame = new Quad(true);
 
-    m_frameBuffer.Create(Screen::Instance()->GetSize());
-    m_frameBuffer.AddAttachment(TEXTURE);
-    m_frameBuffer.AddRenderBuffer(DEPTH_STENCIL);
-    if (!m_frameBuffer.IsFrameBufferComplete()) {
-        return false;
-    }
-
-    Screen::Instance()->Enable3D();
-
-    MatriceBuffer m_matrixBuffer = { Screen::Instance()->GetProjection(), glm::lookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0)) };
-    Shaders::Instance()->SetUniformBufferBinding("Matrices", UniformBufferBinding::MATRICES);
-    m_uniformBuffer.Create(sizeof(m_matrixBuffer));
-    m_uniformBuffer.BindBuffer(UniformBufferBinding::MATRICES);
-    m_uniformBuffer.SetSubData(&MatriceBuffer::m_projection, &m_matrixBuffer.m_projection);
-    m_uniformBuffer.SetSubData(&MatriceBuffer::m_view, &m_matrixBuffer.m_view);
-
-    Shaders::Instance()->UseShader("SKYBOX");
-    Shaders::Instance()->GetCurrentShader()->SetMat4("model", glm::mat4(1.0f));
-    Shaders::Instance()->GetCurrentShader()->SetInt("skybox", 0);
-
-    m_skybox = std::make_shared<Skybox>();
-    m_skybox->Load("OM_skybox/OM.jpg");
-
+    
     Shaders::Instance()->UseShader("INSTANCE");
-
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", glm::vec3(0,0,0));
     Shaders::Instance()->GetCurrentShader()->SetVec3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightColor", glm::vec3(1.0f));
-
-    Shaders::Instance()->UseShader("POST");
-    Shaders::Instance()->GetShader("POST")->SetInt("myTexture", 0);
+    
 
     //Testing new ECS
     //Create A Mesh Component
-    TransformComponent transform;
-    transform.m_transform.SetPosition(glm::vec3(0, 0, -20));
-    MeshComponent meshComp;
-    meshComp.m_mesh.LoadMesh("Assets/Models/cube.obj");
-    //Create Entities;
-    auto entity = m_ecs.MakeEntity();
-    m_ecs.AddComponent(entity, &transform);
-    m_ecs.AddComponent(entity, &meshComp);
+    CreateSimulation();
 
-    NumberGenerator genny;
-    genny.SetSeed(0);
-    genny.SetRange(-50, 50);
-
-    for(int i = 0; i < 10000; i++)
-    {
-        transform.m_transform.SetPosition(glm::vec3(genny.GetNumberF(), genny.GetNumberF(), genny.GetNumberF()));
-
-        auto entity = m_ecs.MakeEntity();
-        m_ecs.AddComponent(entity, &transform);
-        m_ecs.AddComponent(entity, &meshComp);
-    }
 
     //Create Systems
     m_renderPipeline.AddSystem(&m_renderMeshSystem);
+    m_renderPipeline.AddSystem(&m_renderDebugSystem);
+
+    m_physicsSystems.AddSystem(&m_physicsMovementSystem);
+    m_collisionDetection.SetBroadPhase<BoundingVolumeHeirarchy>(&m_debugRenderer);
+    m_collisionDetection.SetNarrowPhase<GJK>();
+    m_physicsSystems.AddSystem(&m_collisionDetection);
+
+    GUI::Instance()->SetRenderDebugSystem(&m_renderDebugSystem);
+    GUI::Instance()->SetCollisionDetectionSystem(&m_collisionDetection);
 
     return true;
 }
@@ -165,53 +174,36 @@ void NewECS::Input()
         }*/
 
     }
+
 }
 
 void NewECS::Update(float delta)
 {
-    viewFloat += 0.001f;
+    m_ecs.UpdateSystems(m_physicsSystems, delta);
 }
 
 void NewECS::Render()
 {
-    glm::vec3 direction(0, 0, 1);
-    direction = glm::normalize(glm::rotate(direction, viewFloat, glm::vec3(0, 1, 0)));
+    glm::mat4 view = glm::lookAt(camTransform->GetPosition(), camTransform->GetPosition() + camTransform->GetForward(), camTransform->GetUp());
 
-    view = glm::lookAt(camTransform->GetPosition(), camTransform->GetPosition() + camTransform->GetForward(), camTransform->GetUp());
-
-    //m_renderer.GetUniformBuffer().SetSubData(&MatriceBuffer::m_view, &view);
-    m_uniformBuffer.SetSubData(&MatriceBuffer::m_view, &view);
-
-    m_frameBuffer.Bind();
-    Screen::Instance()->EnableDepthTesting(true);
-    Screen::Instance()->Clear();
+    m_mainRenderer.SetViewMatrix(view);
+    m_mainRenderer.BeginFrame();
 
     if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
-    Shaders::Instance()->UseShader("INSTANCE");
     m_ecs.UpdateSystems(m_renderPipeline, 0);
-    m_renderer.Render();
-
-    Shaders::Instance()->UseShader("SKYBOX");
-    m_skybox->Render();
-
-
+    m_instanceRenderer.Render();
+    m_debugRenderer.Render();
+    m_skyboxRenderer.Render();
+    
+    
     if (m_wireFrame) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
-    m_frameBuffer.Unbind();
-    Screen::Instance()->EnableDepthTesting(false);
-    Screen::Instance()->Clear(ClearBits::COLOR);
-
-    Shaders::Instance()->UseShader("POST");
-
-    glActiveTexture(GL_TEXTURE0);
-    m_frameBuffer.BindTexture(0);
-    m_screenFrame->Render();
-    m_frameBuffer.BindTexture();
+    m_mainRenderer.Render();
 
     GUI::Instance()->ShowGUI();
 }

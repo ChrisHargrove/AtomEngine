@@ -58,9 +58,6 @@
     <Filter Include="Header Files\Engine\Physics">
       <UniqueIdentifier>{0f56c6f9-0abc-48fd-bb9b-2b7bae4ad616}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Engine\Physics">
-      <UniqueIdentifier>{5a7ef237-b8dc-4552-a19f-9d3f19f5103a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Graphics\Geometry">
       <UniqueIdentifier>{24c9690b-a789-4587-8cb1-1c44b17897d1}</UniqueIdentifier>
     </Filter>
@@ -78,12 +75,6 @@
     </Filter>
     <Filter Include="Source Files\Engine\Graphics\Geometry\Debug">
       <UniqueIdentifier>{1fdfcba1-38c0-4010-a1d3-28cf49912b4d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\IO">
-      <UniqueIdentifier>{7b8e32d9-50bf-434a-ae3c-3fc9600ffc9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\IO">
-      <UniqueIdentifier>{26a93729-a477-429f-8ada-f392ce3bde89}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\Graphics\Texturing">
       <UniqueIdentifier>{727c6dbd-03fd-4e0a-81f8-7750c60ab59c}</UniqueIdentifier>
@@ -121,32 +112,8 @@
     <Filter Include="Source Files\Engine\GUI\IMGUI">
       <UniqueIdentifier>{0ecb4d97-e4ac-40c6-8ea6-c1ad619b562a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Engine\Physics\Manager">
-      <UniqueIdentifier>{02d8dfc7-44b1-41a4-a8b4-6df5ee4d7a94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Physics\Manager">
-      <UniqueIdentifier>{2a5bb3a0-d654-4a95-b973-a647c4c2d9ad}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\Physics\Colliders">
-      <UniqueIdentifier>{fa861db0-9ba5-4385-b883-f2dab94412c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\Physics\Colliders">
-      <UniqueIdentifier>{427189d6-8d28-46dc-a77c-35a6c8f3774a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Engine\Physics\CollisionDetection">
       <UniqueIdentifier>{33534c44-44a6-49c3-ad09-b01e03d22f53}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\ECS\Old">
-      <UniqueIdentifier>{8a1fba90-2f95-4148-81c9-59c4174348ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Engine\ECS\Old\Components">
-      <UniqueIdentifier>{72fbfd92-2929-478c-9cb9-438a9fa83fae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\ECS\Old">
-      <UniqueIdentifier>{be9dbe83-9e6d-4e4d-a864-8b3a9d6f5cab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Engine\ECS\Old\Components">
-      <UniqueIdentifier>{b545c0f0-6092-463a-8ec0-72f6e0376ea8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Engine\ECS\Components">
       <UniqueIdentifier>{5874fa8a-105c-4888-a6f3-7e7e9dd204c4}</UniqueIdentifier>
@@ -159,6 +126,21 @@
     </Filter>
     <Filter Include="Source Files\Engine\ECS\Components">
       <UniqueIdentifier>{404f6b39-b425-446f-b283-eb2628d73da8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Graphics\Renderers">
+      <UniqueIdentifier>{8f583ac4-9fa8-4607-934e-9a13b842fef4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics\ECS">
+      <UniqueIdentifier>{83ef5314-c80b-4df3-8df2-ab18313b6cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics\ECS\Components">
+      <UniqueIdentifier>{6b7b1285-9ee0-40e4-be15-2a8677b0c848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics\ECS\Components\Data">
+      <UniqueIdentifier>{b1bf0634-bb65-4fff-9f91-f6d27c15412c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Physics\ECS\Systems">
+      <UniqueIdentifier>{e3a886fa-73b7-499a-91f5-1e152c5a9b14}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -192,14 +174,8 @@
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files\Engine\Core\Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
-    </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
       <Filter>Source Files\Engine\Core\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
     </ClCompile>
     <ClCompile Include="Cuboid.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
@@ -207,17 +183,11 @@
     <ClCompile Include="DebugCuboid.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Engine\ECS\Old\Components</Filter>
-    </ClCompile>
     <ClCompile Include="ModelLoader.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry</Filter>
     </ClCompile>
     <ClCompile Include="Quad.cpp">
       <Filter>Source Files\Engine\Graphics\Geometry\Primitives</Filter>
-    </ClCompile>
-    <ClCompile Include="IOManager.cpp">
-      <Filter>Source Files\Engine\IO</Filter>
     </ClCompile>
     <ClCompile Include="Lighting.cpp">
       <Filter>Source Files\Engine\Graphics\Lighting</Filter>
@@ -240,9 +210,6 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files\Engine\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="IMGUI\imgui.cpp">
       <Filter>Source Files\Engine\GUI\IMGUI</Filter>
     </ClCompile>
@@ -261,29 +228,8 @@
     <ClCompile Include="IMGUI\imgui_widgets.cpp">
       <Filter>Source Files\Engine\GUI\IMGUI</Filter>
     </ClCompile>
-    <ClCompile Include="RigidBody.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsManager.cpp">
-      <Filter>Source Files\Engine\Physics\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="KDTree.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
-    </ClCompile>
     <ClCompile Include="ProfilerManager.cpp">
       <Filter>Source Files\Engine\Core\Managers</Filter>
-    </ClCompile>
-    <ClCompile Include="BallCollider.cpp">
-      <Filter>Source Files\Engine\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="BoxCollider.cpp">
-      <Filter>Source Files\Engine\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files\Engine\Physics\Colliders</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>Source Files\Engine\ECS\Old</Filter>
     </ClCompile>
     <ClCompile Include="ECS_Component.cpp">
       <Filter>Source Files\Engine\ECS</Filter>
@@ -296,9 +242,6 @@
     </ClCompile>
     <ClCompile Include="POD_Mesh.cpp">
       <Filter>Source Files\Engine\ECS\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="SortAndSweep.cpp">
-      <Filter>Source Files\Engine\Physics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,20 +281,11 @@
     <ClInclude Include="ThreadPool.h">
       <Filter>Header Files\Engine\Core\Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
-    </ClInclude>
     <ClInclude Include="ResourceManager.h">
       <Filter>Header Files\Engine\Core\Managers</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
       <Filter>Header Files\Engine\Core\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
     </ClInclude>
     <ClInclude Include="Cuboid.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
@@ -362,9 +296,6 @@
     <ClInclude Include="DebugCuboid.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Debug</Filter>
     </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Engine\ECS\Old\Components</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Header Files\Engine\Core\Components</Filter>
     </ClInclude>
@@ -373,15 +304,6 @@
     </ClInclude>
     <ClInclude Include="Quad.h">
       <Filter>Header Files\Engine\Graphics\Geometry\Primitives</Filter>
-    </ClInclude>
-    <ClInclude Include="IOManager.h">
-      <Filter>Header Files\Engine\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="SerialRegister.h">
-      <Filter>Header Files\Engine\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="SerialExtensions.h">
-      <Filter>Header Files\Engine\IO</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Engine\Graphics\Texturing</Filter>
@@ -406,9 +328,6 @@
     </ClInclude>
     <ClInclude Include="Skybox.h">
       <Filter>Header Files\Engine\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UniformBufferTypes.h">
       <Filter>Header Files\Engine\Graphics</Filter>
@@ -437,35 +356,8 @@
     <ClInclude Include="IMGUI\imstb_truetype.h">
       <Filter>Header Files\Engine\GUI\IMGUI</Filter>
     </ClInclude>
-    <ClInclude Include="RigidBody.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsManager.h">
-      <Filter>Header Files\Engine\Physics\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsTypes.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
-    <ClInclude Include="KDTree.h">
-      <Filter>Header Files\Engine\Physics</Filter>
-    </ClInclude>
     <ClInclude Include="ProfilerManager.h">
       <Filter>Header Files\Engine\Core\Managers</Filter>
-    </ClInclude>
-    <ClInclude Include="BallCollider.h">
-      <Filter>Header Files\Engine\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="BoxCollider.h">
-      <Filter>Header Files\Engine\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Header Files\Engine\Physics\Colliders</Filter>
-    </ClInclude>
-    <ClInclude Include="BroadPhase.h">
-      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>Header Files\Engine\ECS\Old</Filter>
     </ClInclude>
     <ClInclude Include="ECS_Component.h">
       <Filter>Header Files\Engine\ECS</Filter>
@@ -491,11 +383,53 @@
     <ClInclude Include="POD_Mesh.h">
       <Filter>Header Files\Engine\ECS\Components\Data</Filter>
     </ClInclude>
-    <ClInclude Include="SortAndSweep.h">
-      <Filter>Header Files\Engine\Physics</Filter>
+    <ClInclude Include="InstancedRenderer.h">
+      <Filter>Header Files\Engine\Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="PostRenderer.h">
+      <Filter>Header Files\Engine\Graphics\Renderers</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Header Files\Engine\Graphics</Filter>
+      <Filter>Header Files\Engine\Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxRenderer.h">
+      <Filter>Header Files\Engine\Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="POD_RigidBody.h">
+      <Filter>Header Files\Engine\Physics\ECS\Components\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="RigidBodyComponent.h">
+      <Filter>Header Files\Engine\Physics\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsMovementSystem.h">
+      <Filter>Header Files\Engine\Physics\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Header Files\Engine\Physics\ECS\Components\Data</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderDebugSystem.h">
+      <Filter>Header Files\Engine\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="AABBComponent.h">
+      <Filter>Header Files\Engine\Physics\ECS\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugRenderer.h">
+      <Filter>Header Files\Engine\Graphics\Renderers</Filter>
+    </ClInclude>
+    <ClInclude Include="BroadPhase.h">
+      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="BruteForce.h">
+      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionDetectionSystem.h">
+      <Filter>Header Files\Engine\Physics\ECS\Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="BoundingVolumeHeirarchy.h">
+      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
+    </ClInclude>
+    <ClInclude Include="NarrowPhase.h">
+      <Filter>Header Files\Engine\Physics\CollisionDetection</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

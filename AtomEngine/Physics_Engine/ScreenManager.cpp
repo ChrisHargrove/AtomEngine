@@ -98,6 +98,9 @@ bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
     //Set default clear colour. - Default is Black.
     SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
 
+    //By default enable 3D rendering
+    Enable3D(true);
+
     //No failures so return successful.
     return true;
 }

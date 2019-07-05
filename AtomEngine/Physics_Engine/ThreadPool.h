@@ -241,3 +241,13 @@ bool AreJobsReady(std::vector<std::future<T>> const& futures)
     }
     return ready;
 }
+
+template<class T>
+void WaitForJobCompletion(std::future<T> const & future){
+    while(!IsJobReady(future)){}
+}
+
+template<class T>
+void WaitForJobCompletion(std::vector<std::future<T>> const& futures) {
+    while (!AreJobsReady(futures)) {}
+}

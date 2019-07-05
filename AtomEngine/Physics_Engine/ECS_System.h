@@ -7,6 +7,7 @@
 #endif
 
 #include "ECS_Component.h"
+#include <vector>
 
 /*!
  * \brief The Base class for all systems in the ECS.
@@ -30,6 +31,10 @@ public:
      * \param components Double pointer to the container of components.
      */
     virtual void UpdateComponents(float deltaTime, BaseECSComponent** components){}
+
+    virtual void UpdateComponents(float deltaTime, std::vector<BaseECSComponent*>& components){}
+
+    virtual void UpdateComponents(float deltaTime, std::vector<std::vector<BaseECSComponent*>>& componentArrays){}
 
     /*!
      * \brief Gets the component types associated with this system.

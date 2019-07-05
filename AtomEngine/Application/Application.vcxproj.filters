@@ -22,12 +22,6 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{06740b3c-b85c-403c-b4d0-1776d9e1f64b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Behaviours">
-      <UniqueIdentifier>{d6c7bed3-62c3-4244-946f-7b9718876ea3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Behaviours">
-      <UniqueIdentifier>{03b57bd2-8de4-4a1b-94a1-d86ef67eb142}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\GUI">
       <UniqueIdentifier>{cc7f55d1-bdc1-4438-a1c3-ae23c34fab05}</UniqueIdentifier>
     </Filter>
@@ -39,34 +33,16 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LoadState.cpp">
-      <Filter>Source Files\Game States</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraControls.cpp">
-      <Filter>Source Files\Behaviours</Filter>
-    </ClCompile>
     <ClCompile Include="GUIManager.cpp">
       <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="ForceClicker.cpp">
-      <Filter>Source Files\Behaviours</Filter>
     </ClCompile>
     <ClCompile Include="NewECS.cpp">
       <Filter>Source Files\Game States</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LoadState.h">
-      <Filter>Header Files\Game States</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraControls.h">
-      <Filter>Header Files\Behaviours</Filter>
-    </ClInclude>
     <ClInclude Include="GUIManager.h">
       <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="ForceClicker.h">
-      <Filter>Header Files\Behaviours</Filter>
     </ClInclude>
     <ClInclude Include="NewECS.h">
       <Filter>Header Files\Game States</Filter>
@@ -107,6 +83,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="Shaders\phongInstance.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\debugInstance.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="Shaders\debugInstance.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

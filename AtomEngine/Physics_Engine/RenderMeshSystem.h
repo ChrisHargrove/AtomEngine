@@ -2,24 +2,31 @@
 #include "ECS_System.h"
 #include "TransformComponent.h"
 #include "MeshComponent.h"
-#include "Renderer.h"
+#include "InstancedRenderer.h"
+#include "LogManager.h"
 
 class RenderMeshSystem : public BaseECSSystem
 {
 public:
-    RenderMeshSystem(Renderer& rendererIn) : BaseECSSystem(), renderer(rendererIn) {
+    RenderMeshSystem(InstancedRenderer& rendererIn) : 
+        BaseECSSystem(), 
+        m_renderer(rendererIn)
+    {
         AddComponentType(TransformComponent::ID);
         AddComponentType(MeshComponent::ID);
     }
-
-    virtual void UpdateComponents(float deltaTime, BaseECSComponent** components) override
+    
+    virtual void UpdateComponents(float deltaTime, std::vector<std::vector<BaseECSComponent*>>& componentArrays) override
     {
-        TransformComponent* transform = (TransformComponent*)components[0];
-        MeshComponent* mesh = (MeshComponent*)components[1];
+        for(uint32_t i = 0; i < componentArrays[0].size(); i++)
+        {
+            TransformComponent* transform = (TransformComponent*)componentArrays[0][i];
+            MeshComponent* mesh = (MeshComponent*)componentArrays[1][i];
 
-        renderer.AddToBuffer(mesh->m_mesh.GetSubmeshList(), transform->m_transform.GetMatrix());
+            m_renderer.AddToBuffer(mesh->m_mesh.GetSubmeshList(), transform->m_transform.GetMatrix());
+        }
     }
 
 private:
-    Renderer& renderer;
+    InstancedRenderer& m_renderer;
 };

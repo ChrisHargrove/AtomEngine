@@ -3,17 +3,23 @@
 #include <State.h>
 #include "Buffer.h"
 #include "Quad.h"
-#include "Scene.h"
 #include "POD_Transform.h"
 #include "ECS_Manager.h"
-#include "Renderer.h"
+#include "InstancedRenderer.h"
 #include "RenderMeshSystem.h"
+#include "PostRenderer.h"
+#include "SkyboxRenderer.h"
+#include "PhysicsMovementSystem.h"
+#include "DebugRenderer.h"
+#include "RenderDebugSystem.h"
+#include "CollisionDetectionSystem.h"
 
 class NewECS : public State
 {
 public:
     NewECS();
     virtual ~NewECS();
+    void CreateSimulation();
 
     bool Initialize() override;
     void Input() override;
@@ -24,25 +30,25 @@ public:
     void Resume() override;
     bool IsPaused() override;
 
-    Quad* m_screenFrame;
-
-    FrameBuffer m_frameBuffer;
     bool m_wireFrame = false;
     bool m_showDebug = false;
 
-    std::shared_ptr<Skybox> m_skybox;
-    UniformBuffer m_uniformBuffer;
-
     //test.
     ECS_Manager m_ecs;
-    Renderer m_renderer;
-    RenderMeshSystem m_renderMeshSystem;
-    ECSSystemList m_renderPipeline;
 
+    PostRenderer m_mainRenderer;
+    SkyboxRenderer m_skyboxRenderer;
+    InstancedRenderer m_instanceRenderer;
+    DebugRenderer m_debugRenderer;
+
+    RenderMeshSystem m_renderMeshSystem;
+    RenderDebugSystem m_renderDebugSystem;
+    PhysicsMovementSystem m_physicsMovementSystem;
+    CollisionDetectionSystem m_collisionDetection;
+
+    ECSSystemList m_renderPipeline;
+    ECSSystemList m_physicsSystems;
 
     POD_Transform* camTransform;
-
-    glm::mat4 view;
-    float viewFloat;
 };
 

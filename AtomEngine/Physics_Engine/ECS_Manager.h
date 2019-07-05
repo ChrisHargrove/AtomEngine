@@ -25,6 +25,7 @@ public:
     EntityHandle MakeEntity(BaseECSComponent** components, const uint32_t* componentIDs, size_t numComponents);
 
     void RemoveEntity(EntityHandle handle);
+    void ClearECS();
 
 #pragma endregion 
 
@@ -94,9 +95,6 @@ private:
     void UpdateSystemWithMultiComponent(uint32_t index, ECSSystemList& systemList, float deltaTime, const std::vector<uint32_t>& componentTypes,
                                         std::vector<BaseECSComponent*>& componentParam,
                                         std::vector<std::vector<uint8_t>*>& componentArrays);
-
-    uint32_t FindLeastCommonComponent(const std::vector<uint32_t>& componentTypes);
-
 
 #pragma endregion
 

@@ -1,5 +1,5 @@
 #include "ECS_Manager.h"
-#include <algorithm>
+#include "ThreadPool.h"
 
 
 ECS_Manager::~ECS_Manager()
@@ -62,6 +62,19 @@ void ECS_Manager::RemoveEntity(EntityHandle handle)
 
 }
 
+void ECS_Manager::ClearECS()
+{
+    for(int i = m_entities.size() - 1; i >= 0; --i)
+    {
+        Entity entity = m_entities[i]->second;
+        for(auto& component : entity) {
+            DeleteComponent(component.first, component.second);
+        }
+        delete m_entities[i];
+        m_entities.pop_back();
+    }
+}
+
 void ECS_Manager::UpdateSystems(ECSSystemList& systemList, float deltaTime)
 {
     std::vector<BaseECSComponent*> componentParam;
@@ -70,15 +83,29 @@ void ECS_Manager::UpdateSystems(ECSSystemList& systemList, float deltaTime)
     for(uint32_t i = 0; i < systemList.size(); i++)
     {
         auto componentTypes = systemList[i]->GetComponentTypes();
+
+        bool validity = true;
+        for (auto& type : componentTypes) {
+            if (m_components[type].empty()) {
+                validity = false;
+                break;
+            }
+        }
+        if (!validity) continue;
+
         if(componentTypes.size() == 1)
         {
             auto size = BaseECSComponent::GetTypeSize(componentTypes[0]);
             auto& data = m_components[componentTypes[0]];
+
+            std::vector<BaseECSComponent*> components;
+            components.reserve(data.size() / size);
+
             for(uint32_t j = 0; j < data.size(); j += size)
             {
-                auto component = (BaseECSComponent*)&data[j];
-                systemList[i]->UpdateComponents(deltaTime, &component);
+                components.push_back((BaseECSComponent*)&data[j]);
             }
+            systemList[i]->UpdateComponents(deltaTime, components);
         }
         else
         {
@@ -153,53 +180,41 @@ void ECS_Manager::UpdateSystemWithMultiComponent(uint32_t index, ECSSystemList& 
     const std::vector<uint32_t>& componentTypes, std::vector<BaseECSComponent*>& componentParam,
     std::vector<std::vector<uint8_t>*>& componentArrays)
 {
-    componentParam.resize(std::max(componentParam.size(), componentTypes.size()));
-    componentArrays.resize(std::max(componentArrays.size(), componentTypes.size()));
+    componentParam.resize((std::max)(componentParam.size(), componentTypes.size()));
+    componentArrays.resize((std::max)(componentArrays.size(), componentTypes.size()));
+
+    std::vector<std::vector<BaseECSComponent*>> components;
+    std::vector<std::future< std::vector<BaseECSComponent*>>> jobs;
+
     for(uint32_t i = 0; i < componentTypes.size(); i++) {
-        componentArrays[i] = &m_components[componentTypes[i]];
-    }
 
-    auto minSizeIndex = FindLeastCommonComponent(componentTypes);
+        auto& compRef = m_components;
 
-    auto size = BaseECSComponent::GetTypeSize(componentTypes[0]);
-    std::vector<uint8_t>& data = *componentArrays[minSizeIndex];
-    for (uint32_t i = 0; i < data.size(); i += size)
-    {
-        componentParam[0] = reinterpret_cast<BaseECSComponent*>(&data[i]);
-        auto entity = HandleToEntity(componentParam[minSizeIndex]->m_entityID);
-
-        bool isValid = true;
-        for(uint32_t j = 0; j < componentTypes.size(); j++)
+        jobs.push_back(JobSystem::Instance()->AddJob([i, &compRef, &componentArrays, &componentTypes]
         {
-            if (j == minSizeIndex) continue;
+            componentArrays[i] = &compRef[componentTypes[i]];
 
-            componentParam[j] = GetComponentInternal(entity, *componentArrays[j], componentTypes[j]);
-            if(componentParam[j] == nullptr) {
-                isValid = false;
-                break;
+            auto size = BaseECSComponent::GetTypeSize(componentTypes[i]);
+
+            std::vector<BaseECSComponent*> comp;
+
+            std::vector<uint8_t>& data = *componentArrays[i];
+
+            for (uint32_t j = 0; j < data.size(); j += size)
+            {
+                comp.push_back((BaseECSComponent*)&data[j]);
             }
-        }
 
-        if (isValid)
-        {
-            systemList[index]->UpdateComponents(deltaTime, &componentParam[0]);
-        }
+            return comp;
+
+        }));
     }
-}
 
-uint32_t ECS_Manager::FindLeastCommonComponent(const std::vector<uint32_t>& componentTypes)
-{
-    uint32_t minSize = m_components[componentTypes[0]].size() / BaseECSComponent::GetTypeSize(componentTypes[0]);
-    uint32_t minIndex = 0;
-    for(uint32_t i = 1; i < componentTypes.size(); i++)
-    {
-        auto typesize = BaseECSComponent::GetTypeSize(componentTypes[i]);
-        auto size = m_components[componentTypes[i]].size() / typesize;
+    WaitForJobCompletion(jobs);
 
-        if(size < minSize) {
-            minSize = size;
-            minIndex = i;
-        }
+    for(auto& job : jobs) {
+        components.push_back(job.get());
     }
-    return minIndex;
+
+    systemList[index]->UpdateComponents(deltaTime, components);
 }

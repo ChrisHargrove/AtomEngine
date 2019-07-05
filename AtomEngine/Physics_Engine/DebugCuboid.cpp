@@ -2,12 +2,10 @@
 #include "ShaderManager.h"
 
 
-DebugCuboid::DebugCuboid()
-{
-}
-
 DebugCuboid::DebugCuboid(float width, float height, float depth, glm::vec3 color)
 {
+    m_color = color;
+
     m_vertices = {
         //front bottom left
         -0.5f * width, -0.5f * height, -0.5f * depth,
@@ -35,8 +33,8 @@ DebugCuboid::DebugCuboid(float width, float height, float depth, glm::vec3 color
 
     m_vertexArray.Create(VAO);
     m_vertexBuffer.Create(VBO);
-
     m_elementBuffer.Create(EBO);
+    m_instanceBuffer.Create(VBO);
 
     m_vertexArray.Bind();
     m_vertexBuffer.Bind();
@@ -46,6 +44,17 @@ DebugCuboid::DebugCuboid(float width, float height, float depth, glm::vec3 color
 
     m_elementBuffer.Bind();
     m_elementBuffer.FillBuffer(sizeof(unsigned int) * m_indices.size(), &m_indices[0], STATIC);
+
+    m_instanceBuffer.Bind();
+    m_instanceBuffer.AddAttributePointer(BufferAttribute::INSTANCE_MAT_1, 4, VT_FLOAT, 4 * sizeof(glm::vec4));
+    m_instanceBuffer.AddAttributePointer(BufferAttribute::INSTANCE_MAT_2, 4, VT_FLOAT, 4 * sizeof(glm::vec4), sizeof(glm::vec4));
+    m_instanceBuffer.AddAttributePointer(BufferAttribute::INSTANCE_MAT_3, 4, VT_FLOAT, 4 * sizeof(glm::vec4), 2 * sizeof(glm::vec4));
+    m_instanceBuffer.AddAttributePointer(BufferAttribute::INSTANCE_MAT_4, 4, VT_FLOAT, 4 * sizeof(glm::vec4), 3 * sizeof(glm::vec4));
+    m_instanceBuffer.AddAtributeDivisor(BufferAttribute::INSTANCE_MAT_1, 1);
+    m_instanceBuffer.AddAtributeDivisor(BufferAttribute::INSTANCE_MAT_2, 1);
+    m_instanceBuffer.AddAtributeDivisor(BufferAttribute::INSTANCE_MAT_3, 1);
+    m_instanceBuffer.AddAtributeDivisor(BufferAttribute::INSTANCE_MAT_4, 1);
+
     m_vertexArray.Unbind();
 
     m_color = color;
@@ -57,25 +66,6 @@ DebugCuboid::~DebugCuboid()
 {
     m_vertexArray.Destroy();
     m_vertexBuffer.Destroy();
-}
-
-void DebugCuboid::Render()
-{
-    Shaders::Instance()->GetShader("BASIC")->SetVec3("aColor", m_color);
-    m_vertexArray.Bind();
-    //glDrawArrays(GL_LINES, 0, m_drawCount);
-    glDrawElements(GL_LINE_STRIP, m_drawCount, GL_UNSIGNED_INT, 0);
-    m_vertexArray.Unbind();
-}
-
-void DebugCuboid::Render(glm::mat4 modelMatrix)
-{
-    Shaders::Instance()->GetCurrentShader()->SetVec3("aColor", m_color);
-    Shaders::Instance()->GetCurrentShader()->SetMat4("model", modelMatrix);
-
-    m_vertexArray.Bind();
-    glDrawElements(GL_LINE_STRIP, m_drawCount, GL_UNSIGNED_INT, 0);
-    m_vertexArray.Unbind();
 }
 
 void DebugCuboid::SetDimensions(float width, float height, float depth)

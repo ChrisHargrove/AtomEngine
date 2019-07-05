@@ -1,4 +1,6 @@
 #pragma once
+
+#include <GLM/glm.hpp>
 #include <GLM/mat4x4.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
 #include <GLM/gtc/quaternion.hpp>
@@ -35,29 +37,37 @@ public:
 
     glm::mat4 GetMatrix() {
         if(needsUpdate) {
-            m_matrix = glm::scale(glm::mat4(1.0f), m_scale);
-            m_matrix = glm::translate(m_matrix, m_position);
+            auto translation = glm::translate(glm::mat4(1.0f), m_position);
             m_orientation = glm::normalize(m_orientation);
-            m_matrix *= glm::mat4_cast(m_orientation);
+            auto rotation = glm::mat4_cast(m_orientation);
+            auto scale = glm::scale(glm::mat4(1.0f), m_scale);
+            m_matrix = translation * rotation * scale;
             needsUpdate = false;
         }
         
         return m_matrix;
+
+        /*glm::mat4 m_matrix = glm::scale(glm::mat4(1.0f), m_scale);
+        m_matrix = glm::translate(m_matrix, m_position);
+        m_orientation = glm::normalize(m_orientation);
+        m_matrix *= glm::mat4_cast(m_orientation);
+        return m_matrix;*/
     }
 
     glm::vec3 GetPosition() {
         return m_position;
     }
 
+    glm::vec3 GetLocalPosition() {
+        return WorldToLocal(m_position);
+    }
+
     glm::quat GetRotation() {
         return m_orientation;
     }
 
-    glm::vec3 GetEuler() {
-        glm::vec3 euler;
-        auto rotation = glm::mat4_cast(m_orientation);
-        glm::extractEulerAngleXYZ(rotation, euler.x, euler.y, euler.z);
-        return euler;
+    glm::mat3 GetRotationMatrix() {
+        return glm::mat3_cast(m_orientation);
     }
 
     glm::vec3 GetScale() {
@@ -99,6 +109,16 @@ public:
 
     glm::vec3 GetForward() {
         return glm::row(glm::mat3_cast(m_orientation), 2);
+    }
+
+    glm::vec3 WorldToLocal(const glm::vec3& vector)
+    {
+        return glm::transpose(glm::inverse(glm::mat3(GetMatrix()))) * vector;
+    }
+
+    glm::vec3 LocalToWorld(const glm::vec3& vector)
+    {
+        return glm::transpose(glm::mat3(GetMatrix())) * vector;
     }
 
 private:

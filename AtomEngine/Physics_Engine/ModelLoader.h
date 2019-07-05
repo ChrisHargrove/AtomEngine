@@ -13,11 +13,10 @@
 #define ATOM_API __declspec(dllimport)
 #endif
 
+#include <ASSIMP/Importer.hpp>
 #include <ASSIMP/scene.h>
 #include <string>
-#include "Mesh.h"
 
-class Mesh;
 class POD_Mesh;
 
 class ATOM_API ModelLoader
@@ -32,8 +31,6 @@ public:
         * This function with load the file from the specified path provided and place the data
         * inside the mesh provided.
     */
-    static bool LoadModel(const std::string& fileName, Mesh* mesh);
-
     static bool LoadModel(const std::string& fileName);
 
     static bool LoadModel(const std::string& fileName, POD_Mesh* mesh);
@@ -47,9 +44,6 @@ private:
         *
         * This function is used to recursivly get all data out of the scene heirarchy.
     */
-    static void ProcessNode(aiNode* node, const aiScene* scene, Mesh* mesh);
-
-    static void ProcessNode(aiNode* node, const aiScene* scene, MeshResource* resource);
 
     static void ProcessNode(aiNode* node, const aiScene* scene, POD_Mesh* mesh);
 
@@ -62,14 +56,8 @@ private:
         * This function is where all data from the Assimp mesh is transferred into the mesh 
         * object.
     */
-    static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, Mesh* mesh);
 
     static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, POD_Mesh* mesh);
-
-    static void ProcessMesh(aiMesh* aimesh, const aiScene* scene, MeshResource* resource);
-
-    static void CalculateMeshBounds(Mesh* mesh);
-    static void CalculateMeshBounds(MeshResource* resource);
 
     static void CalculateMeshBounds(POD_Mesh* mesh);
 

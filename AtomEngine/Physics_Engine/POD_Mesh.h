@@ -9,13 +9,13 @@
 #include <vector>
 #include "Types.h"
 #include "Buffer.h"
+#include "POD_Transform.h"
 
 class POD_SubMesh
 {
 public:
     friend class ModelLoader;
     friend class POD_Mesh;
-    friend class Renderer;
 
     POD_SubMesh() :
         m_drawCount(0) {
@@ -41,6 +41,10 @@ public:
     void FillInstanceBuffer(std::vector<glm::mat4>& data) {
         m_instanceBuffer.FillBuffer(data.size() * sizeof(glm::mat4), &data[0], DYNAMIC);
         m_instanceBuffer.Unbind();
+    }
+
+    unsigned int GetDrawCount() {
+        return m_drawCount;
     }
 
 protected:
@@ -75,6 +79,29 @@ public:
 
     inline std::vector<POD_SubMesh*>& GetSubmeshList() {
         return m_subMeshList;
+    }
+
+    inline glm::vec3 Support(POD_Transform& transform, glm::vec3 direction)
+    {
+        std::vector<glm::vec3> verts;
+        for(auto mesh : m_subMeshList) {
+            for(auto vertex : mesh->m_vertices) {
+                auto vert = glm::mat3(transform.GetMatrix()) * vertex.m_position;
+                vert += transform.GetPosition();
+                verts.push_back(vert);
+            }
+        }
+        float furthestDistance = -std::numeric_limits<float>::infinity();
+        glm::vec3 furthestPoint(furthestDistance);
+        for(auto vert : verts) {
+            auto tmp = glm::dot(vert, direction);
+            if(tmp > furthestDistance) {
+                furthestDistance = tmp;
+                furthestPoint = vert;
+            }
+        }
+
+        return furthestPoint;
     }
 
 protected:

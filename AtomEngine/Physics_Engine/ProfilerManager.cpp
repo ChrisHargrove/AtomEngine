@@ -10,31 +10,41 @@ void ProfilerManager::Initialize(const std::string & fileName)
 
 void ProfilerManager::Shutdown()
 {
+    for(auto label : m_averageTimes)
+    {
+        float totalTime = 0;
+        for(auto time : label.second)
+        {
+            totalTime += time;
+        }
+        float averageTime = totalTime / label.second.size();
+
+        (*m_fileStream) << '[' << label.first << ']' << " Took Average of: " << std::to_string(averageTime * 1000) + "ms" << std::endl;
+    }
+
     delete m_fileStream;
 }
 
 void ProfilerManager::Start(const std::string& label)
 {
-    //add label to the queue
-    m_labelOrder.push_back(label);
-    //store the start time of the profile, and use a key value of its label.
-    m_profiles.emplace(std::make_pair(label, std::chrono::high_resolution_clock::now()));
+    m_startTimes[label] = std::chrono::high_resolution_clock::now();
 }
 
-void ProfilerManager::End()
+void ProfilerManager::End(const std::string& label)
 {
-    //sort out labels
-    std::string label = m_labelOrder.back();
-    std::string prefix = "[PROFILER]";
+    auto endTime = std::chrono::high_resolution_clock::now();
+    auto startTime = m_startTimes[label];
 
-    //calculate time taken for this label
+    auto timeTaken = std::chrono::duration_cast<std::chrono::duration<float>>(endTime - startTime).count();
 
-    std::string timeTaken = std::to_string(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - m_profiles.at(label)).count());
+    if(m_averageTimes[label].size() < 10)
+    {
+        m_averageTimes[label].push_back(timeTaken);
+    }
+    else
+    {
+        m_averageTimes[label].pop_front();
+        m_averageTimes[label].push_back(timeTaken);
+    }
 
-    //output it to the file
-    (*m_fileStream) << prefix << label << " took " << timeTaken << "ms to complete\n";
-
-    //remove from the list of profiles and labels.
-    m_labelOrder.pop_back();
-    m_profiles.erase(label);
 }
