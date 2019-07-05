@@ -5,15 +5,15 @@
 #include "IMGUI/imgui_impl_opengl3.h"
 #include <memory>
 
-class Component;
-class GameObject;
-class Scene;
+class CollisionDetectionSystem;
+class RenderDebugSystem;
 
 enum class WindowID
 {
     HEIRARCHY = 0,
     OBJECT_EDITOR,
-    SAVE_AS
+    SAVE_AS,
+    LOAD
 };
 
 class GUIManager
@@ -32,13 +32,11 @@ public:
     void ProcessInput(SDL_Event* evt);
     void Shutdown();
 
-    void CloseWindow(WindowID id);
+    void SetRenderDebugSystem(RenderDebugSystem* renderDebug);
+    void SetCollisionDetectionSystem(CollisionDetectionSystem* bvh);
 
     void ShowGUI();
     bool QuitCalled();
-
-    void SetSceneData(std::weak_ptr<Scene> scene);
-    Scene* GetScene();
 
 private:
     GUIManager() {};
@@ -46,32 +44,14 @@ private:
     ~GUIManager() {};
 
     bool m_quitCalled;
-    bool m_showHeirarchyWindow;
-    bool m_showObjectEditorWindow;
-    bool m_showSaveWindow;
 
-    std::weak_ptr<Scene> m_scene;
-
-    //Heirachy Window Variables 
-    int m_nodeClicked;
-    long int m_selectionMask;
-    GameObject* m_objectSelected;
-    ImGuiTreeNodeFlags m_nodeFlags;
-
-    //Object Editor Window Variables
-    char m_nameBuffer[128] = "";
-    char m_meshName[64] = "";
-
-    void ShowGameObjectNode(GameObject* obj, int& index);
     void ShowMenuBar();
     void ShowMenu();
-    void ShowHeirarchyWindow();
-    void ShowObjectEditorWindow();
-    void ShowSaveWindow();
-
-    void ShowComponontInfo(Component* component);
 
     static GUIManager* m_instance;
+
+    RenderDebugSystem* m_renderDebugSystem;
+    CollisionDetectionSystem* m_collisionDetectionSystem;
 };
 
 typedef GUIManager GUI;

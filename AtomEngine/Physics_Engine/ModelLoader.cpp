@@ -1,26 +1,52 @@
 #include "ModelLoader.h"
 #include "LogManager.h"
-#include "Mesh.h"
 #include <vector>
 
-#include <ASSIMP/Importer.hpp>
 #include <ASSIMP/postprocess.h>
+#include "ResourceManager.h"
 
-bool ModelLoader::LoadModel(const std::string & fileName, Mesh* mesh)
+#include "POD_Mesh.h"
+
+bool ModelLoader::LoadModel(const std::string& fileName)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
         Logger::Instance()->LogError("[ASSIMP]" + std::string(importer.GetErrorString()));
         return false;
     }
-    
-    ProcessNode(scene->mRootNode, scene, mesh);
 
-    return true;
+    POD_Mesh mesh;
+    mesh.m_meshName = fileName;
+    ProcessNode(scene->mRootNode, scene, &mesh);
+    CalculateMeshBounds(&mesh);
+
+    auto resource = std::make_shared<POD_Mesh>(mesh);
+
+    return Resource::Instance()->AddResource<POD_Mesh>(fileName, std::move(resource));
 }
 
-void ModelLoader::ProcessNode(aiNode * node, const aiScene * scene, Mesh* mesh)
+bool ModelLoader::LoadModel(const std::string& fileName, POD_Mesh* mesh)
+{
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
+        Logger::Instance()->LogError("[ASSIMP]" + std::string(importer.GetErrorString()));
+        return false;
+    }
+
+    mesh->m_meshName = fileName;
+    ProcessNode(scene->mRootNode, scene, mesh);
+    CalculateMeshBounds(mesh);
+
+    auto resource = std::make_shared<POD_Mesh>(*mesh);
+
+    return Resource::Instance()->AddResource<POD_Mesh>(fileName, std::move(resource));
+}
+
+void ModelLoader::ProcessNode(aiNode* node, const aiScene* scene, POD_Mesh* mesh)
 {
     for (int i = 0; i < (int)node->mNumMeshes; i++) {
         aiMesh* aimesh = scene->mMeshes[node->mMeshes[i]];
@@ -31,13 +57,13 @@ void ModelLoader::ProcessNode(aiNode * node, const aiScene * scene, Mesh* mesh)
     }
 }
 
-void ModelLoader::ProcessMesh(aiMesh * aimesh, const aiScene * scene, Mesh* mesh)
+void ModelLoader::ProcessMesh(aiMesh* aimesh, const aiScene* scene, POD_Mesh* mesh)
 {
     std::vector<ComplexVertex> vertices;
     std::vector<unsigned int> indices;
 
-    SubMesh* subMesh = new SubMesh();
-    
+    auto subMesh = new POD_SubMesh();
+
     for (int i = 0; i < (int)aimesh->mNumVertices; i++) {
         ComplexVertex vertex;
         glm::vec3 vector;
@@ -92,7 +118,48 @@ void ModelLoader::ProcessMesh(aiMesh * aimesh, const aiScene * scene, Mesh* mesh
     subMesh->m_indices = indices;
     subMesh->m_drawCount = indices.size();
 
-    mesh->m_subMeshList.push_back(subMesh);
 
+    mesh->m_subMeshList.push_back(subMesh);
 }
 
+void ModelLoader::CalculateMeshBounds(POD_Mesh* mesh)
+{
+    glm::vec3 minBounds(0, 0, 0);
+    glm::vec3 maxBounds(0, 0, 0);
+
+    for (auto submesh : mesh->GetSubmeshList())
+    {
+        for (auto vertex : submesh->m_vertices)
+        {
+            if (vertex.m_position.x < minBounds.x)
+            {
+                minBounds.x = vertex.m_position.x;
+            }
+            else if (vertex.m_position.x > maxBounds.x)
+            {
+                maxBounds.x = vertex.m_position.x;
+            }
+
+            if (vertex.m_position.y < minBounds.y)
+            {
+                minBounds.y = vertex.m_position.y;
+            }
+            else if (vertex.m_position.y > maxBounds.y)
+            {
+                maxBounds.y = vertex.m_position.y;
+            }
+
+            if (vertex.m_position.z < minBounds.z)
+            {
+                minBounds.z = vertex.m_position.z;
+            }
+            else if (vertex.m_position.z > maxBounds.z)
+            {
+                maxBounds.z = vertex.m_position.z;
+            }
+        }
+    }
+
+    mesh->m_maximumBounds = maxBounds;
+    mesh->m_minimumBounds = minBounds;
+}

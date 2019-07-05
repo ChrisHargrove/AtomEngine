@@ -3,6 +3,9 @@
 #include "LogManager.h"
 
 #include "ShaderManager.h"
+#include "ResourceManager.h"
+
+#include "Transform.h"
 
 
 Mesh::Mesh()
@@ -14,24 +17,24 @@ Mesh::Mesh()
 
 Mesh::~Mesh()
 {
-    for (int i = 0; i < m_subMeshList.size(); i++) {
-        delete m_subMeshList[i];
-    }
+    m_subMeshList.reset();
 }
 
 void Mesh::Update(float deltaTime)
 {
 }
 
-void Mesh::Initialize()
+bool Mesh::Initialize()
 {
-    if (m_meshName == "") {
-        return;
+    m_transform = GetComponent<Transform>();
+
+    if (m_meshName.empty()) {
+        return false;
     }
     else {
         if (LoadMesh(m_meshName)) {
 
-            for (auto subMesh : m_subMeshList) {
+            for (auto subMesh : *m_subMeshList.get()) {
                 subMesh->m_vertexArray.Bind();
                 subMesh->m_vertexBuffer.Bind();
 
@@ -48,9 +51,19 @@ void Mesh::Initialize()
 
                 subMesh->m_vertexArray.Unbind();
             }
-            
         }
     }
+    return true;
+}
+
+glm::vec3& Mesh::GetMinimumBounds()
+{
+    return m_meshMinBounds;
+}
+
+glm::vec3& Mesh::GetMaximumBounds()
+{
+    return m_meshMaxBounds;
 }
 
 void Mesh::SetMesh(const std::string& meshName)
@@ -70,8 +83,24 @@ bool Mesh::LoadMesh()
 
 bool Mesh::LoadMesh(const std::string& meshName)
 {
-    if (ModelLoader::LoadModel(meshName, this)) {
+    if(Resource::Instance()->HasResource<Mesh>(meshName))
+    {
+        auto resource = Resource::Instance()->GetResource<Mesh>(meshName);
+        m_subMeshList = resource->m_subMeshList;
+        m_meshMinBounds = resource->m_meshMinBounds;
+        m_meshMaxBounds = resource->m_meshMaxBounds;
+        return true;
+    }
+
+    //DRAGONS LAY HERE!!! NEEDS SERIOUS INSPECTION!!
+    //Don't worry Dragons were tamed :D 17/01/19
+    if(ModelLoader::LoadModel(meshName))
+    {
         Logger::Instance()->LogInfo("Successfully Loaded: " + meshName);
+        auto resource = Resource::Instance()->GetResource<Mesh>(meshName);
+        m_subMeshList = resource->m_subMeshList;
+        m_meshMinBounds = resource->m_meshMinBounds;
+        m_meshMaxBounds = resource->m_meshMaxBounds;
         return true;
     }
     return false;
@@ -79,7 +108,7 @@ bool Mesh::LoadMesh(const std::string& meshName)
 
 void Mesh::Render()
 {
-    for (auto subMesh : m_subMeshList) {
+    for (auto& subMesh : *m_subMeshList.get()) {
         if (subMesh->m_drawCount > 0) {
             subMesh->Render();
         }
@@ -88,7 +117,7 @@ void Mesh::Render()
 
 void Mesh::Render(int instanceCount)
 {
-    for (auto subMesh : m_subMeshList) {
+    for (auto& subMesh : *m_subMeshList.get()) {
         if (subMesh->m_drawCount > 0) {
             subMesh->Render(instanceCount);
         }
@@ -97,7 +126,7 @@ void Mesh::Render(int instanceCount)
 
 std::vector<SubMesh*> Mesh::GetSubMeshList()
 {
-    return m_subMeshList;
+    return *m_subMeshList.get();
 }
 
 SubMesh::SubMesh() :
@@ -106,6 +135,7 @@ SubMesh::SubMesh() :
     m_vertexArray.Create(VAO);
     m_vertexBuffer.Create(VBO);
     m_elementBuffer.Create(EBO);
+    m_instanceBuffer.Create(VBO);
 }
 
 SubMesh::~SubMesh()

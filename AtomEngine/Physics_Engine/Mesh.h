@@ -54,7 +54,10 @@ private:
     Buffer m_vertexArray;       /*!< The Vertex Array Object. */
     Buffer m_vertexBuffer;      /*!< The Vertex Buffer Object. */
     Buffer m_elementBuffer;     /*!< The Element Array Buffer. */
+    Buffer m_instanceBuffer;    /*!< The Instance Array Buffer. */
 };
+
+typedef std::vector<SubMesh*> SubMeshList;
 
 class ATOM_API Mesh : public Component
 {
@@ -104,7 +107,7 @@ public:
 
     void Render(int instanceCount);
 
-    std::vector<SubMesh*> GetSubMeshList();
+    SubMeshList GetSubMeshList();
 
     template<class Archive>
     void serialize(Archive &archive) {
@@ -124,11 +127,29 @@ public:
         *
         * This function is where the initial setup for this component is set.
     */
-    void Initialize() override;
+    bool Initialize() override;
+
+    glm::vec3& GetMinimumBounds();
+    glm::vec3& GetMaximumBounds();
 
 private:
     std::string m_meshName;                 /*!< The name of the overall Mesh. */
-    std::vector<SubMesh*> m_subMeshList;    /*!< The list of sub-mesh's. */
+    std::shared_ptr<SubMeshList> m_subMeshList;    /*!< The list of sub-mesh's. */
+    glm::vec3 m_meshMinBounds;
+    glm::vec3 m_meshMaxBounds;
+};
+
+struct MeshResource
+{
+    std::shared_ptr<SubMeshList> m_subMeshList;
+    glm::vec3 m_minBounds;
+    glm::vec3 m_maxBounds;
+
+    MeshResource(std::shared_ptr<SubMeshList> list, glm::vec3 min, glm::vec3 max) {
+        m_subMeshList = list;
+        m_minBounds = min;
+        m_maxBounds = max;
+    }
 };
 
 CEREAL_REGISTER_TYPE_WITH_NAME(Mesh, "MeshObject");

@@ -9,6 +9,7 @@
 #include <string>
 #include <vector>
 #include <future>
+#include <GLM/glm.hpp>
 
 namespace StringUtils{
     /*!
@@ -51,6 +52,23 @@ namespace MathUtils {
     */
     ATOM_API float MapRange(float number, float inRangeStart, float inRangeEnd, float outRangeStart, float outRangeEnd);
 
+    ATOM_API float RoundToPrecision(float number, int precision);
+
+}
+
+namespace glm
+{
+    ATOM_API inline bool operator>= (const glm::vec3& lhs, const glm::vec3& rhs) {
+        return glm::all(glm::greaterThanEqual(lhs, rhs));
+    }
+
+    ATOM_API inline bool operator<= (const glm::vec3& lhs, const glm::vec3& rhs) {
+        return glm::all(glm::lessThanEqual(lhs, rhs));
+    }
+
+    ATOM_API inline glm::vec3 TripleProduct(const glm::vec3& a, const glm::vec3& b, const glm::vec3& c) {
+        return glm::cross(glm::cross(a, b), c);
+    }
 }
 
 namespace DataUtils {
@@ -68,6 +86,5 @@ namespace DataUtils {
     {
         return reinterpret_cast<std::size_t>(&(((T*)0)->*member));
     }
-      
 
 }

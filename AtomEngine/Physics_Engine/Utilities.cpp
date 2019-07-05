@@ -30,4 +30,9 @@ namespace MathUtils {
     {
         return ((number - inRangeStart) * ((outRangeEnd - outRangeStart) / (inRangeEnd - inRangeStart))) + outRangeEnd;
     }
+
+    float RoundToPrecision(float value, int precision)
+    {
+        return (std::floor((value * std::pow(10, precision) + 0.5f)) / std::pow(10, precision));
+    }
 }

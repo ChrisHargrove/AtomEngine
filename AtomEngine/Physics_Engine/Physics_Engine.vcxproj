@@ -32,7 +32,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -80,8 +80,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>DEBUG;BUILDING_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard>
-      </LanguageStandard>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)libs</AdditionalLibraryDirectories>
@@ -111,13 +110,14 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)includes</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>BUILDING_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILDING_DLL;GLM_FORCE_SSE2;GLM_FORCE_ALIGNED;GLM_FORCE_INLINE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)libs</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;glew32.lib;opengl32.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -135,14 +135,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Buffer.cpp" />
-    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CubeMap.cpp" />
     <ClCompile Include="Cuboid.cpp" />
     <ClCompile Include="DebugCuboid.cpp" />
+    <ClCompile Include="ECS_Component.cpp" />
+    <ClCompile Include="ECS_Manager.cpp" />
+    <ClCompile Include="ECS_System.cpp" />
     <ClCompile Include="Engine.cpp" />
-    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="IMGUI\imgui.cpp" />
     <ClCompile Include="IMGUI\imgui_demo.cpp" />
     <ClCompile Include="IMGUI\imgui_draw.cpp" />
@@ -150,16 +150,15 @@
     <ClCompile Include="IMGUI\imgui_impl_sdl.cpp" />
     <ClCompile Include="IMGUI\imgui_widgets.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="LogManager.cpp" />
     <ClCompile Include="Material.cpp" />
-    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="ModelLoader.cpp" />
     <ClCompile Include="NumberGenerator.cpp" />
+    <ClCompile Include="POD_Mesh.cpp" />
+    <ClCompile Include="ProfilerManager.cpp" />
     <ClCompile Include="Quad.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="ScreenManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -168,20 +167,25 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="ThreadPool.cpp" />
     <ClCompile Include="Timing.cpp" />
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="AABBComponent.h" />
     <ClInclude Include="AlignedAllocation.h" />
+    <ClInclude Include="BoundingVolumeHeirarchy.h" />
+    <ClInclude Include="BroadPhase.h" />
+    <ClInclude Include="BruteForce.h" />
     <ClInclude Include="Buffer.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Component.h" />
+    <ClInclude Include="CollisionDetectionSystem.h" />
     <ClInclude Include="CubeMap.h" />
     <ClInclude Include="Cuboid.h" />
     <ClInclude Include="DebugCuboid.h" />
+    <ClInclude Include="DebugRenderer.h" />
+    <ClInclude Include="ECS_Component.h" />
+    <ClInclude Include="ECS_Manager.h" />
+    <ClInclude Include="ECS_System.h" />
     <ClInclude Include="Engine.h" />
-    <ClInclude Include="GameObject.h" />
     <ClInclude Include="IMGUI\imconfig.h" />
     <ClInclude Include="IMGUI\imgui.h" />
     <ClInclude Include="IMGUI\imgui_impl_opengl3.h" />
@@ -191,31 +195,40 @@
     <ClInclude Include="IMGUI\imstb_textedit.h" />
     <ClInclude Include="IMGUI\imstb_truetype.h" />
     <ClInclude Include="InputManager.h" />
-    <ClInclude Include="IOManager.h" />
     <ClInclude Include="Kernel.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="LogManager.h" />
+    <ClInclude Include="NarrowPhase.h" />
+    <ClInclude Include="PhysicsMovementSystem.h" />
+    <ClInclude Include="POD_RigidBody.h" />
+    <ClInclude Include="PostRenderer.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshComponent.h" />
     <ClInclude Include="ModelLoader.h" />
     <ClInclude Include="NumberGenerator.h" />
+    <ClInclude Include="POD_Mesh.h" />
+    <ClInclude Include="POD_Transform.h" />
     <ClInclude Include="PrimitiveShape.h" />
+    <ClInclude Include="ProfilerManager.h" />
     <ClInclude Include="Quad.h" />
+    <ClInclude Include="InstancedRenderer.h" />
+    <ClInclude Include="RenderDebugSystem.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="RenderMeshSystem.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Scene.h" />
+    <ClInclude Include="RigidBodyComponent.h" />
     <ClInclude Include="ScreenManager.h" />
-    <ClInclude Include="SerialExtensions.h" />
-    <ClInclude Include="SerialRegister.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="Skybox.h" />
+    <ClInclude Include="SkyboxRenderer.h" />
     <ClInclude Include="State.h" />
     <ClInclude Include="StateManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="ThreadPool.h" />
     <ClInclude Include="Timing.h" />
-    <ClInclude Include="Transform.h" />
+    <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="Types.h" />
     <ClInclude Include="UniformBufferTypes.h" />
     <ClInclude Include="Utilities.h" />

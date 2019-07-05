@@ -90,7 +90,7 @@ void Skybox::Render()
 {
     glDepthFunc(GL_LEQUAL);
 
-    Shaders::Instance()->GetCurrentShader()->SetInt("skybox", 0);
+    
     m_vertexArray.Bind();
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, m_texture->GetID());

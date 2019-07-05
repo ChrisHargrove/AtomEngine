@@ -5,6 +5,7 @@
 #include "ScreenManager.h"
 
 #include "Timing.h"
+#include "ProfilerManager.h"
 
 Engine::Engine()
 {
@@ -17,13 +18,14 @@ Engine::~Engine()
 
 bool Engine::Initialize(float width, float height, const std::string & title, const std::string& logFile)
 {
+    Profiler::Instance()->Initialize("AtomProfile.log");
     Logger::Instance()->Initialize(logFile);
     Screen::Instance()->SetVersion();
     if (!Screen::Instance()->Initialize(title, glm::vec2(width, height))) {
         Logger::Instance()->LogError("Screen: Failed to Initialize correctly!");
         return false;
     }
-    Screen::Instance()->InitializeProjection();
+    Screen::Instance()->InitializeProjection(90, 0.1, 1000);
 
     if (m_guiInitializeCallback != nullptr) m_guiInitializeCallback();
 
@@ -66,8 +68,11 @@ int Engine::Run()
     m_timer->Start();
 
     while (!Input::Instance()->HasQuit()) {
+        
         Input();
+        Profiler::Instance()->Start("Game Update Loop");
         Update(m_timer->GetDelta());
+        Profiler::Instance()->End("Game Update Loop");
         Render();
     }
 
@@ -90,6 +95,7 @@ bool Engine::Shutdown()
 
     Screen::Instance()->Close();
     Logger::Instance()->Shutdown();
+    Profiler::Instance()->Shutdown();
     return true;
 }
 

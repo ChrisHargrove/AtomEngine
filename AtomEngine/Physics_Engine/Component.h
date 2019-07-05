@@ -24,6 +24,8 @@
 
 #include "SerialExtensions.h"
 
+class Transform;
+
 class ATOM_API Component
 {
 public:
@@ -39,14 +41,14 @@ public:
         *
         * Will call the appropriate function for each component by polymorphism.
     */
-    virtual void Update(float deltaTime) = 0;
+    virtual void Update(float deltaTime) {};
 
     /*!
         * \brief Virtual Initialize Function.
         *
         * Will call the appropriate function for each component by polymorphism.
     */
-    virtual void Initialize() = 0;
+    virtual bool Initialize() = 0;
 
     /*!
         * \brief Sets the owning parent object.
@@ -90,12 +92,14 @@ public:
         * Will check the parent for a Component of specified type and return it.
     */
     template<class T>
-    T* GetComponent();
+    T* GetComponent() const;
 
+    Transform* m_transform;
 
 protected:
     const std::type_info* m_typeInfo;
     std::string m_name;                 /*!< A string containing the name of the Component. Used to identify component during serialization.*/
+
     std::weak_ptr<GameObject> m_parent; /*!< A pointer to the owning parent game object. */
 
 private:
@@ -105,7 +109,7 @@ private:
 };
 
 template<class T>
-inline T* Component::GetComponent()
+inline T* Component::GetComponent() const 
 {
     if(m_parent.lock() != nullptr) return m_parent.lock().get()->GetComponent<T>();
     else { return nullptr; }

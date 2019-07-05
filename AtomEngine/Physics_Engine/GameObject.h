@@ -19,6 +19,7 @@
 #include <memory>
 
 #include <CEREAL/cereal.hpp>
+#include <mutex>
 
 class Component;
 
@@ -94,6 +95,9 @@ public:
     */
     template<class T>
     T* GetComponent();
+
+    template<class T>
+    std::shared_ptr<T> GetComponentPtr();
 
     /*!
         * \brief Gets a component from the parent object.
@@ -171,7 +175,7 @@ public:
     */
     static void Destroy(std::shared_ptr<GameObject> &obj);
 
-    std::string GetName();
+    std::string& GetName();
 
     void SetName(const std::string& name);
 
@@ -182,6 +186,8 @@ protected:
 
 private:
     std::string m_name;
+
+    std::mutex m_mutex;
 
     bool m_hasInitialized; /*!< Whether the game object has already been initialized or not. */
 
@@ -273,10 +279,21 @@ inline T* GameObject::GetComponent()
     return nullptr;
 }
 
+template <class T>
+std::shared_ptr<T> GameObject::GetComponentPtr()
+{
+    for (auto component : m_componentList) {
+        if (typeid(*component.get()) == typeid(T)) {
+            return std::dynamic_pointer_cast<T>(component);
+        }
+    }
+    return nullptr;
+}
+
 template<class T>
 inline T* GameObject::GetComponentInParent()
 {
-    for (auto component : m_parentObject.get()->m_componentList) {
+    for (auto component : m_parentObject.lock().get()->m_componentList) {
         if (typeid(*component.get()) == typeid(T)) {
             return component.get();
         }

@@ -17,9 +17,10 @@ Camera::~Camera()
 {
 }
 
-void Camera::Initialize()
+bool Camera::Initialize()
 {
-    _transform = GetComponent<Transform>();
+    m_transform = GetComponent<Transform>();
+    return m_transform != nullptr;
 }
 
 
@@ -35,20 +36,17 @@ float Camera::GetZoom() const
 
 glm::mat4 Camera::GetViewMatrix()
 {
-    if (_transform == nullptr) return glm::mat4();
+    if (m_transform == nullptr) return glm::mat4();
 
-    auto* transform = dynamic_cast<Transform*>(_transform);
-
-    m_viewMatrix = glm::lookAt(transform->GetPosition(), transform->GetPosition() + transform->GetForward(), transform->GetUp());
+    m_viewMatrix = glm::lookAt(m_transform->GetPosition(), m_transform->GetPosition() + m_transform->GetForward(), m_transform->GetUp());
     return m_viewMatrix;
 }
 
 glm::mat4 Camera::GetOrthoMatrix() const
 {
-    if (_transform == nullptr) return glm::mat4();
-    auto transform = dynamic_cast<Transform*>(_transform);
+    if (m_transform == nullptr) return glm::mat4();
 
-    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), transform->GetUp());
+    return glm::lookAt(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0), m_transform->GetUp());
 }
 
 void Camera::EnablePitchConstraint(bool enable)

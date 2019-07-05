@@ -80,7 +80,7 @@ public:
         *
         * This function is where the initial setup for this component is set.
     */
-    void Initialize() override;
+    bool Initialize() override;
 
 
 private:
@@ -91,8 +91,6 @@ private:
 
     glm::vec3 m_target;         /*!< The camera target. */
     glm::mat4 m_viewMatrix;     /*!< The current 4x4 view matrix. */
-
-    Component* _transform;
 
     template<class Archive>
     void serialize(Archive &archive) {
