@@ -6,6 +6,7 @@
 
 #include "CollisionDetectionSystem.h"
 #include "RenderDebugSystem.h"
+#include "NewECS.h"
 
 GUIManager* GUIManager::m_instance = nullptr;
 
@@ -67,6 +68,11 @@ void GUIManager::SetCollisionDetectionSystem(CollisionDetectionSystem* bvh)
     m_collisionDetectionSystem = bvh;
 }
 
+void GUIManager::SetECS(NewECS* ecs)
+{
+    m_ECS = ecs;
+}
+
 void GUIManager::ShowGUI()
 {
     ShowMenuBar();
@@ -89,6 +95,10 @@ void GUIManager::ShowMenuBar()
 
         if(ImGui::BeginMenu("Physics"))
         {
+            if(m_ECS) {
+                ImGui::Checkbox("Run Simulation", m_ECS->GetRunSimulation());
+                ImGui::Separator();
+            }
             if(m_renderDebugSystem) {
                 ImGui::Checkbox("Draw AABB's", m_renderDebugSystem->GetShowDebug());
                 ImGui::Separator();

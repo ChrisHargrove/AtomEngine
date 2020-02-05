@@ -32,6 +32,9 @@ public:
 
     bool m_wireFrame = false;
     bool m_showDebug = false;
+    bool m_runSimulation = false;
+
+    bool* GetRunSimulation() { return &m_runSimulation; }
 
     //test.
     ECS_Manager m_ecs;

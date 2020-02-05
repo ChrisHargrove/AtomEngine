@@ -55,13 +55,9 @@ bool CubeMap::Load(const std::string & fileName)
 
         std::string fullPath = (filePath + "_" + m_faces[i] + extension);
 
-        if (image = IMG_Load(fullPath.c_str())) {
-            //Check to see if image was loaded.
-            if (!image) {
-                Logger::Instance()->LogError("Image: " + filePath + "_" + m_faces[i] + extension + " Failed to load!");
-                glDeleteTextures(1, &m_ID); //If image failed to load delete OpenGL texture.
-                return false;
-            }
+        image = IMG_Load(fullPath.c_str());
+
+        if (image) {
             //Find image format.
             GLenum format;
             if (image->format->Amask > 0) {
@@ -73,9 +69,12 @@ bool CubeMap::Load(const std::string & fileName)
             //Generate texture
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, format, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
 
-        }
-        if (image) { //After image has been converted then free the memory for the image so it can be reused.
             SDL_FreeSurface(image);
+        }
+        else {
+             Logger::Instance()->LogError("Image: " + filePath + "_" + m_faces[i] + extension + " Failed to load!");
+             glDeleteTextures(1, &m_ID); //If image failed to load delete OpenGL texture.
+             return false;
         }
     }
     //Set up linear filtering

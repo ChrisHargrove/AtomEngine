@@ -7,6 +7,7 @@
 
 class CollisionDetectionSystem;
 class RenderDebugSystem;
+class NewECS;
 
 enum class WindowID
 {
@@ -34,6 +35,7 @@ public:
 
     void SetRenderDebugSystem(RenderDebugSystem* renderDebug);
     void SetCollisionDetectionSystem(CollisionDetectionSystem* bvh);
+    void SetECS(NewECS* ecs);
 
     void ShowGUI();
     bool QuitCalled();
@@ -52,6 +54,8 @@ private:
 
     RenderDebugSystem* m_renderDebugSystem;
     CollisionDetectionSystem* m_collisionDetectionSystem;
+
+    NewECS* m_ECS;
 };
 
 typedef GUIManager GUI;

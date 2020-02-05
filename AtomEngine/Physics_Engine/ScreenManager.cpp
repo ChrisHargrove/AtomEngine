@@ -56,7 +56,7 @@ bool ScreenManager::Initialize(std::string title, glm::vec2 size, bool core)
 
 
     //Create SDL Window
-    m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)m_size.x, (int)m_size.y, SDL_WINDOW_OPENGL);
+    m_window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, (int)m_size.x, (int)m_size.y, SDL_WINDOW_OPENGL | SDL_WINDOW_FULLSCREEN);
     if (m_window == 0) {
         std::string temp = SDL_GetError();
         Logger::Instance()->LogError("SDL_CreateWindow() Failed: " + temp);

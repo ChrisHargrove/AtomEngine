@@ -82,7 +82,6 @@ bool NewECS::Initialize()
     m_mainRenderer.Initialize("POST", "postProcessing");
 
 
-    
     Shaders::Instance()->UseShader("INSTANCE");
     Shaders::Instance()->GetCurrentShader()->SetVec3("lightPos", glm::vec3(1.2f, 1.0f, 2.0f));
     Shaders::Instance()->GetCurrentShader()->SetVec3("viewPos", glm::vec3(0,0,0));
@@ -106,6 +105,7 @@ bool NewECS::Initialize()
 
     GUI::Instance()->SetRenderDebugSystem(&m_renderDebugSystem);
     GUI::Instance()->SetCollisionDetectionSystem(&m_collisionDetection);
+    GUI::Instance()->SetECS(this);
 
     return true;
 }
@@ -179,7 +179,9 @@ void NewECS::Input()
 
 void NewECS::Update(float delta)
 {
-    m_ecs.UpdateSystems(m_physicsSystems, delta);
+    if(m_runSimulation) {
+        m_ecs.UpdateSystems(m_physicsSystems, delta);
+    }
 }
 
 void NewECS::Render()
@@ -215,6 +217,7 @@ bool NewECS::Shutdown()
 
 void NewECS::Pause()
 {
+
 }
 
 void NewECS::Resume()

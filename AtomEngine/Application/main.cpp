@@ -5,7 +5,6 @@
 #include "GUIManager.h"
 #include "NewECS.h"
 
-
 int main(int argc, char** argv) {
 
     Engine* game = new Engine();
@@ -17,7 +16,7 @@ int main(int argc, char** argv) {
     game->SetGUIRenderFrameCallback([] { GUI::Instance()->Render(); });
     game->SetGUIShutdownCallback([] { GUI::Instance()->Shutdown(); });
 
-    game->Initialize(1330, 768, "Atom Engine v3.0", "AtomEngine.log");
+    game->Initialize(1920, 1080, "Atom Engine v3.0", "AtomEngine.log");
 
     if (StateMachine::Instance()->AddState("ECS:", new NewECS())) {
         StateMachine::Instance()->PushState("ECS:");
